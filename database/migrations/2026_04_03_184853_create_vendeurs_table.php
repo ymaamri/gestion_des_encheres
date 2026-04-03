@@ -13,13 +13,11 @@ return new class extends Migration {
         Schema::create('vendeurs', function (Blueprint $table) {
             $table->id();
 
-            // Relation with users (Breeze)
-            $table->foreignId('user_id')
+            // Link to CLIENT (NOT directly user)
+            $table->foreignId('client_id')
                 ->constrained()
                 ->onDelete('cascade');
 
-            // Vendeur specific fields
-            $table->string('prenom');
             $table->string('siret')->nullable();
             $table->double('note_moyenne')->default(0);
             $table->integer('nombre_ventes')->default(0);

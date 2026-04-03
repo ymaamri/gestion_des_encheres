@@ -6,39 +6,26 @@ use Illuminate\Database\Eloquent\Model;
 
 class Client extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'user_id',
-        'nom',
-        'prenom',
         'telephone',
         'adresse_livraison',
         'solde',
         'statut',
     ];
 
-    /**
-     * Client belongs to User
-     */
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * A client can participate in many enchères
-     */
-    public function encheres()
+    public function vendeur()
     {
-        return $this->belongsToMany(Enchere::class);
+        return $this->hasOne(Vendeur::class);
     }
 
-    /**
-     * A client receives many notifications
-     */
-    public function notifications()
+    public function mises()
     {
-        return $this->hasMany(Notification::class);
+        return $this->hasMany(Mise::class);
     }
 }

@@ -7,29 +7,21 @@ use Illuminate\Database\Eloquent\Model;
 
 class Vendeur extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
-        'user_id',
-        'prenom',
+        'client_id',
         'siret',
         'note_moyenne',
         'nombre_ventes',
     ];
 
-    /**
-     * Relation: Vendeur belongs to User
-     */
-    public function user()
+    public function client()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Client::class);
     }
 
-    /**
-     * Example: a vendeur can have many enchères
-     */
-    public function encheres()
+    // Access user easily
+    public function user()
     {
-        return $this->hasMany(Enchere::class);
+        return $this->client->user();
     }
 }
