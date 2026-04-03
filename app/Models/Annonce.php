@@ -70,4 +70,9 @@ class Annonce extends Model
     {
         return $this->prix_actuel ?? $this->prix_depart;
     }
+
+    public function categorie()
+    {
+        return $this->belongsTo(Categorie::class);
+    }
 }

@@ -28,4 +28,9 @@ class Client extends Model
     {
         return $this->hasMany(Mise::class);
     }
+
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class);
+    }
 }

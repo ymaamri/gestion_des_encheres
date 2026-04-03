@@ -5,29 +5,47 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::create('annonce_client', function (Blueprint $table) {
+        Schema::create('annonces', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('annonce_id')->constrained()->onDelete('cascade');
-            $table->foreignId('client_id')->constrained()->onDelete('cascade');
+            // 🔗 Relations
+            $table->foreignId('vendeur_id')
+                ->constrained()
+                ->onDelete('cascade');
 
-            $table->double('montant');
-            $table->dateTime('date_mise');
+            $table->foreignId('produit_id')
+                ->constrained()
+                ->onDelete('cascade');
+
+            // 📌 Core fields
+            $table->string('titre');
+            $table->text('description')->nullable();
+
+            $table->double('prix_depart');
+            $table->double('prix_actuel')->nullable();
+
+            $table->double('montant_mise')->default(0);
+
+            $table->dateTime('date_debut');
+            $table->dateTime('date_fin');
+
+            // 📊 Status ENUM
+            $table->enum('statut', [
+                'EN_ATTENTE',
+                'ACTIVE',
+                'CLOTUREE',
+                'BLOQUEE',
+                'ANNULEE'
+            ])->default('EN_ATTENTE');
 
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('annonce_client');
+        Schema::dropIfExists('annonces');
     }
 };
