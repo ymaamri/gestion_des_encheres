@@ -52,4 +52,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(Vendeur::class);
     }
+
+    public function client()
+    {
+        return $this->hasOne(Client::class);
+    }
 }
