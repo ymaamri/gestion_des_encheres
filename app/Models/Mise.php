@@ -9,13 +9,13 @@ class Mise extends Model
 {
     use HasFactory;
 
-    protected $table = 'annonce_client';
+    protected $table = 'enchere'; // Changed from 'annonce_client'
 
     protected $fillable = [
-        'annonce_id',
-        'client_id',
-        'montant',
-        'date_mise',
+        'annonce_id',  // Changed from 'annonce_id'
+        'client_id',   // Changed from 'client_id'
+        'montant',     // Changed from 'montant'
+        'date_mise',   // Changed from 'date_mise'
     ];
 
     /**
