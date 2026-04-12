@@ -28,7 +28,7 @@ class Produit extends Model
 
     public function annonces()
     {
-        return $this->hasMany(Annonce::class);
+        return $this->hasManyThrough(Annonce::class, Produit::class);
     }
 
     /**
@@ -60,5 +60,10 @@ class Produit extends Model
     public function categorie()
     {
         return $this->belongsTo(Categorie::class);
+    }
+
+    public function sousCategorie()
+    {
+        return $this->belongsTo(SousCategorie::class);
     }
 }

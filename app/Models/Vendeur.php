@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Vendeur extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'client_id',
         'siret',
@@ -17,6 +19,11 @@ class Vendeur extends Model
     public function client()
     {
         return $this->belongsTo(Client::class);
+    }
+
+    public function annonces()
+    {
+        return $this->hasMany(Annonce::class);
     }
 
     // Access user easily

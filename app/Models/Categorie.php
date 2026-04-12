@@ -27,4 +27,9 @@ class Categorie extends Model
     {
         return $this->hasMany(Annonce::class);
     }
+
+    public function sousCategories()
+    {
+        return $this->hasMany(SousCategorie::class);
+    }
 }
