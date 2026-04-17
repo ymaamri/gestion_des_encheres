@@ -12,20 +12,28 @@ class ImageHelper
     public static function getProductImage($produit, $index = 0)
     {
         if (!$produit) {
-            return 'https://via.placeholder.com/400x300?text=No+Image';
+            return 'https://picsum.photos/id/1/400/300';
         }
 
         $photos = $produit->photos;
 
+        // Check if photos exist
         if ($photos && is_array($photos) && isset($photos[$index]) && $photos[$index]) {
-            // Check if file exists in storage
-            if (Storage::disk('public')->exists($photos[$index])) {
-                return Storage::url($photos[$index]);
+            $photo = $photos[$index];
+
+            // If it's a URL (starts with http)
+            if (filter_var($photo, FILTER_VALIDATE_URL)) {
+                return $photo;
+            }
+
+            // If it's a local storage path
+            if (Storage::disk('public')->exists($photo)) {
+                return Storage::url($photo);
             }
         }
 
-        // Return placeholder image
-        return 'https://via.placeholder.com/400x300?text=' . urlencode($produit->nom ?? 'Product');
+        // Return a nice placeholder image from picsum with product name in alt text
+        return 'https://picsum.photos/id/' . (($produit->id % 100) + 1) . '/400/300';
     }
 
     /**
@@ -37,14 +45,19 @@ class ImageHelper
 
         if ($produit && $produit->photos && is_array($produit->photos)) {
             foreach ($produit->photos as $photo) {
-                if ($photo && Storage::disk('public')->exists($photo)) {
-                    $images[] = Storage::url($photo);
+                if ($photo) {
+                    if (filter_var($photo, FILTER_VALIDATE_URL)) {
+                        $images[] = $photo;
+                    } elseif (Storage::disk('public')->exists($photo)) {
+                        $images[] = Storage::url($photo);
+                    }
                 }
             }
         }
 
         if (empty($images)) {
-            $images[] = 'https://via.placeholder.com/400x300?text=No+Image';
+            // Use picsum with different IDs for variety
+            $images[] = 'https://picsum.photos/id/' . (($produit->id % 100) + 1) . '/400/300';
         }
 
         return $images;
