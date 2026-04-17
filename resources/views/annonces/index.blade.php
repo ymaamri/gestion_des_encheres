@@ -33,15 +33,14 @@
                         </thead>
                         <tbody>
                             @forelse($annonces as $annonce)
+                            @php
+                                $productImage = \App\Helpers\ImageHelper::getProductImage($annonce->produit);
+                            @endphp
                             <tr>
                                 <td>
                                     <div class="d-flex px-2 py-1">
                                         <div>
-                                            @php
-                                                $photos = $annonce->produit->photos ?? [];
-                                                $firstPhoto = !empty($photos) ? Storage::url($photos[0]) : 'https://via.placeholder.com/40x40';
-                                            @endphp
-                                            <img src="{{ $firstPhoto }}" class="avatar avatar-sm me-3 border-radius-lg" alt="produit">
+                                            <img src="{{ $productImage }}" class="avatar avatar-sm me-3 border-radius-lg" alt="{{ $annonce->produit->nom }}" style="width: 40px; height: 40px; object-fit: cover;">
                                         </div>
                                         <div class="d-flex flex-column justify-content-center">
                                             <h6 class="mb-0 text-sm">{{ Str::limit($annonce->titre, 40) }}</h6>
@@ -51,13 +50,25 @@
                                 </td>
                                 <td>
                                     <p class="text-xs font-weight-bold mb-0">{{ $annonce->produit->marque }} {{ $annonce->produit->modele }}</p>
-                                    <p class="text-xs text-secondary mb-0">{{ $annonce->produit->etat }}</p>
+                                    <p class="text-xs text-secondary mb-0">
+                                        @switch($annonce->produit->etat)
+                                            @case('NEUF') Neuf @break
+                                            @case('TRES_BON_ETAT') Très Bon État @break
+                                            @case('BON_ETAT') Bon État @break
+                                            @case('ACCEPTABLE') Acceptable @break
+                                            @default {{ $annonce->produit->etat }}
+                                        @endswitch
+                                    </p>
                                 </td>
                                 <td class="align-middle text-center">
                                     <span class="text-secondary text-xs font-weight-bold">{{ number_format($annonce->prix_depart, 2) }} MAD</span>
                                 </td>
                                 <td class="align-middle text-center">
-                                    <span class="text-secondary text-xs font-weight-bold">{{ number_format($annonce->getMontantActuel(), 2) }} MAD</span>
+                                    <span class="text-primary text-xs font-weight-bold">{{ number_format($annonce->getMontantActuel(), 2) }} MAD</span>
+                                    @if($annonce->mises()->count() > 0)
+                                        <br>
+                                        <small class="text-muted">{{ $annonce->mises()->count() }} enchère(s)</small>
+                                    @endif
                                 </td>
                                 <td class="align-middle text-center">
                                     @switch($annonce->statut)
@@ -76,13 +87,26 @@
                                         @case('ANNULEE')
                                             <span class="badge badge-sm bg-gradient-dark">Annulée</span>
                                             @break
+                                        @default
+                                            <span class="badge badge-sm bg-gradient-secondary">{{ $annonce->statut }}</span>
                                     @endswitch
                                 </td>
                                 <td class="align-middle text-center">
                                     <span class="text-secondary text-xs font-weight-bold">
                                         {{ \Carbon\Carbon::parse($annonce->date_fin)->format('d/m/Y H:i') }}
                                         <br>
-                                        <small class="text-muted">{{ \Carbon\Carbon::parse($annonce->date_fin)->diffForHumans() }}</small>
+                                        <small class="text-muted">
+                                            @if($annonce->statut == 'ACTIVE')
+                                                <i class="material-symbols-rounded" style="font-size: 12px;">schedule</i>
+                                                {{ \Carbon\Carbon::parse($annonce->date_fin)->diffForHumans() }}
+                                            @elseif($annonce->statut == 'CLOTUREE')
+                                                <i class="material-symbols-rounded" style="font-size: 12px;">check_circle</i>
+                                                Terminée
+                                            @else
+                                                <i class="material-symbols-rounded" style="font-size: 12px;">pending</i>
+                                                En cours
+                                            @endif
+                                        </small>
                                     </span>
                                 </td>
                                 <td class="align-middle">
@@ -96,14 +120,14 @@
                                                     <i class="material-symbols-rounded me-2">visibility</i> Voir
                                                 </a>
                                             </li>
-                                            @if($annonce->statut === 'EN_ATTENTE')
+                                            @if($annonce->statut === 'EN_ATTENTE' || $annonce->statut === 'DRAFT')
                                             <li>
                                                 <a class="dropdown-item border-radius-md" href="{{ route('annonces.edit', $annonce) }}">
                                                     <i class="material-symbols-rounded me-2">edit</i> Modifier
                                                 </a>
                                             </li>
                                             <li>
-                                                <form method="POST" action="{{ route('annonces.destroy', $annonce) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette annonce ?')">
+                                                <form method="POST" action="{{ route('annonces.destroy', $annonce) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette annonce ? Cette action est irréversible.')">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="dropdown-item border-radius-md text-danger">
@@ -112,26 +136,123 @@
                                                 </form>
                                             </li>
                                             @endif
+                                            @if($annonce->statut === 'ACTIVE')
+                                            <li>
+                                                <a class="dropdown-item border-radius-md text-info" href="#" onclick="shareAuction({{ $annonce->id }})">
+                                                    <i class="material-symbols-rounded me-2">share</i> Partager
+                                                </a>
+                                            </li>
+                                            @endif
                                         </ul>
                                     </div>
                                 </td>
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="7" class="text-center py-4">
-                                    <p class="text-secondary mb-0">Aucune annonce trouvée.</p>
-                                    <a href="{{ route('annonces.create') }}" class="btn btn-sm bg-gradient-primary mt-3">Créer votre première annonce</a>
+                                <td colspan="7" class="text-center py-5">
+                                    <i class="material-symbols-rounded" style="font-size: 64px; color: #cbd5e0;">inventory_2</i>
+                                    <h5 class="mt-3 text-secondary">Aucune annonce trouvée</h5>
+                                    <p class="text-muted">Vous n'avez pas encore créé d'annonces.</p>
+                                    <a href="{{ route('annonces.create') }}" class="btn btn-sm bg-gradient-primary mt-2">
+                                        <i class="material-symbols-rounded">add_circle</i> Créer votre première annonce
+                                    </a>
                                 </td>
                             </tr>
                             @endforelse
                         </tbody>
                     </table>
                 </div>
+                @if($annonces->count() > 0)
                 <div class="px-3 pt-3">
                     {{ $annonces->links() }}
+                </div>
+                @endif
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Share Modal -->
+<div class="modal fade" id="shareModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-gradient-dark text-white">
+                <h5 class="modal-title">Partager cette annonce</h5>
+                <button type="button" class="btn-close text-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <p>Partagez cette annonce avec vos amis !</p>
+                <div class="input-group mb-3">
+                    <input type="text" id="shareLink" class="form-control" readonly>
+                    <button class="btn btn-primary" onclick="copyShareLink()">
+                        <i class="material-symbols-rounded">content_copy</i> Copier
+                    </button>
+                </div>
+                <div class="d-flex justify-content-center gap-2">
+                    <a href="#" id="facebookShare" class="btn btn-outline-primary" target="_blank">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="#" id="twitterShare" class="btn btn-outline-info" target="_blank">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" id="whatsappShare" class="btn btn-outline-success" target="_blank">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    let currentAuctionId = null;
+    
+    function shareAuction(auctionId) {
+        currentAuctionId = auctionId;
+        const shareUrl = window.location.origin + '/annonces/' + auctionId;
+        document.getElementById('shareLink').value = shareUrl;
+        
+        // Update social media share links
+        document.getElementById('facebookShare').href = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(shareUrl);
+        document.getElementById('twitterShare').href = 'https://twitter.com/intent/tweet?url=' + encodeURIComponent(shareUrl) + '&text=Découvrez cette enchère exceptionnelle !';
+        document.getElementById('whatsappShare').href = 'https://wa.me/?text=' + encodeURIComponent('Découvrez cette enchère exceptionnelle : ' + shareUrl);
+        
+        // Show modal
+        var myModal = new bootstrap.Modal(document.getElementById('shareModal'));
+        myModal.show();
+    }
+    
+    function copyShareLink() {
+        const shareLink = document.getElementById('shareLink');
+        shareLink.select();
+        shareLink.setSelectionRange(0, 99999);
+        document.execCommand('copy');
+        
+        // Show feedback
+        const button = event.target;
+        const originalText = button.innerHTML;
+        button.innerHTML = '<i class="material-symbols-rounded">check</i> Copié !';
+        setTimeout(() => {
+            button.innerHTML = originalText;
+        }, 2000);
+    }
+    
+    // Add search functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('tableSearch');
+        if (searchInput) {
+            searchInput.addEventListener('keyup', function() {
+                const searchTerm = this.value.toLowerCase();
+                const tableRows = document.querySelectorAll('tbody tr');
+                
+                tableRows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    row.style.display = text.includes(searchTerm) ? '' : 'none';
+                });
+            });
+        }
+    });
+</script>
+@endpush    

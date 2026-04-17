@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class AnnonceController extends Controller
 {
@@ -78,6 +79,18 @@ class AnnonceController extends Controller
         try {
             DB::beginTransaction();
 
+            // Handle photo uploads FIRST
+            $photos = [];
+            if ($request->hasFile('photos')) {
+                foreach ($request->file('photos') as $photo) {
+                    // Generate unique filename
+                    $filename = time() . '_' . Str::random(10) . '.' . $photo->getClientOriginalExtension();
+                    // Store in public disk
+                    $path = $photo->storeAs('products', $filename, 'public');
+                    $photos[] = $path;
+                }
+            }
+
             // Create product
             $produit = Produit::create([
                 'nom' => $validated['produit_nom'],
@@ -85,20 +98,8 @@ class AnnonceController extends Controller
                 'marque' => $validated['produit_marque'],
                 'modele' => $validated['produit_modele'],
                 'etat' => $validated['produit_etat'],
-                'categorie_id' => $validated['categorie_id'],
-                'photos' => [],
+                'photos' => $photos, // Store array of paths
             ]);
-
-            // Handle photo uploads
-            if ($request->hasFile('photos')) {
-                $photos = [];
-                foreach ($request->file('photos') as $photo) {
-                    $path = $photo->store('products', 'public');
-                    $photos[] = $path;
-                }
-                $produit->photos = $photos;
-                $produit->save();
-            }
 
             // Create annonce
             $vendeur = Auth::user()->client->vendeur;
@@ -108,10 +109,11 @@ class AnnonceController extends Controller
                 'titre' => $validated['titre'],
                 'description' => $validated['description'],
                 'prix_depart' => $validated['prix_depart'],
+                'prix_actuel' => $validated['prix_depart'],
+                'montant_mise' => $validated['prix_depart'],
                 'date_debut' => now(),
                 'date_fin' => $validated['date_fin'],
-                'statut' => 'ACTIVE', // Set to ACTIVE for testing
-                'montant_mise' => $validated['prix_depart'],
+                'statut' => 'ACTIVE',
             ]);
 
             DB::commit();
