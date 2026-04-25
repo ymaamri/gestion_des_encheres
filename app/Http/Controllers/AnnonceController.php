@@ -130,19 +130,16 @@ class AnnonceController extends Controller
      * Display the specified annonce.
      */
     public function show(Annonce $annonce)
-    {
-        $annonce->load(['produit', 'produit.categorie', 'vendeur.client.user']);
+{
+    $annonce->load(['produit', 'produit.sousCategorie.categorie', 'vendeur.client.user']);
 
-        $currentHighestBid = $annonce->mises()->max('montant') ?? $annonce->prix_depart;
-        $userBid = null;
+    $currentHighestBid = $annonce->getMontantActuel();
+    $userBid = null;
 
-        if (Auth::check() && Auth::user()->client) {
-            $userBid = $annonce->mises()
-                ->where('client_id', Auth::user()->client->id)
-                ->latest()
-                ->first();
-        }
-
-        return view('annonces.show', compact('annonce', 'currentHighestBid', 'userBid'));
+    if (Auth::check() && Auth::user()->client) {
+        $userBid = $annonce->getUserBid(Auth::id());
     }
+
+    return view('annonces.show', compact('annonce', 'currentHighestBid', 'userBid'));
+}
 }

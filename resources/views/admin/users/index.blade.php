@@ -13,11 +13,11 @@
                 <div class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
                     <h6 class="text-white text-capitalize ps-3 mb-0">Liste des Utilisateurs</h6>
                     <div class="me-3">
-                        <div class="input-group input-group-sm w-auto">
+                        <div class="input-group input-group-sm w-auto ">
                             <span class="input-group-text text-body bg-white">
                                 <i class="material-symbols-rounded">search</i>
                             </span>
-                            <input type="text" class="form-control" id="userSearch" placeholder="Rechercher...">
+                            <input type="text" class="form-control text-white" id="userSearch" placeholder="Rechercher...">
                         </div>
                     </div>
                 </div>
@@ -78,7 +78,7 @@
                                 </td>
                                 <td class="align-middle text-center">
                                     <div class="dropdown">
-                                        <button class="btn btn-link text-primary mb-0" type="button" data-bs-toggle="dropdown">
+                                        <button class="btn btn-link text-secondary mb-0" type="button" data-bs-toggle="dropdown">
                                             <i class="material-symbols-rounded">more_vert</i>
                                         </button>
                                         <ul class="dropdown-menu dropdown-menu-end px-2 py-3">
@@ -154,7 +154,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-gradient-dark text-white">
-                <h5 class="modal-title" id="userModalLabel{{ $user->id }}">Détails de l'utilisateur</h5>
+                <h5 class="modal-title text-white" id="userModalLabel{{ $user->id }}">Détails de l'utilisateur</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
             </div>
             <div class="modal-body">
@@ -279,7 +279,7 @@
 
 @push('styles')
 <style>
-    .input-group-text.bg-white {
+    .input-group-text.bg-white .input-group-sm {
         background-color: white !important;
     }
     .btn-close-white {
@@ -292,6 +292,25 @@
     .text-primary {
         color: #e91e63 !important;
         font-weight: 600;
+    }
+
+    /* Fix : Material Dashboard écrase text-white avec ses propres règles de couleur */
+    .modal-header.bg-gradient-dark,
+    .modal-header.bg-gradient-dark * {
+        color: #fff !important;
+    }
+
+    /* Fix : les th/td du tableau interne du modal héritent d'une couleur sombre */
+    .modal-body .table th,
+    .modal-body .table td {
+        color: #344767 !important;
+    }
+
+    /* Fix : text-white dans les cards et headers de Material Dashboard */
+    .card-header .bg-gradient-dark h6,
+    .card-header .bg-gradient-dark .text-white,
+    .bg-gradient-dark .text-white {
+        color: #fff !important;
     }
 </style>
 @endpush
