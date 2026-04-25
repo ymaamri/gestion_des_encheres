@@ -9,7 +9,7 @@ class Enchere extends Model
 {
     use HasFactory;
 
-    protected $table = 'enchere';
+    protected $table = 'encheres';
 
     protected $fillable = [
         'annonce_id',

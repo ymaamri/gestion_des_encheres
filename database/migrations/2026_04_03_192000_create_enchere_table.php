@@ -11,12 +11,13 @@ return new class extends Migration {
             $table->id();
 
             $table->foreignId('annonce_id')
+            ->nullable()
                 ->constrained('annonces')
-                ->onDelete('cascade');
-
+                ->onDelete('set null');
             $table->foreignId('client_id')
+                ->nullable()
                 ->constrained('clients')
-                ->onDelete('cascade');
+                ->onDelete('set null');
 
             // Montant de la mise
             $table->decimal('montant', 10, 2);
