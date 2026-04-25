@@ -13,11 +13,14 @@
     <!-- Fonts and icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100;14..32,200;14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100;14..32,200;14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap"
+        rel="stylesheet">
     <link href="{{ asset('assets/css/nucleo-icons.css') }}" rel="stylesheet" />
     <link href="{{ asset('assets/css/nucleo-svg.css') }}" rel="stylesheet" />
     <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
 
     <!-- CSS Files -->
     <link id="pagestyle" href="{{ asset('assets/css/material-dashboard.css') }}" rel="stylesheet" />
@@ -340,56 +343,73 @@
             <div class="navbar-menu">
                 @auth
                     @role('admin')
-                        <a class="nav-link-custom {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
-                            <i class="material-symbols-rounded">dashboard</i>
-                            <span>Dashboard</span>
-                        </a>
-                        <a class="nav-link-custom {{ request()->routeIs('admin.users*') ? 'active' : '' }}" href="{{ route('admin.users.index') }}">
-                            <i class="material-symbols-rounded">people</i>
-                            <span>Utilisateurs</span>
-                        </a>
-                        <a class="nav-link-custom {{ request()->routeIs('admin.categories*') ? 'active' : '' }}" href="{{ route('admin.categories.index') }}">
-                            <i class="material-symbols-rounded">category</i>
-                            <span>Catégories</span>
-                        </a>
-                        <a class="nav-link-custom {{ request()->routeIs('admin.auctions*') ? 'active' : '' }}" href="{{ route('admin.auctions.index') }}">
-                            <i class="material-symbols-rounded">gavel</i>
-                            <span>Enchères</span>
-                        </a>
+                    <a class="nav-link-custom {{ request()->routeIs('dashboard') ? 'active' : '' }}"
+                        href="{{ route('dashboard') }}">
+                        <i class="material-symbols-rounded">dashboard</i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a class="nav-link-custom {{ request()->routeIs('admin.users*') ? 'active' : '' }}"
+                        href="{{ route('admin.users.index') }}">
+                        <i class="material-symbols-rounded">people</i>
+                        <span>Utilisateurs</span>
+                    </a>
+                    <a class="nav-link-custom {{ request()->routeIs('admin.categories*') ? 'active' : '' }}"
+                        href="{{ route('admin.categories.index') }}">
+                        <i class="material-symbols-rounded">category</i>
+                        <span>Catégories</span>
+                    </a>
+                    <a class="nav-link-custom {{ request()->routeIs('admin.auctions*') ? 'active' : '' }}"
+                        href="{{ route('admin.auctions.index') }}">
+                        <i class="material-symbols-rounded">gavel</i>
+                        <span>Enchères</span>
+                    </a>
                     @endrole
 
                     @role('vendeur')
-                        <a class="nav-link-custom {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
-                            <i class="material-symbols-rounded">dashboard</i>
-                            <span>Dashboard</span>
-                        </a>
-                        <a class="nav-link-custom {{ request()->routeIs('annonces.index') ? 'active' : '' }}" href="{{ route('annonces.index') }}">
-                            <i class="material-symbols-rounded">inventory_2</i>
-                            <span>Mes Annonces</span>
-                        </a>
-                        <a class="nav-link-custom {{ request()->routeIs('annonces.create') ? 'active' : '' }}" href="{{ route('annonces.create') }}">
-                            <i class="material-symbols-rounded">add_circle</i>
-                            <span>Créer</span>
-                        </a>
+                    <a class="nav-link-custom {{ request()->routeIs('dashboard') ? 'active' : '' }}"
+                        href="{{ route('dashboard') }}">
+                        <i class="material-symbols-rounded">dashboard</i>
+                        <span>Dashboard</span>
+                    </a>
+                    <!-- My Products Link -->
+                    <a class="nav-link-custom {{ request()->routeIs('seller.products*') ? 'active' : '' }}"
+                        href="{{ route('seller.products.index') }}">
+                        <i class="material-symbols-rounded">inventory_2</i>
+                        <span>Mes Produits</span>
+                    </a>
+                    <a class="nav-link-custom {{ request()->routeIs('annonces.index') ? 'active' : '' }}"
+                        href="{{ route('annonces.index') }}">
+                        <i class="material-symbols-rounded">list_alt</i>
+                        <span>Mes Annonces</span>
+                    </a>
+                    <a class="nav-link-custom {{ request()->routeIs('annonces.create') ? 'active' : '' }}"
+                        href="{{ route('annonces.create') }}">
+                        <i class="material-symbols-rounded">add_circle</i>
+                        <span>Créer</span>
+                    </a>
                     @endrole
 
                     @role('client')
-                        <a class="nav-link-custom {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
-                            <i class="material-symbols-rounded">dashboard</i>
-                            <span>Dashboard</span>
-                        </a>
-                        <a class="nav-link-custom {{ request()->routeIs('auctions.active') ? 'active' : '' }}" href="{{ route('auctions.active') }}">
-                            <i class="material-symbols-rounded">gavel</i>
-                            <span>Enchères</span>
-                        </a>
-                        <a class="nav-link-custom {{ request()->routeIs('my.bids') ? 'active' : '' }}" href="{{ route('my.bids') }}">
-                            <i class="material-symbols-rounded">history</i>
-                            <span>Mes Offres</span>
-                        </a>
-                        <a class="nav-link-custom {{ request()->routeIs('my.won') ? 'active' : '' }}" href="{{ route('my.won') }}">
-                            <i class="material-symbols-rounded">emoji_events</i>
-                            <span>Gagnées</span>
-                        </a>
+                    <a class="nav-link-custom {{ request()->routeIs('dashboard') ? 'active' : '' }}"
+                        href="{{ route('dashboard') }}">
+                        <i class="material-symbols-rounded">dashboard</i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a class="nav-link-custom {{ request()->routeIs('auctions.active') ? 'active' : '' }}"
+                        href="{{ route('auctions.active') }}">
+                        <i class="material-symbols-rounded">gavel</i>
+                        <span>Enchères</span>
+                    </a>
+                    <a class="nav-link-custom {{ request()->routeIs('my.bids') ? 'active' : '' }}"
+                        href="{{ route('my.bids') }}">
+                        <i class="material-symbols-rounded">history</i>
+                        <span>Mes Offres</span>
+                    </a>
+                    <a class="nav-link-custom {{ request()->routeIs('my.won') ? 'active' : '' }}"
+                        href="{{ route('my.won') }}">
+                        <i class="material-symbols-rounded">emoji_events</i>
+                        <span>Gagnées</span>
+                    </a>
                     @endrole
                 @endauth
             </div>
@@ -414,7 +434,8 @@
                             <div style="padding: 0.75rem 1rem; border-bottom: 1px solid #e2e8f0;">
                                 <strong>Notifications</strong>
                                 @if($unreadCount > 0)
-                                    <form method="POST" action="{{ route('notifications.mark-all-read') }}" class="d-inline float-end">
+                                    <form method="POST" action="{{ route('notifications.mark-all-read') }}"
+                                        class="d-inline float-end">
                                         @csrf
                                         <button type="submit" class="btn btn-link btn-sm p-0">Tout marquer lu</button>
                                     </form>
@@ -422,10 +443,12 @@
                             </div>
                             <div style="max-height: 300px; overflow-y: auto;">
                                 @forelse(Auth::check() && Auth::user()->client ? Auth::user()->client->notifications()->latest()->take(5)->get() : [] as $notification)
-                                    <a class="dropdown-item-custom" href="{{ route('notifications.mark', $notification) }}" style="border-bottom: 1px solid #f0f0f0;">
+                                    <a class="dropdown-item-custom" href="{{ route('notifications.mark', $notification) }}"
+                                        style="border-bottom: 1px solid #f0f0f0;">
                                         <div>
                                             <div style="font-size: 0.85rem;">{{ $notification->message }}</div>
-                                            <small style="font-size: 0.7rem; color: #a0aec0;">{{ $notification->created_at->diffForHumans() }}</small>
+                                            <small
+                                                style="font-size: 0.7rem; color: #a0aec0;">{{ $notification->created_at->diffForHumans() }}</small>
                                         </div>
                                     </a>
                                 @empty
@@ -436,7 +459,8 @@
                             </div>
                             @if(Auth::check() && Auth::user()->client && Auth::user()->client->notifications()->count() > 0)
                                 <div style="padding: 0.75rem; text-align: center; border-top: 1px solid #e2e8f0;">
-                                    <a href="{{ route('notifications.index') }}" style="color: #667eea; text-decoration: none;">Voir toutes les notifications</a>
+                                    <a href="{{ route('notifications.index') }}"
+                                        style="color: #667eea; text-decoration: none;">Voir toutes les notifications</a>
                                 </div>
                             @endif
                         </div>
@@ -458,7 +482,8 @@
                             </a>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
-                                <button type="submit" class="dropdown-item-custom" style="width: 100%; background: none; border: none; cursor: pointer;">
+                                <button type="submit" class="dropdown-item-custom"
+                                    style="width: 100%; background: none; border: none; cursor: pointer;">
                                     <i class="material-symbols-rounded">logout</i>
                                     <span>Déconnexion</span>
                                 </button>
@@ -479,45 +504,60 @@
         <div class="mobile-sidebar-content">
             @auth
                 @role('admin')
-                    <a class="mobile-nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
-                        <i class="material-symbols-rounded">dashboard</i> Dashboard
-                    </a>
-                    <a class="mobile-nav-item {{ request()->routeIs('admin.users*') ? 'active' : '' }}" href="{{ route('admin.users.index') }}">
-                        <i class="material-symbols-rounded">people</i> Utilisateurs
-                    </a>
-                    <a class="mobile-nav-item {{ request()->routeIs('admin.categories*') ? 'active' : '' }}" href="{{ route('admin.categories.index') }}">
-                        <i class="material-symbols-rounded">category</i> Catégories
-                    </a>
-                    <a class="mobile-nav-item {{ request()->routeIs('admin.auctions*') ? 'active' : '' }}" href="{{ route('admin.auctions.index') }}">
-                        <i class="material-symbols-rounded">gavel</i> Enchères
-                    </a>
+                <a class="mobile-nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}"
+                    href="{{ route('dashboard') }}">
+                    <i class="material-symbols-rounded">dashboard</i> Dashboard
+                </a>
+                <a class="mobile-nav-item {{ request()->routeIs('admin.users*') ? 'active' : '' }}"
+                    href="{{ route('admin.users.index') }}">
+                    <i class="material-symbols-rounded">people</i> Utilisateurs
+                </a>
+                <a class="mobile-nav-item {{ request()->routeIs('admin.categories*') ? 'active' : '' }}"
+                    href="{{ route('admin.categories.index') }}">
+                    <i class="material-symbols-rounded">category</i> Catégories
+                </a>
+                <a class="mobile-nav-item {{ request()->routeIs('admin.auctions*') ? 'active' : '' }}"
+                    href="{{ route('admin.auctions.index') }}">
+                    <i class="material-symbols-rounded">gavel</i> Enchères
+                </a>
                 @endrole
 
                 @role('vendeur')
-                    <a class="mobile-nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
-                        <i class="material-symbols-rounded">dashboard</i> Dashboard
-                    </a>
-                    <a class="mobile-nav-item {{ request()->routeIs('annonces.index') ? 'active' : '' }}" href="{{ route('annonces.index') }}">
-                        <i class="material-symbols-rounded">inventory_2</i> Mes Annonces
-                    </a>
-                    <a class="mobile-nav-item {{ request()->routeIs('annonces.create') ? 'active' : '' }}" href="{{ route('annonces.create') }}">
-                        <i class="material-symbols-rounded">add_circle</i> Créer une Annonce
-                    </a>
+                <a class="mobile-nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}"
+                    href="{{ route('dashboard') }}">
+                    <i class="material-symbols-rounded">dashboard</i> Dashboard
+                </a>
+                <!-- My Products Link (Mobile) -->
+                <a class="mobile-nav-item {{ request()->routeIs('seller.products*') ? 'active' : '' }}"
+                    href="{{ route('seller.products.index') }}">
+                    <i class="material-symbols-rounded">inventory_2</i> Mes Produits
+                </a>
+                <a class="mobile-nav-item {{ request()->routeIs('annonces.index') ? 'active' : '' }}"
+                    href="{{ route('annonces.index') }}">
+                    <i class="material-symbols-rounded">list_alt</i> Mes Annonces
+                </a>
+                <a class="mobile-nav-item {{ request()->routeIs('annonces.create') ? 'active' : '' }}"
+                    href="{{ route('annonces.create') }}">
+                    <i class="material-symbols-rounded">add_circle</i> Créer une Annonce
+                </a>
                 @endrole
 
                 @role('client')
-                    <a class="mobile-nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
-                        <i class="material-symbols-rounded">dashboard</i> Dashboard
-                    </a>
-                    <a class="mobile-nav-item {{ request()->routeIs('auctions.active') ? 'active' : '' }}" href="{{ route('auctions.active') }}">
-                        <i class="material-symbols-rounded">gavel</i> Enchères Actives
-                    </a>
-                    <a class="mobile-nav-item {{ request()->routeIs('my.bids') ? 'active' : '' }}" href="{{ route('my.bids') }}">
-                        <i class="material-symbols-rounded">history</i> Mes Offres
-                    </a>
-                    <a class="mobile-nav-item {{ request()->routeIs('my.won') ? 'active' : '' }}" href="{{ route('my.won') }}">
-                        <i class="material-symbols-rounded">emoji_events</i> Enchères Gagnées
-                    </a>
+                <a class="mobile-nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}"
+                    href="{{ route('dashboard') }}">
+                    <i class="material-symbols-rounded">dashboard</i> Dashboard
+                </a>
+                <a class="mobile-nav-item {{ request()->routeIs('auctions.active') ? 'active' : '' }}"
+                    href="{{ route('auctions.active') }}">
+                    <i class="material-symbols-rounded">gavel</i> Enchères Actives
+                </a>
+                <a class="mobile-nav-item {{ request()->routeIs('my.bids') ? 'active' : '' }}"
+                    href="{{ route('my.bids') }}">
+                    <i class="material-symbols-rounded">history</i> Mes Offres
+                </a>
+                <a class="mobile-nav-item {{ request()->routeIs('my.won') ? 'active' : '' }}" href="{{ route('my.won') }}">
+                    <i class="material-symbols-rounded">emoji_events</i> Enchères Gagnées
+                </a>
                 @endrole
 
                 <hr>
@@ -526,7 +566,8 @@
                 </a>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <button type="submit" class="mobile-nav-item" style="width: 100%; text-align: left; background: none; border: none; cursor: pointer;">
+                    <button type="submit" class="mobile-nav-item"
+                        style="width: 100%; text-align: left; background: none; border: none; cursor: pointer;">
                         <i class="material-symbols-rounded">logout</i> Déconnexion
                     </button>
                 </form>
@@ -546,8 +587,10 @@
                     <h4 class="mb-0 fw-bold">@yield('page-title', 'Tableau de Bord')</h4>
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb mb-0 mt-2">
-                            <li class="breadcrumb-item"><a href="{{ route('dashboard') }}" style="text-decoration: none; color: #667eea;">Accueil</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">@yield('breadcrumb', 'Dashboard')</li>
+                            <li class="breadcrumb-item"><a href="{{ route('dashboard') }}"
+                                    style="text-decoration: none; color: #667eea;">Accueil</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">@yield('breadcrumb', 'Dashboard')
+                            </li>
                         </ol>
                     </nav>
                 </div>
@@ -626,10 +669,13 @@
         }
 
         // Close dropdowns when clicking outside
-        document.addEventListener('click', function(event) {
+        document.addEventListener('click', function (event) {
             if (!event.target.closest('.notification-badge') && !event.target.closest('#notificationsDropdown')) {
-                document.getElementById('notificationsDropdown').style.opacity = '0';
-                document.getElementById('notificationsDropdown').style.visibility = 'hidden';
+                const dropdown = document.getElementById('notificationsDropdown');
+                if (dropdown) {
+                    dropdown.style.opacity = '0';
+                    dropdown.style.visibility = 'hidden';
+                }
             }
         });
 

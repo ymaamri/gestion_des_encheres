@@ -323,5 +323,16 @@ Route::get('/api/featured-products', function () {
     ]);
 });
 
+
+// Seller product management
+Route::middleware(['auth', 'role:vendeur'])
+    ->prefix('vendeur')
+    ->name('seller.')
+    ->group(function () {
+        Route::resource('products', \App\Http\Controllers\Seller\ProductController::class)->except(['show']);
+        Route::get('products/{product}', [\App\Http\Controllers\Seller\ProductController::class, 'show'])->name('products.show');
+        Route::get('subcategories/{category}', [\App\Http\Controllers\Seller\ProductController::class, 'getSubcategories'])->name('products.subcategories');
+    });
+
 require __DIR__ . '/auth.php';
 require __DIR__ . '/admin.php';

@@ -53,7 +53,7 @@ class Enchere extends Model
             ->whereNotNull('client_id')
             ->orderBy('montant', 'desc')
             ->first();
-            
+
         return $highestBid && $highestBid->id === $this->id;
     }
 
@@ -70,19 +70,19 @@ class Enchere extends Model
         // Vérifier si l'enchère est active
         $now = now();
         $lastEnchere = $annonce->encheres()->latest('date_fin')->first();
-        
+
         if (!$lastEnchere || $lastEnchere->date_fin <= $now) {
             throw new \Exception('Cette enchère est terminée');
         }
-        
+
         // Vérifier le montant minimum
         $prixActuel = $annonce->prix_actuel;
         $montantMin = $prixActuel + 1; // Pas d'enchère minimum de 1 MAD
-        
+
         if ($montant < $montantMin) {
             throw new \Exception("Le montant minimum est de {$montantMin} MAD");
         }
-        
+
         // Créer la nouvelle mise
         return self::create([
             'annonce_id' => $annonce->id,
