@@ -85,7 +85,29 @@ class CategoryController extends Controller
             'description' => $validated['description'],
         ]);
 
+        // Si la requête est AJAX, retourner JSON, sinon redirection
+        if ($request->ajax()) {
+            return response()->json(['success' => true, 'message' => 'Sous-catégorie ajoutée avec succès.']);
+        }
+        
         return back()->with('success', 'Sous-catégorie ajoutée avec succès.');
+    }
+
+    /**
+     * Update a subcategory.
+     */
+    public function updateSubcategory(Request $request, SousCategorie $subcategory)
+    {
+        $validated = $request->validate([
+            'nom' => 'required|string|max:255',
+            'description' => 'nullable|string',
+        ]);
+
+        $subcategory->update($validated);
+
+        // Rediriger vers la page des catégories avec un message de succès
+        return redirect()->route('admin.categories.index')
+            ->with('success', 'Sous-catégorie mise à jour avec succès.');
     }
 
     /**
@@ -101,6 +123,7 @@ class CategoryController extends Controller
 
         $subcategory->delete();
 
-        return back()->with('success', 'Sous-catégorie supprimée avec succès.');
+        return redirect()->route('admin.categories.index')
+            ->with('success', 'Sous-catégorie supprimée avec succès.');
     }
 }

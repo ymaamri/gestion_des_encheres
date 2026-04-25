@@ -77,110 +77,6 @@
                                     </div>
                                 </td>
                             </tr>
-
-                            <!-- Edit Category Modal -->
-                            <div class="modal fade" id="editCategoryModal{{ $categorie->id }}" tabindex="-1">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header bg-gradient-dark text-white">
-                                            <h5 class="modal-title">Modifier la catégorie</h5>
-                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                                        </div>
-                                        <form method="POST" action="{{ route('admin.categories.update', $categorie) }}">
-                                            @csrf
-                                            @method('PUT')
-                                            <div class="modal-body">
-                                                <div class="mb-3">
-                                                    <label class="form-label text-dark fw-bold">Nom</label>
-                                                    <input type="text" name="nom" class="form-control" value="{{ old('nom', $categorie->nom) }}" required>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label class="form-label text-dark fw-bold">Description</label>
-                                                    <textarea name="description" class="form-control" rows="3">{{ old('description', $categorie->description) }}</textarea>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label class="form-label text-dark fw-bold">Icône</label>
-                                                    <input type="text" name="icone" class="form-control" value="{{ old('icone', $categorie->icone) }}" placeholder="category">
-                                                    <small class="text-muted">Nom de l'icône Material Symbols (ex: category, devices, home)</small>
-                                                </div>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                                                <button type="submit" class="btn bg-gradient-dark">Enregistrer</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Subcategories Modal -->
-                            <div class="modal fade" id="subcategoryModal{{ $categorie->id }}" tabindex="-1">
-                                <div class="modal-dialog modal-lg">
-                                    <div class="modal-content">
-                                        <div class="modal-header bg-gradient-dark text-white">
-                                            <h5 class="modal-title">Sous-catégories - {{ $categorie->nom }}</h5>
-                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <form method="POST" action="{{ route('admin.categories.subcategories.store', $categorie) }}" class="mb-4">
-                                                @csrf
-                                                <div class="row">
-                                                    <div class="col-md-8">
-                                                        <input type="text" name="nom" class="form-control" placeholder="Nom de la sous-catégorie" required>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <button type="submit" class="btn bg-gradient-dark w-100">
-                                                            <i class="material-symbols-rounded me-1">add</i> Ajouter
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                                <div class="mt-2">
-                                                    <textarea name="description" class="form-control" rows="2" placeholder="Description (optionnel)"></textarea>
-                                                </div>
-                                            </form>
-
-                                            {{-- <div class="table-responsive">
-                                                <table class="table align-items-center mb-0">
-                                                    <thead>
-                                                        <tr>
-                                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Nom</th>
-                                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Description</th>
-                                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Actions</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        @forelse($categorie->sousCategories as $sousCategorie)
-                                                        <tr>
-                                                            <td>
-                                                                <h6 class="mb-0 text-sm">{{ $sousCategorie->nom }}</h6>
-                                                            </td>
-                                                            <td>
-                                                                <p class="text-xs text-secondary mb-0">{{ Str::limit($sousCategorie->description ?? '', 50) }}</p>
-                                                            </td>
-                                                            <td class="align-middle text-center">
-                                                                <form method="POST" action="{{ route('admin.categories.subcategories.destroy', [$categorie, $sousCategorie]) }}" class="d-inline" onsubmit="return confirm('Supprimer cette sous-catégorie ?')">
-                                                                    @csrf
-                                                                    @method('DELETE')
-                                                                    <button type="submit" class="btn btn-link text-danger p-0 m-0">
-                                                                        <i class="material-symbols-rounded">delete</i>
-                                                                    </button>
-                                                                </form>
-                                                            </td>
-                                                        </tr>
-                                                        @empty
-                                                        {{-- <tr>
-                                                            <td colspan="3" class="text-center py-4">
-                                                                <p class="text-secondary mb-0">Aucune sous-catégorie trouvée.</p>
-                                                            </td>
-                                                        </tr> --}}
-                                                        {{-- @endforelse
-                                                    </tbody>
-                                                </table>
-                                            </div> --}}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                             @empty
                             <tr>
                                 <td colspan="5" class="text-center py-4">
@@ -200,13 +96,183 @@
     </div>
 </div>
 
-<!-- Add Category Modal -->
-<div class="modal fade" id="addCategoryModal" tabindex="-1">
+{{--
+    ============================================================
+    TOUS LES MODALS EN DEHORS DU TABLEAU
+    Un <div> ne peut jamais être enfant de <tbody>/<tr>/<td>.
+    Le navigateur expulse ces éléments du DOM, ce qui fait que
+    seule la première ligne est rendue et le contenu se retrouve
+    en dehors du tableau.
+    ============================================================
+--}}
+
+{{-- Modals Modifier Catégorie + Gérer Sous-catégories --}}
+@foreach($categories as $categorie)
+
+    {{-- ── Modal : Modifier la catégorie ── --}}
+    <div class="modal fade" id="editCategoryModal{{ $categorie->id }}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-gradient-dark">
+                    <h5 class="modal-title text-white">Modifier la catégorie</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                </div>
+                <form method="POST" action="{{ route('admin.categories.update', $categorie) }}">
+                    @csrf
+                    @method('PUT')
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label text-dark fw-bold">Nom</label>
+                            <input type="text" name="nom" class="form-control" value="{{ old('nom', $categorie->nom) }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-dark fw-bold">Description</label>
+                            <textarea name="description" class="form-control" rows="3">{{ old('description', $categorie->description) }}</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-dark fw-bold">Icône</label>
+                            <input type="text" name="icone" class="form-control" value="{{ old('icone', $categorie->icone) }}" placeholder="category">
+                            <small class="text-muted">Nom de l'icône Material Symbols (ex: category, devices, home)</small>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                        <button type="submit" class="btn bg-gradient-dark text-white">Enregistrer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {{-- ── Modal : Gérer les sous-catégories ── --}}
+    <div class="modal fade" id="subcategoryModal{{ $categorie->id }}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-gradient-dark">
+                    <h5 class="modal-title text-white">Sous-catégories — {{ $categorie->nom }}</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                </div>
+                <div class="modal-body">
+
+                    {{-- Formulaire d'ajout rapide --}}
+                    <form method="POST" action="{{ route('admin.categories.subcategories.store', $categorie) }}" class="mb-4 p-3 bg-light rounded">
+                        @csrf
+                        <h6 class="text-primary mb-3">Ajouter une sous-catégorie</h6>
+                        <div class="row g-2">
+                            <div class="col-md-5">
+                                <input type="text" name="nom" class="form-control" placeholder="Nom de la sous-catégorie" required>
+                            </div>
+                            <div class="col-md-5">
+                                <input type="text" name="description" class="form-control" placeholder="Description (optionnel)">
+                            </div>
+                            <div class="col-md-2">
+                                <button type="submit" class="btn bg-gradient-success w-100 text-white">
+                                    <i class="material-symbols-rounded">add</i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                    {{-- Liste des sous-catégories --}}
+                    <div class="table-responsive">
+                        <table class="table align-items-center mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Nom</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Description</th>
+                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($categorie->sousCategories as $sousCategorie)
+                                <tr>
+                                    <td>
+                                        <h6 class="mb-0 text-sm">{{ $sousCategorie->nom }}</h6>
+                                    </td>
+                                    <td>
+                                        <p class="text-xs text-secondary mb-0">{{ Str::limit($sousCategorie->description ?? '', 50) }}</p>
+                                    </td>
+                                    <td class="align-middle text-center">
+                                        <button type="button"
+                                            class="btn btn-link text-primary p-0 m-0 me-2"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#editSubcategoryModal{{ $sousCategorie->id }}">
+                                            <i class="material-symbols-rounded">edit</i>
+                                        </button>
+                                        <form method="POST"
+                                            action="{{ route('admin.categories.subcategories.destroy', [$categorie, $sousCategorie]) }}"
+                                            class="d-inline"
+                                            onsubmit="return confirm('Supprimer cette sous-catégorie ?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-link text-danger p-0 m-0">
+                                                <i class="material-symbols-rounded">delete</i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                @empty
+                                <tr>
+                                    <td colspan="3" class="text-center py-4">
+                                        <i class="material-symbols-rounded" style="font-size: 48px;">subdirectory_arrow_right</i>
+                                        <p class="text-secondary mt-2 mb-0">Aucune sous-catégorie trouvée.</p>
+                                        <small class="text-muted">Utilisez le formulaire ci-dessus pour en ajouter.</small>
+                                    </td>
+                                </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{--
+        ── Modals Modifier Sous-catégorie ──
+        Ces modals doivent aussi être EN DEHORS du tableau des sous-catégories
+        (même problème d'imbrication dans un <tr>).
+    --}}
+    @foreach($categorie->sousCategories as $sousCategorie)
+    <div class="modal fade" id="editSubcategoryModal{{ $sousCategorie->id }}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-gradient-dark">
+                    <h5 class="modal-title text-white">Modifier la sous-catégorie</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                </div>
+                <form method="POST" action="{{ route('admin.categories.subcategories.update', $sousCategorie) }}">
+                    @csrf
+                    @method('PUT')
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label text-dark fw-bold">Nom</label>
+                            <input type="text" name="nom" class="form-control" value="{{ $sousCategorie->nom }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-dark fw-bold">Description</label>
+                            <textarea name="description" class="form-control" rows="3">{{ $sousCategorie->description }}</textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                        <button type="submit" class="btn bg-gradient-dark text-white">Enregistrer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    @endforeach
+
+@endforeach
+
+{{-- ── Modal : Ajouter une catégorie (déjà correct dans l'original) ── --}}
+<div class="modal fade" id="addCategoryModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header bg-gradient-dark text-white">
-                <h5 class="modal-title">Ajouter une catégorie</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            <div class="modal-header bg-gradient-dark">
+                <h5 class="modal-title text-white">Ajouter une catégorie</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
             </div>
             <form method="POST" action="{{ route('admin.categories.store') }}">
                 @csrf
@@ -227,27 +293,27 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                    <button type="submit" class="btn bg-gradient-dark">Créer</button>
+                    <button type="submit" class="btn bg-gradient-dark text-white">Créer</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
 @endsection
 
 @push('styles')
 <style>
-    .input-group-outline {
-        margin-top: 0 !important;
-    }
     .dropdown-item {
         cursor: pointer;
     }
     .btn-link {
         text-decoration: none;
     }
-    .modal-header.bg-gradient-dark {
-        background: linear-gradient(195deg, #42424a, #191919) !important;
+    /* Fix text-white sur les headers de modals (même fix que users/index) */
+    .modal-header.bg-gradient-dark,
+    .modal-header.bg-gradient-dark * {
+        color: #fff !important;
     }
     .form-control {
         border: 1px solid #d2d6da;
@@ -258,6 +324,13 @@
         border-color: #e91e63;
         outline: none;
         box-shadow: 0 0 0 2px rgba(233, 30, 99, 0.25);
+    }
+    .bg-light {
+        background-color: #f8f9fa !important;
+    }
+    .text-primary {
+        color: #e91e63 !important;
+        font-weight: 600;
     }
 </style>
 @endpush
