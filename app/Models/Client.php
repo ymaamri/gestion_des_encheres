@@ -29,9 +29,10 @@ class Client extends Model
         return $this->hasOne(Vendeur::class);
     }
 
-    public function mises()
+    // Change from mises() to encheres()
+    public function encheres()
     {
-        return $this->hasMany(Mise::class);
+        return $this->hasMany(Enchere::class);
     }
 
     public function notifications()

@@ -4,15 +4,15 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AnnonceController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\CategoryController;
-use App\Http\Controllers\Admin\AuctionController;
-use App\Http\Controllers\BidController;
+use App\Http\Controllers\Admin\AuctionController as AdminAuctionController;
+use App\Http\Controllers\EnchereController;
 use App\Http\Controllers\AuctionController as PublicAuctionController;
 use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Annonce;
-use App\Models\Mise;
+use App\Models\Enchere;
 use App\Models\Categorie;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -61,7 +61,7 @@ Route::get('/dashboard', function () {
             'total_users' => \App\Models\User::count(),
             'total_auctions' => \App\Models\Annonce::count(),
             'active_auctions' => \App\Models\Annonce::where('statut', 'ACTIVE')->count(),
-            'total_bids' => \App\Models\Mise::count(),
+            'total_bids' => \App\Models\Enchere::count(),
         ];
         return view('dashboard', compact('stats'));
     } elseif ($user->role === 'vendeur') {
@@ -105,12 +105,15 @@ Route::get('/dashboard', function () {
         }
 
         $stats = [
-            'total_bids' => $client->mises()->count(),
-            'active_bids' => $client->mises()->whereHas('annonce', function ($q) {
+            'total_bids' => $client->encheres()->count(),
+            'active_bids' => $client->encheres()->whereHas('annonce', function ($q) {
                 $q->where('statut', 'ACTIVE');
             })->count(),
-            'won_auctions' => $client->mises()->whereHas('annonce', function ($q) {
+            'won_auctions' => $client->encheres()->whereHas('annonce', function ($q) {
                 $q->where('statut', 'CLOTUREE');
+            })->get()->filter(function ($enchere) {
+                return $enchere->annonce->getHighestBid() &&
+                    $enchere->annonce->getHighestBid()->id === $enchere->id;
             })->count(),
             'balance' => $client->solde ?? 0,
         ];
@@ -139,9 +142,9 @@ Route::middleware(['auth'])->prefix('annonces')->group(function () {
 // Public auction routes (for buyers)
 Route::middleware(['auth', 'role:client'])->group(function () {
     Route::get('/auctions/active', [PublicAuctionController::class, 'active'])->name('auctions.active');
-    Route::get('/my-bids', [BidController::class, 'myBids'])->name('my.bids');
-    Route::get('/my-won', [BidController::class, 'wonAuctions'])->name('my.won');
-    Route::post('/bids/{annonce}', [BidController::class, 'placeBid'])->name('bids.place');
+    Route::get('/my-bids', [EnchereController::class, 'myBids'])->name('my.bids');
+    Route::get('/my-won', [EnchereController::class, 'wonAuctions'])->name('my.won');
+    Route::post('/bids/{annonce}', [EnchereController::class, 'placeBid'])->name('bids.place');
     Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-read');
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications/{notification}/mark-read', [NotificationController::class, 'markAsRead'])->name('notifications.mark');
@@ -167,11 +170,11 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('/categories/{category}/subcategories', [CategoryController::class, 'storeSubcategory'])->name('categories.subcategories.store');
     Route::delete('/categories/{category}/subcategories/{subcategory}', [CategoryController::class, 'destroySubcategory'])->name('categories.subcategories.destroy');
 
-    Route::get('/auctions', [AuctionController::class, 'index'])->name('auctions.index');
-    Route::get('/auctions/{auction}', [AuctionController::class, 'show'])->name('auctions.show');
-    Route::post('/auctions/{annonce}/publish', [AuctionController::class, 'publish'])->name('auctions.publish');
-    Route::post('/auctions/{annonce}/block', [AuctionController::class, 'block'])->name('auctions.block');
-    Route::delete('/auctions/{annonce}', [AuctionController::class, 'destroy'])->name('auctions.destroy');
+    Route::get('/auctions', [AdminAuctionController::class, 'index'])->name('auctions.index');
+    Route::get('/auctions/{auction}', [AdminAuctionController::class, 'show'])->name('auctions.show');
+    Route::post('/auctions/{annonce}/publish', [AdminAuctionController::class, 'publish'])->name('auctions.publish');
+    Route::post('/auctions/{annonce}/block', [AdminAuctionController::class, 'block'])->name('auctions.block');
+    Route::delete('/auctions/{annonce}', [AdminAuctionController::class, 'destroy'])->name('auctions.destroy');
 });
 
 // ============================================
@@ -185,7 +188,7 @@ Route::get('/api/stats', function () {
         'active_auctions' => Annonce::where('statut', 'ACTIVE')
             ->where('date_fin', '>', now())
             ->count(),
-        'total_bids' => Mise::count(),
+        'total_bids' => Enchere::count(),
     ]);
 });
 
@@ -223,7 +226,7 @@ Route::get('/api/categories', function () {
 
 // Get products with pagination and search
 Route::get('/api/products', function (Request $request) {
-    $query = Annonce::with(['produit', 'mises', 'vendeur.client'])
+    $query = Annonce::with(['produit', 'encheres', 'vendeur.client'])
         ->where('statut', 'ACTIVE')
         ->where('date_fin', '>', now());
 
@@ -251,7 +254,7 @@ Route::get('/api/products', function (Request $request) {
                 'description' => Str::limit($annonce->description, 100),
                 'current_price' => $annonce->getMontantActuel(),
                 'original_price' => $annonce->prix_depart,
-                'bid_count' => $annonce->mises()->count(),
+                'bid_count' => $annonce->encheres()->count(),
                 'date_fin' => $annonce->date_fin,
                 'image' => getProductImageUrl($photos),
                 'category' => $annonce->produit->categorie->nom ?? 'Non catégorisé',
@@ -271,7 +274,7 @@ Route::get('/api/products/by-category', function (Request $request) {
         'category_id' => 'required|exists:categories,id'
     ]);
 
-    $products = Annonce::with(['produit', 'mises'])
+    $products = Annonce::with(['produit', 'encheres'])
         ->where('statut', 'ACTIVE')
         ->where('date_fin', '>', now())
         ->whereHas('produit.categorie', function ($q) use ($request) {
@@ -289,7 +292,7 @@ Route::get('/api/products/by-category', function (Request $request) {
                 'titre' => $annonce->titre,
                 'current_price' => $annonce->getMontantActuel(),
                 'original_price' => $annonce->prix_depart,
-                'bid_count' => $annonce->mises()->count(),
+                'bid_count' => $annonce->encheres()->count(),
                 'date_fin' => $annonce->date_fin,
                 'image' => getProductImageUrl($photos),
             ];
@@ -299,7 +302,7 @@ Route::get('/api/products/by-category', function (Request $request) {
 
 // Get featured products
 Route::get('/api/featured-products', function () {
-    $products = Annonce::with(['produit', 'mises'])
+    $products = Annonce::with(['produit', 'encheres'])
         ->where('statut', 'ACTIVE')
         ->where('date_fin', '>', now())
         ->orderBy('created_at', 'desc')
@@ -313,7 +316,7 @@ Route::get('/api/featured-products', function () {
                 'id' => $annonce->id,
                 'titre' => $annonce->titre,
                 'current_price' => $annonce->getMontantActuel(),
-                'bid_count' => $annonce->mises()->count(),
+                'bid_count' => $annonce->encheres()->count(),
                 'image' => getProductImageUrl($photos),
             ];
         })
@@ -321,3 +324,4 @@ Route::get('/api/featured-products', function () {
 });
 
 require __DIR__ . '/auth.php';
+require __DIR__ . '/admin.php';

@@ -3,47 +3,34 @@
 namespace App\Http\Controllers;
 
 use App\Models\Annonce;
-use App\Models\Categorie;
+use App\Models\Enchere;
 use Illuminate\Http\Request;
 
 class AuctionController extends Controller
 {
-    public function active(Request $request)
+    public function active()
     {
-        $query = Annonce::with(['produit', 'produit.categorie', 'vendeur.client'])
-            ->where('statut', 'ACTIVE')
-            ->where('date_fin', '>', now());
+        $activeAuctions = Annonce::where('statut', 'ACTIVE')
+            ->where('date_fin', '>', now())
+            ->with(['produit', 'vendeur.client', 'encheres'])
+            ->orderBy('date_fin', 'asc')
+            ->paginate(12);
 
-        // Apply filters
-        if ($request->filled('categorie')) {
-            $query->whereHas('produit.categorie', function ($q) use ($request) {
-                $q->where('id', $request->categorie);
-            });
+        return view('auctions.active', compact('activeAuctions'));
+    }
+
+    public function show(Annonce $annonce)
+    {
+        $annonce->load(['produit', 'vendeur.client', 'encheres.client']);
+
+        $userHighestBid = null;
+        if (auth()->check() && auth()->user()->client) {
+            $userHighestBid = Enchere::where('annonce_id', $annonce->id)
+                ->where('client_id', auth()->user()->client->id)
+                ->orderBy('montant', 'desc')
+                ->first();
         }
 
-        if ($request->filled('prix_min')) {
-            $query->where(function ($q) use ($request) {
-                $q->where('prix_actuel', '>=', $request->prix_min)
-                    ->orWhere('prix_depart', '>=', $request->prix_min);
-            });
-        }
-
-        if ($request->filled('prix_max')) {
-            $query->where(function ($q) use ($request) {
-                $q->where('prix_actuel', '<=', $request->prix_max)
-                    ->orWhere('prix_depart', '<=', $request->prix_max);
-            });
-        }
-
-        if ($request->filled('etat')) {
-            $query->whereHas('produit', function ($q) use ($request) {
-                $q->where('etat', $request->etat);
-            });
-        }
-
-        $auctions = $query->orderBy('date_fin', 'asc')->paginate(12);
-        $categories = Categorie::all();
-
-        return view('auctions.active', compact('auctions', 'categories'));
+        return view('auctions.show', compact('annonce', 'userHighestBid'));
     }
 }

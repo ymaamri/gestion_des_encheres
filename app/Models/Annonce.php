@@ -22,6 +22,11 @@ class Annonce extends Model
         'statut',
     ];
 
+    protected $casts = [
+        'date_debut' => 'datetime',
+        'date_fin' => 'datetime',
+    ];
+
     public function vendeur()
     {
         return $this->belongsTo(Vendeur::class);
@@ -32,9 +37,10 @@ class Annonce extends Model
         return $this->belongsTo(Produit::class);
     }
 
-    public function mises()
+    // Change from mises() to encheres()
+    public function encheres()
     {
-        return $this->hasMany(Mise::class);
+        return $this->hasMany(Enchere::class);
     }
 
     public function estActive()
@@ -58,5 +64,17 @@ class Annonce extends Model
     public function getMontantActuel()
     {
         return $this->prix_actuel ?? $this->prix_depart;
+    }
+
+    // Get the highest bid for this auction
+    public function getHighestBid()
+    {
+        return $this->encheres()->orderBy('montant', 'desc')->first();
+    }
+
+    // Get all bids for this auction
+    public function getAllBids()
+    {
+        return $this->encheres()->orderBy('montant', 'desc')->get();
     }
 }
