@@ -9,8 +9,6 @@ class Enchere extends Model
 {
     use HasFactory;
 
-    protected $table = 'enchere';
-
     protected $fillable = [
         'annonce_id',
         'client_id',
@@ -21,13 +19,13 @@ class Enchere extends Model
     ];
 
     protected $casts = [
-        'date_mise' => 'datetime',
         'montant' => 'decimal:2',
+        'date_mise' => 'datetime',
+        'date_debut' => 'datetime',
+        'date_fin' => 'datetime',
     ];
 
-    /**
-     * Relations
-     */
+    // Relations
     public function annonce()
     {
         return $this->belongsTo(Annonce::class);
@@ -36,14 +34,6 @@ class Enchere extends Model
     public function client()
     {
         return $this->belongsTo(Client::class);
-    }
-
-    /**
-     * Helper method to check if this is the winning bid
-     */
-    public function isWinningBid()
-    {
-        return $this->annonce->getMontantActuel() == $this->montant;
     }
 
     // Vérifier si cette mise est la gagnante

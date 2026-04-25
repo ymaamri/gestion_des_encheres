@@ -21,19 +21,15 @@ return new class extends Migration {
             $table->string('titre');
             $table->text('description')->nullable();
 
-            $table->double('prix_depart');
-            $table->double('prix_actuel')->nullable();
-            $table->double('montant_mise')->default(0);
-
-            $table->dateTime('date_debut');
-            $table->dateTime('date_fin');
+            $table->decimal('prix_depart', 10, 2);
+            $table->decimal('prix_final', 10, 2)->nullable(); // Prix final après clôture
 
             $table->enum('statut', [
-                'EN_ATTENTE',
-                'ACTIVE',
-                'CLOTUREE',
-                'BLOQUEE',
-                'ANNULEE'
+                'EN_ATTENTE',    // En attente validation admin
+                'ACTIVE',        // Enchère en cours
+                'CLOTUREE',      // Terminée
+                'BLOQUEE',       // Bloquée par admin
+                'ANNULEE'        // Annulée par vendeur
             ])->default('EN_ATTENTE');
 
             $table->timestamps();

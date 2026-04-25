@@ -39,4 +39,23 @@ class Client extends Model
     {
         return $this->hasMany(Notification::class);
     }
+
+
+    // Récupérer les enchères gagnées par le client
+    public function encheresGagnees()
+    {
+        return $this->hasMany(Enchere::class)->whereHas('annonce', function($q) {
+            $q->where('statut', 'CLOTUREE');
+        })->orderBy('montant', 'desc');
+    }
+
+    // Récupérer les enchères actives du client
+    public function encheresActives()
+    {
+        return $this->hasMany(Enchere::class)
+            ->whereHas('annonce', function($q) {
+                $q->where('statut', 'ACTIVE');
+            })
+            ->where('date_fin', '>', now());
+    }
 }
