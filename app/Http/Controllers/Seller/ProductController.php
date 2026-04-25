@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Produit;
 use App\Models\Categorie;
 use App\Models\SousCategorie;
-use App\Models\Annonce;  // Added for the index method
+use App\Models\Annonce;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -14,8 +14,9 @@ use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
-    // No constructor – middleware is applied via routes
-
+    /**
+     * Display a listing of the seller's products.
+     */
     public function index()
     {
         $vendeur = Auth::user()->client->vendeur;
@@ -32,12 +33,18 @@ class ProductController extends Controller
         return view('seller.products.index', compact('products'));
     }
 
+    /**
+     * Show the form for creating a new product.
+     */
     public function create()
     {
         $categories = Categorie::with('sousCategories')->get();
         return view('seller.products.create', compact('categories'));
     }
 
+    /**
+     * Store a newly created product in storage.
+     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -74,6 +81,9 @@ class ProductController extends Controller
             ->with('success', 'Produit créé avec succès !');
     }
 
+    /**
+     * Display the specified product.
+     */
     public function show(Produit $product)
     {
         $vendeur = Auth::user()->client->vendeur;
@@ -85,6 +95,9 @@ class ProductController extends Controller
         return view('seller.products.show', compact('product'));
     }
 
+    /**
+     * Show the form for editing the specified product.
+     */
     public function edit(Produit $product)
     {
         $vendeur = Auth::user()->client->vendeur;
@@ -97,6 +110,9 @@ class ProductController extends Controller
         return view('seller.products.edit', compact('product', 'categories'));
     }
 
+    /**
+     * Update the specified product in storage.
+     */
     public function update(Request $request, Produit $product)
     {
         $vendeur = Auth::user()->client->vendeur;
@@ -111,12 +127,12 @@ class ProductController extends Controller
             'marque' => 'nullable|string|max:255',
             'modele' => 'nullable|string|max:255',
             'etat' => 'required|in:NEUF,TRES_BON_ETAT,BON_ETAT,ACCEPTABLE',
-            'categorie_id' => 'required|exists:categories,id',
             'sous_categorie_id' => 'nullable|exists:sous_categories,id',
             'photos.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'delete_photos' => 'nullable|array',
         ]);
 
+        // Merge existing photos with new ones
         $photos = $product->photos ?? [];
         if ($request->hasFile('photos')) {
             foreach ($request->file('photos') as $photo) {
@@ -126,6 +142,7 @@ class ProductController extends Controller
             }
         }
 
+        // Remove selected photos
         if ($request->filled('delete_photos')) {
             foreach ($request->delete_photos as $photoToDelete) {
                 if (Storage::disk('public')->exists($photoToDelete)) {
@@ -146,9 +163,12 @@ class ProductController extends Controller
         ]);
 
         return redirect()->route('seller.products.index')
-            ->with('success', 'Produit mis à jour !');
+            ->with('success', 'Produit mis à jour avec succès !');
     }
 
+    /**
+     * Remove the specified product from storage.
+     */
     public function destroy(Produit $product)
     {
         $vendeur = Auth::user()->client->vendeur;
@@ -157,6 +177,7 @@ class ProductController extends Controller
             abort(403);
         }
 
+        // Delete associated photo files
         if ($product->photos) {
             foreach ($product->photos as $photo) {
                 if (Storage::disk('public')->exists($photo)) {
@@ -166,10 +187,14 @@ class ProductController extends Controller
         }
 
         $product->delete();
+
         return redirect()->route('seller.products.index')
             ->with('success', 'Produit supprimé définitivement.');
     }
 
+    /**
+     * Get subcategories for a given category (AJAX).
+     */
     public function getSubcategories($categoryId)
     {
         $subcategories = SousCategorie::where('categorie_id', $categoryId)->get();

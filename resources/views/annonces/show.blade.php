@@ -189,7 +189,7 @@
                         </thead>
                         <tbody>
                             @php
-                                $bids = $annonce->mises()->with('client.user')->latest()->get();
+                                $bids = $annonce->encheres()->with('client.user')->latest()->get();
                             @endphp
                             @forelse($bids as $mise)
                             <tr class="{{ $loop->first ? 'bg-gradient-light' : '' }}">
@@ -197,12 +197,18 @@
                                     <div class="d-flex px-2 py-1">
                                         <div class="d-flex flex-column justify-content-center">
                                             <h6 class="mb-0 text-sm">
-                                                {{ $mise->client->nom }} {{ $mise->client->prenom }}
+                                                @if($mise->client)
+                                                    {{ $mise->client->nom }} {{ $mise->client->prenom }}
+                                                @else
+                                                    <span class="text-muted">Utilisateur supprimé</span>
+                                                @endif
                                                 @if($loop->first && $annonce->statut == 'ACTIVE')
                                                     <span class="badge badge-sm bg-gradient-success ms-2">Leader 🏆</span>
                                                 @endif
                                             </h6>
-                                            <p class="text-xs text-secondary mb-0">{{ $mise->client->user->email }}</p>
+                                            @if($mise->client && $mise->client->user)
+                                                <p class="text-xs text-secondary mb-0">{{ $mise->client->user->email }}</p>
+                                            @endif
                                         </div>
                                     </div>
                                 </td>
@@ -290,9 +296,9 @@
                                     <label class="form-label">Votre enchère (MAD)</label>
                                     <div class="input-group">
                                         <span class="input-group-text">MAD</span>
-                                        <input type="number" name="montant" class="form-control" step="1" min="{{ $currentHighestBid + 1 }}" id="bidAmount" required>
+                                        <input type="number" name="montant" class="form-control" step="1" min="{{ $currentHighestBid + $annonce->montant_mise }}" id="bidAmount" required>
                                     </div>
-                                    <small class="text-muted">Enchère minimale: {{ number_format($currentHighestBid + 1, 2) }} MAD</small>
+                                    <small class="text-muted">Enchère minimale: {{ number_format($currentHighestBid + $annonce->montant_mise, 2) }} MAD</small>
                                 </div>
                                 <button type="submit" class="btn bg-gradient-primary w-100" id="submitBid">
                                     <i class="material-symbols-rounded me-1">gavel</i> Placer mon enchère
@@ -321,7 +327,7 @@
                     @endif
                 @elseif($annonce->statut === 'CLOTUREE')
                     @php
-                        $winningBid = $annonce->mises()->latest('montant')->first();
+                        $winningBid = $annonce->encheres()->latest('montant')->first();
                         $userWon = Auth::check() && Auth::user()->client && $winningBid && $winningBid->client_id == Auth::user()->client->id;
                     @endphp
                     @if($userWon)
@@ -338,7 +344,14 @@
                             <i class="material-symbols-rounded">check_circle</i>
                             <p class="mb-0 mt-2">Cette enchère est terminée.</p>
                             @if($winningBid)
-                                <small>Gagnée par {{ $winningBid->client->nom }} avec {{ number_format($winningBid->montant, 2) }} MAD</small>
+                                <small>Gagnée par 
+                                    @if($winningBid->client)
+                                        {{ $winningBid->client->nom }}
+                                    @else
+                                        un utilisateur supprimé
+                                    @endif
+                                    avec {{ number_format($winningBid->montant, 2) }} MAD
+                                </small>
                             @endif
                         </div>
                     @endif
@@ -356,15 +369,15 @@
                     <h6 class="text-uppercase text-secondary">Informations</h6>
                     <div class="d-flex justify-content-between mb-2">
                         <span><i class="material-symbols-rounded">event</i> Début:</span>
-                        <span>{{ \Carbon\Carbon::parse($annonce->date_debut)->format('d/m/Y H:i') }}</span>
+                        <span>{{ $annonce->date_debut ? \Carbon\Carbon::parse($annonce->date_debut)->format('d/m/Y H:i') : 'Non définie' }}</span>
                     </div>
                     <div class="d-flex justify-content-between mb-2">
                         <span><i class="material-symbols-rounded">event_busy</i> Fin:</span>
-                        <span>{{ \Carbon\Carbon::parse($annonce->date_fin)->format('d/m/Y H:i') }}</span>
+                        <span>{{ $annonce->date_fin ? \Carbon\Carbon::parse($annonce->date_fin)->format('d/m/Y H:i') : 'Non définie' }}</span>
                     </div>
                     <div class="d-flex justify-content-between">
                         <span><i class="material-symbols-rounded">gavel</i> Total enchères:</span>
-                        <span class="badge bg-gradient-info">{{ $annonce->mises()->count() }}</span>
+                        <span class="badge bg-gradient-info">{{ $annonce->encheres()->count() }}</span>
                     </div>
                 </div>
             </div>
@@ -376,7 +389,7 @@
 @push('scripts')
 <script>
     // Countdown Timer
-    @if($annonce->statut === 'ACTIVE')
+    @if($annonce->statut === 'ACTIVE' && $annonce->date_fin)
         function updateCountdown() {
             const endDate = new Date('{{ $annonce->date_fin }}').getTime();
             const now = new Date().getTime();
@@ -407,7 +420,7 @@
     // Bid form validation
     document.getElementById('bidForm')?.addEventListener('submit', function(e) {
         const bidAmount = document.getElementById('bidAmount').value;
-        const minBid = {{ $currentHighestBid + 1 }};
+        const minBid = {{ $currentHighestBid + $annonce->montant_mise }};
         
         if (bidAmount < minBid) {
             e.preventDefault();

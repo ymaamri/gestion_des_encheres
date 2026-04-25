@@ -15,16 +15,25 @@ class Annonce extends Model
         'titre',
         'description',
         'prix_depart',
+        'prix_actuel',
+        'montant_mise',
+        'date_debut',
+        'date_fin',
         'prix_final',
         'statut',
     ];
 
     protected $casts = [
         'prix_depart' => 'decimal:2',
+        'prix_actuel' => 'decimal:2',
+        'montant_mise' => 'decimal:2',
         'prix_final' => 'decimal:2',
+        'date_debut' => 'datetime',
+        'date_fin' => 'datetime',
     ];
 
-    // Relations
+    // =============================== Relations ===============================
+
     public function vendeur()
     {
         return $this->belongsTo(Vendeur::class);
@@ -40,20 +49,25 @@ class Annonce extends Model
         return $this->hasMany(Enchere::class);
     }
 
+    // Alias for encheres (used in some views)
+    public function mises()
+    {
+        return $this->encheres();
+    }
+
+    // =============================== Auction Helpers ===============================
+
     /**
-     * Get the current highest bid amount
+     * Get the current highest bid amount.
+     * Returns prix_actuel if set, otherwise prix_depart.
      */
     public function getMontantActuel()
     {
-        // Get the highest bid from encheres table
-        $highestBid = $this->encheres()->max('montant');
-        
-        // If there are bids, return the highest, otherwise return the starting price
-        return $highestBid ?? $this->prix_depart;
+        return $this->prix_actuel ?? $this->prix_depart;
     }
 
     /**
-     * Get the current highest bid with client info
+     * Get the current highest bid with client info.
      */
     public function getHighestBid()
     {
@@ -64,7 +78,7 @@ class Annonce extends Model
     }
 
     /**
-     * Get all bids for this auction
+     * Get all bids for this auction.
      */
     public function getBids()
     {
@@ -75,7 +89,7 @@ class Annonce extends Model
     }
 
     /**
-     * Get bid count
+     * Get bid count.
      */
     public function getBidCount()
     {
@@ -83,21 +97,15 @@ class Annonce extends Model
     }
 
     /**
-     * Check if auction is active
+     * Check if auction is currently active.
      */
     public function estActive()
     {
-        // Check if there's an active enchere for this annonce
-        $activeEnchere = $this->encheres()
-            ->where('date_debut', '<=', now())
-            ->where('date_fin', '>', now())
-            ->exists();
-            
-        return $this->statut === 'ACTIVE' && $activeEnchere;
+        return $this->statut === 'ACTIVE' && $this->date_fin && $this->date_fin > now();
     }
 
     /**
-     * Check if auction is ended
+     * Check if auction has ended.
      */
     public function estTerminee()
     {
@@ -105,91 +113,65 @@ class Annonce extends Model
     }
 
     /**
-     * Get the current enchere session
-     */
-    public function getCurrentEnchere()
-    {
-        return $this->encheres()
-            ->where('date_debut', '<=', now())
-            ->where('date_fin', '>', now())
-            ->first();
-    }
-
-    /**
-     * Get end date (from the latest enchere)
-     */
-    public function getDateFinAttribute()
-    {
-        $latestEnchere = $this->encheres()->latest('date_fin')->first();
-        return $latestEnchere ? $latestEnchere->date_fin : null;
-    }
-
-    /**
-     * Get start date (from the earliest enchere)
-     */
-    public function getDateDebutAttribute()
-    {
-        $earliestEnchere = $this->encheres()->oldest('date_debut')->first();
-        return $earliestEnchere ? $earliestEnchere->date_debut : null;
-    }
-
-    /**
-     * Check if user has bid on this auction
+     * Check if a specific user has placed a bid on this auction.
      */
     public function userHasBid($userId)
     {
         return $this->encheres()
-            ->whereHas('client', function($q) use ($userId) {
+            ->whereHas('client', function ($q) use ($userId) {
                 $q->where('user_id', $userId);
             })
             ->exists();
     }
 
     /**
-     * Get user's highest bid on this auction
+     * Get the user's highest bid on this auction.
      */
     public function getUserBid($userId)
     {
         return $this->encheres()
-            ->whereHas('client', function($q) use ($userId) {
+            ->whereHas('client', function ($q) use ($userId) {
                 $q->where('user_id', $userId);
             })
             ->orderBy('montant', 'desc')
             ->first();
     }
 
-    // Helper methods for the auction lifecycle
+    // =============================== Lifecycle Methods ===============================
+
+    /**
+     * Mark the auction as pending (called after creation).
+     */
     public function publier()
     {
         $this->statut = 'EN_ATTENTE';
         $this->save();
     }
 
+    /**
+     * Activate the auction with start and end dates.
+     * Called by admin after validation.
+     */
     public function valider($dateDebut, $dateFin)
     {
-        // Create the first enchere session
-        Enchere::create([
-            'annonce_id' => $this->id,
-            'client_id' => null,
-            'montant' => $this->prix_depart,
-            'date_mise' => $dateDebut,
-            'date_debut' => $dateDebut,
-            'date_fin' => $dateFin,
-        ]);
-        
+        $this->date_debut = $dateDebut;
+        $this->date_fin = $dateFin;
+        $this->prix_actuel = $this->prix_depart; // initial current price
         $this->statut = 'ACTIVE';
         $this->save();
     }
 
+    /**
+     * Close the auction, set final price based on winning bid.
+     */
     public function cloturer()
     {
-        // Find the winning bid
         $winningBid = $this->getHighestBid();
-        
         if ($winningBid) {
             $this->prix_final = $winningBid->montant;
+        } else {
+            $this->prix_final = $this->prix_depart;
         }
-        
         $this->statut = 'CLOTUREE';
         $this->save();
     }

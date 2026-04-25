@@ -323,8 +323,7 @@ Route::get('/api/featured-products', function () {
     ]);
 });
 
-
-// Seller product management
+// Seller product management + bids received + sales history
 Route::middleware(['auth', 'role:vendeur'])
     ->prefix('vendeur')
     ->name('seller.')
@@ -332,6 +331,12 @@ Route::middleware(['auth', 'role:vendeur'])
         Route::resource('products', \App\Http\Controllers\Seller\ProductController::class)->except(['show']);
         Route::get('products/{product}', [\App\Http\Controllers\Seller\ProductController::class, 'show'])->name('products.show');
         Route::get('subcategories/{category}', [\App\Http\Controllers\Seller\ProductController::class, 'getSubcategories'])->name('products.subcategories');
+
+        // Offres reçues sur les annonces du vendeur
+        Route::get('/bids', [\App\Http\Controllers\Seller\BidController::class, 'index'])->name('bids.index');
+
+        // NEW: Historique des ventes (enchères clôturées)
+        Route::get('/sales', [\App\Http\Controllers\Seller\SalesController::class, 'index'])->name('sales.index');
     });
 
 require __DIR__ . '/auth.php';

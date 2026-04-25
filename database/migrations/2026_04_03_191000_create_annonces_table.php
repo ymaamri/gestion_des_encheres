@@ -22,14 +22,20 @@ return new class extends Migration {
             $table->text('description')->nullable();
 
             $table->decimal('prix_depart', 10, 2);
-            $table->decimal('prix_final', 10, 2)->nullable(); // Prix final après clôture
+            $table->decimal('prix_actuel', 10, 2)->nullable();   // current highest bid
+            $table->decimal('montant_mise', 10, 2)->default(1); // minimum bid increment
+            $table->decimal('prix_final', 10, 2)->nullable();    // final price after closing
+
+            // Auction time window (directly on the annonce)
+            $table->dateTime('date_debut')->nullable();
+            $table->dateTime('date_fin')->nullable();
 
             $table->enum('statut', [
-                'EN_ATTENTE',    // En attente validation admin
-                'ACTIVE',        // Enchère en cours
-                'CLOTUREE',      // Terminée
-                'BLOQUEE',       // Bloquée par admin
-                'ANNULEE'        // Annulée par vendeur
+                'EN_ATTENTE',    // pending admin validation
+                'ACTIVE',        // auction in progress
+                'CLOTUREE',      // finished
+                'BLOQUEE',       // blocked by admin
+                'ANNULEE'        // cancelled by seller
             ])->default('EN_ATTENTE');
 
             $table->timestamps();
