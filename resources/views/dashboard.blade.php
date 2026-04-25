@@ -373,9 +373,14 @@
                                                 </td>
                                                 <td>
                                                     @if($annonce->statut == 'ACTIVE')
-                                                        <span class="text-warning text-sm">{{ \Carbon\Carbon::parse($annonce->date_fin)->diffForHumans() }}</span>
-                                                    @else
-                                                        <span class="text-secondary text-sm">Terminée</span>
+                                                        @php
+                                                            $dateFin = $annonce->getDateFinAttribute();
+                                                        @endphp
+                                                        @if($dateFin)
+                                                            <span class="text-warning text-sm">{{ \Carbon\Carbon::parse($dateFin)->diffForHumans() }}</span>
+                                                        @else
+                                                            <span class="text-warning text-sm">Date non définie</span>
+                                                        @endif
                                                     @endif
                                                 </td>
                                                 <td class="align-middle">

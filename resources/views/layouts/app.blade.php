@@ -24,6 +24,7 @@
 
     <!-- CSS Files -->
     <link id="pagestyle" href="{{ asset('assets/css/material-dashboard.css') }}" rel="stylesheet" />
+    
 
     <style>
         * {

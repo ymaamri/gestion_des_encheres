@@ -1,4 +1,3 @@
-{{-- /opt/lampp/htdocs/gestion_des_encheres/resources/views/admin/auctions/index.blade.php --}}
 @extends('layouts.app')
 
 @section('title', 'Gestion des Enchères')
@@ -52,13 +51,13 @@
                                         </div>
                                         <div class="d-flex flex-column justify-content-center">
                                             <h6 class="mb-0 text-sm">{{ Str::limit($annonce->titre, 40) }}</h6>
-                                            <p class="text-xs text-secondary mb-0">{{ $annonce->produit->nom }}</p>
+                                            <p class="text-xs text-secondary mb-0">{{ $annonce->produit->nom ?? 'N/A' }}</p>
                                         </div>
                                     </div>
                                 </td>
                                 <td>
-                                    <p class="text-xs font-weight-bold mb-0">{{ $annonce->vendeur->client->nom }}</p>
-                                    <p class="text-xs text-secondary mb-0">Note: {{ number_format($annonce->vendeur->note_moyenne, 1) }}/5</p>
+                                    <p class="text-xs font-weight-bold mb-0">{{ $annonce->vendeur->client->nom ?? 'N/A' }}</p>
+                                    <p class="text-xs text-secondary mb-0">Note: {{ number_format($annonce->vendeur->note_moyenne ?? 0, 1) }}/5</p>
                                 </td>
                                 <td class="align-middle text-center">
                                     <span class="text-secondary text-xs font-weight-bold">{{ number_format($annonce->prix_depart, 2) }} MAD</span>
@@ -80,15 +79,24 @@
                                         @case('BLOQUEE')
                                             <span class="badge badge-sm bg-gradient-danger">Bloquée</span>
                                             @break
+                                        @default
+                                            <span class="badge badge-sm bg-gradient-secondary">{{ $annonce->statut }}</span>
                                     @endswitch
                                 </td>
                                 <td class="align-middle text-center">
                                     <span class="text-secondary text-xs font-weight-bold">
-                                        {{ \Carbon\Carbon::parse($annonce->date_fin)->format('d/m/Y H:i') }}
+                                        @php
+                                            $dateFin = $annonce->getDateFinAttribute();
+                                        @endphp
+                                        @if($dateFin)
+                                            {{ \Carbon\Carbon::parse($dateFin)->format('d/m/Y H:i') }}
+                                        @else
+                                            Non définie
+                                        @endif
                                     </span>
                                 </td>
                                 <td class="align-middle text-center">
-                                    <span class="badge badge-sm bg-gradient-info">{{ $annonce->mises()->count() }}</span>
+                                    <span class="badge badge-sm bg-gradient-info">{{ $annonce->encheres()->count() }}</span>
                                 </td>
                                 <td class="align-middle">
                                     <div class="dropdown">
@@ -153,6 +161,7 @@
         </div>
     </div>
 </div>
+@endsection
 
 @push('scripts')
 <script>
@@ -170,4 +179,3 @@
     });
 </script>
 @endpush
-@endsection
