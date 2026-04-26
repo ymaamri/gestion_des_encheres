@@ -33,9 +33,6 @@ class AuctionSeeder extends Seeder
 
         // Create subcategories for Electronics
         $electronics = Categorie::where('nom', 'Electronics')->first();
-        $smartphonesSubcat = null;
-        $laptopsSubcat = null;
-        $tabletsSubcat = null;
 
         if ($electronics) {
             $subcats = [
@@ -45,18 +42,10 @@ class AuctionSeeder extends Seeder
             ];
 
             foreach ($subcats as $subData) {
-                $subcat = SousCategorie::firstOrCreate(
+                SousCategorie::firstOrCreate(
                     ['categorie_id' => $electronics->id, 'nom' => $subData['nom']],
                     $subData
                 );
-
-                if ($subData['nom'] == 'Smartphones') {
-                    $smartphonesSubcat = $subcat;
-                } elseif ($subData['nom'] == 'Laptops') {
-                    $laptopsSubcat = $subcat;
-                } elseif ($subData['nom'] == 'Tablets') {
-                    $tabletsSubcat = $subcat;
-                }
             }
         }
 
@@ -151,7 +140,7 @@ class AuctionSeeder extends Seeder
         );
 
         // Create sample products and auctions
-        $products = [
+        $productDataList = [
             [
                 'nom' => 'iPhone 14 Pro',
                 'description' => 'Latest iPhone with dynamic island, A16 Bionic chip',
@@ -162,7 +151,7 @@ class AuctionSeeder extends Seeder
                 'sous_categorie' => 'Smartphones',
                 'titre' => 'iPhone 14 Pro - Like New',
                 'prix_depart' => 8000,
-                'date_debut' => Carbon::now()->subDays(1), // Commencé hier
+                'date_debut' => Carbon::now()->subDays(1),
                 'date_fin' => Carbon::now()->addDays(5),
             ],
             [
@@ -219,14 +208,14 @@ class AuctionSeeder extends Seeder
             ],
         ];
 
-        foreach ($products as $productData) {
+        foreach ($productDataList as $data) {
             // Get category
-            $categorie = Categorie::where('nom', $productData['categorie'])->first();
+            $categorie = Categorie::where('nom', $data['categorie'])->first();
 
             // Get subcategory if specified
             $sousCategorieId = null;
-            if ($productData['sous_categorie'] && $categorie) {
-                $sousCategorie = SousCategorie::where('nom', $productData['sous_categorie'])
+            if ($data['sous_categorie'] && $categorie) {
+                $sousCategorie = SousCategorie::where('nom', $data['sous_categorie'])
                     ->where('categorie_id', $categorie->id)
                     ->first();
                 if ($sousCategorie) {
@@ -234,102 +223,87 @@ class AuctionSeeder extends Seeder
                 }
             }
 
-            // Create product
+            // Create product (with vendeur_id)
             $produit = Produit::create([
-                'nom' => $productData['nom'],
-                'description' => $productData['description'],
-                'marque' => $productData['marque'],
-                'modele' => $productData['modele'],
-                'etat' => $productData['etat'],
+                'nom' => $data['nom'],
+                'description' => $data['description'],
+                'marque' => $data['marque'],
+                'modele' => $data['modele'],
+                'etat' => $data['etat'],
                 'sous_categorie_id' => $sousCategorieId,
+                'vendeur_id' => $vendeur->id,
                 'photos' => [],
             ]);
 
-            // Create auction (annonce)
+            // Create auction (annonce) with dates
             $annonce = Annonce::create([
                 'vendeur_id' => $vendeur->id,
                 'produit_id' => $produit->id,
-                'titre' => $productData['titre'],
-                'description' => $productData['description'],
-                'prix_depart' => $productData['prix_depart'],
+                'titre' => $data['titre'],
+                'description' => $data['description'],
+                'prix_depart' => $data['prix_depart'],
+                'prix_actuel' => $data['prix_depart'],
+                'montant_mise' => 1,
+                'date_debut' => $data['date_debut'],
+                'date_fin' => $data['date_fin'],
                 'prix_final' => null,
                 'statut' => 'ACTIVE',
             ]);
 
-            // Create the first enchere (bid) to start the auction with dates
-            $firstEnchere = Enchere::create([
-                'annonce_id' => $annonce->id,
-                'client_id' => null, // No client for the starting price
-                'montant' => $productData['prix_depart'],
-                'date_mise' => $productData['date_debut'],
-                'date_debut' => $productData['date_debut'],
-                'date_fin' => $productData['date_fin'],
-            ]);
-
-            // Add sample bids for the iPhone auction
-            if ($productData['nom'] == 'iPhone 14 Pro') {
-                // Bid 1: Client at 8500
+            // Add sample bids (only if auction is active)
+            // For iPhone
+            if ($data['nom'] == 'iPhone 14 Pro') {
                 Enchere::create([
                     'annonce_id' => $annonce->id,
                     'client_id' => $client->id,
                     'montant' => 8500,
                     'date_mise' => Carbon::now()->subHours(2),
-                    'date_debut' => $productData['date_debut'],
-                    'date_fin' => $productData['date_fin'],
                 ]);
-
-                // Bid 2: Test client at 9000
                 Enchere::create([
                     'annonce_id' => $annonce->id,
                     'client_id' => $testClient->id,
                     'montant' => 9000,
                     'date_mise' => Carbon::now()->subHour(),
-                    'date_debut' => $productData['date_debut'],
-                    'date_fin' => $productData['date_fin'],
                 ]);
-
-                // Bid 3: Client at 9500 (current highest)
                 Enchere::create([
                     'annonce_id' => $annonce->id,
                     'client_id' => $client->id,
                     'montant' => 9500,
                     'date_mise' => Carbon::now()->subMinutes(30),
-                    'date_debut' => $productData['date_debut'],
-                    'date_fin' => $productData['date_fin'],
                 ]);
+                // Update annonce current price
+                $annonce->prix_actuel = 9500;
+                $annonce->save();
             }
 
-            // Add sample bids for MacBook
-            if ($productData['nom'] == 'MacBook Pro M2') {
+            // For MacBook
+            if ($data['nom'] == 'MacBook Pro M2') {
                 Enchere::create([
                     'annonce_id' => $annonce->id,
                     'client_id' => $client->id,
                     'montant' => 15500,
                     'date_mise' => Carbon::now()->subDay(),
-                    'date_debut' => $productData['date_debut'],
-                    'date_fin' => $productData['date_fin'],
                 ]);
+                $annonce->prix_actuel = 15500;
+                $annonce->save();
             }
 
-            // Add sample bids for Samsung Galaxy
-            if ($productData['nom'] == 'Samsung Galaxy S23') {
+            // For Samsung Galaxy
+            if ($data['nom'] == 'Samsung Galaxy S23') {
                 Enchere::create([
                     'annonce_id' => $annonce->id,
                     'client_id' => $testClient->id,
                     'montant' => 6200,
                     'date_mise' => Carbon::now()->subHours(5),
-                    'date_debut' => $productData['date_debut'],
-                    'date_fin' => $productData['date_fin'],
                 ]);
-
                 Enchere::create([
                     'annonce_id' => $annonce->id,
                     'client_id' => $client->id,
                     'montant' => 6500,
                     'date_mise' => Carbon::now()->subHours(2),
-                    'date_debut' => $productData['date_debut'],
-                    'date_fin' => $productData['date_fin'],
                 ]);
+                $annonce->prix_actuel = 6500;
+                $annonce->save();
             }
         }
 
@@ -341,6 +315,7 @@ class AuctionSeeder extends Seeder
             'modele' => 'PS5',
             'etat' => 'NEUF',
             'sous_categorie_id' => null,
+            'vendeur_id' => $vendeur->id,
             'photos' => [],
         ]);
 
@@ -353,60 +328,41 @@ class AuctionSeeder extends Seeder
             'titre' => 'PlayStation 5 - Complete package',
             'description' => 'Includes 2 controllers and 3 games',
             'prix_depart' => 4000,
+            'prix_actuel' => 5200,
+            'montant_mise' => 1,
+            'date_debut' => $dateDebutClosed,
+            'date_fin' => $dateFinClosed,
             'prix_final' => 5200,
             'statut' => 'CLOTUREE',
         ]);
 
-        // Starting bid
-        Enchere::create([
-            'annonce_id' => $closedAuction->id,
-            'client_id' => null,
-            'montant' => 4000,
-            'date_mise' => $dateDebutClosed,
-            'date_debut' => $dateDebutClosed,
-            'date_fin' => $dateFinClosed,
-        ]);
-
-        // Intermediate bids
+        // Bids for closed auction
         Enchere::create([
             'annonce_id' => $closedAuction->id,
             'client_id' => $testClient->id,
             'montant' => 4500,
             'date_mise' => Carbon::now()->subDays(8),
-            'date_debut' => $dateDebutClosed,
-            'date_fin' => $dateFinClosed,
         ]);
-
         Enchere::create([
             'annonce_id' => $closedAuction->id,
             'client_id' => $client->id,
             'montant' => 4800,
             'date_mise' => Carbon::now()->subDays(6),
-            'date_debut' => $dateDebutClosed,
-            'date_fin' => $dateFinClosed,
         ]);
-
         Enchere::create([
             'annonce_id' => $closedAuction->id,
             'client_id' => $testClient->id,
             'montant' => 5000,
             'date_mise' => Carbon::now()->subDays(5),
-            'date_debut' => $dateDebutClosed,
-            'date_fin' => $dateFinClosed,
         ]);
-
-        // Winning bid
         Enchere::create([
             'annonce_id' => $closedAuction->id,
             'client_id' => $client->id,
             'montant' => 5200,
             'date_mise' => Carbon::now()->subDays(3),
-            'date_debut' => $dateDebutClosed,
-            'date_fin' => $dateFinClosed,
         ]);
 
         // Create notifications
-        // Notification for winning auction
         Notification::create([
             'client_id' => $client->id,
             'message' => 'Félicitations ! Vous avez gagné l\'enchère pour la PlayStation 5 avec une offre de 5 200 MAD.',
@@ -415,7 +371,6 @@ class AuctionSeeder extends Seeder
             'lue' => false,
         ]);
 
-        // Notification for being outbid on iPhone
         Notification::create([
             'client_id' => $testClient->id,
             'message' => 'Vous avez été surenchéri sur l\'iPhone 14 Pro. Nouveau prix : 9 500 MAD.',
@@ -424,7 +379,6 @@ class AuctionSeeder extends Seeder
             'lue' => false,
         ]);
 
-        // Notification for auction ending soon
         Notification::create([
             'client_id' => $client->id,
             'message' => 'L\'enchère pour le MacBook Pro M2 se termine dans 3 jours !',

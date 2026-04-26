@@ -16,8 +16,6 @@ class Enchere extends Model
         'client_id',
         'montant',
         'date_mise',
-        'date_debut',
-        'date_fin',
     ];
 
     protected $casts = [
@@ -61,7 +59,7 @@ class Enchere extends Model
     public function estActive()
     {
         $now = now();
-        return $this->date_debut <= $now && $this->date_fin > $now;
+        return $this->annonce->date_debut <= $now && $this->annonce->date_fin > $now;
     }
 
     // Placer une nouvelle mise
@@ -89,8 +87,6 @@ class Enchere extends Model
             'client_id' => $client->id,
             'montant' => $montant,
             'date_mise' => $now,
-            'date_debut' => $lastEnchere->date_debut,
-            'date_fin' => $lastEnchere->date_fin,
         ]);
     }
 

@@ -122,7 +122,7 @@
                                                     @default
                                                         <span class="badge bg-gradient-secondary">{{ $annonce->produit->etat }}</span>
                                                 @endswitch
-                                             </td>
+                                              </td>
                                         </tr>
                                         <tr>
                                             <th><i class="material-symbols-rounded">sell</i> Prix de départ :</th>
@@ -197,8 +197,8 @@
                                     <div class="d-flex px-2 py-1">
                                         <div class="d-flex flex-column justify-content-center">
                                             <h6 class="mb-0 text-sm">
-                                                @if($mise->client)
-                                                    {{ $mise->client->nom }} {{ $mise->client->prenom }}
+                                                @if($enchere->client)
+                                                    {{ $enchere->client->nom }} {{ $enchere->client->prenom }}
                                                 @else
                                                     <span class="text-muted">Utilisateur supprimé</span>
                                                 @endif
@@ -206,8 +206,8 @@
                                                     <span class="badge badge-sm bg-gradient-success ms-2">Leader 🏆</span>
                                                 @endif
                                             </h6>
-                                            @if($mise->client && $mise->client->user)
-                                                <p class="text-xs text-secondary mb-0">{{ $mise->client->user->email }}</p>
+                                            @if($enchere->client && $enchere->client->user)
+                                                <p class="text-xs text-secondary mb-0">{{ $enchere->client->user->email }}</p>
                                             @endif
                                         </div>
                                     </div>
@@ -395,7 +395,8 @@
     // Countdown Timer
     @if($annonce->statut === 'ACTIVE' && $annonce->date_fin)
         function updateCountdown() {
-            const endDate = new Date('{{ $annonce->getDateFinAttribute() }}').getTime();
+            // Use the date_fin attribute directly (Carbon instance will be cast to string)
+            const endDate = new Date('{{ $annonce->date_fin }}').getTime();
             const now = new Date().getTime();
             const distance = endDate - now;
 

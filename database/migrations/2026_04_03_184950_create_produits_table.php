@@ -10,12 +10,13 @@ return new class extends Migration {
         Schema::create('produits', function (Blueprint $table) {
             $table->id();
 
-            // 🔥 Updated: now linked to sous_categories instead of categories
             $table->foreignId('sous_categorie_id')
                 ->nullable()
                 ->constrained('sous_categories')
                 ->onDelete('cascade');
 
+            // Simple column – no foreign key constraint
+            $table->unsignedBigInteger('vendeur_id')->nullable();
 
             $table->string('nom');
             $table->text('description')->nullable();

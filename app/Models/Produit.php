@@ -19,6 +19,7 @@ class Produit extends Model
         'etat',
         'sous_categorie_id',
         'photos',
+        'vendeur_id',
     ];
 
     protected $casts = [

@@ -26,6 +26,12 @@ class Vendeur extends Model
         return $this->hasMany(Annonce::class);
     }
 
+    // 👇 NEW: Relationship to products owned by this seller
+    public function produits()
+    {
+        return $this->hasMany(Produit::class);
+    }
+
     // Access user easily
     public function user()
     {

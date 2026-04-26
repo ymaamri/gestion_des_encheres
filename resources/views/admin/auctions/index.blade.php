@@ -85,11 +85,8 @@
                                 </td>
                                 <td class="align-middle text-center">
                                     <span class="text-secondary text-xs font-weight-bold">
-                                        @php
-                                            $dateFin = $annonce->getDateFinAttribute();
-                                        @endphp
-                                        @if($dateFin)
-                                            {{ \Carbon\Carbon::parse($dateFin)->format('d/m/Y H:i') }}
+                                        @if($annonce->date_fin)
+                                            {{ \Carbon\Carbon::parse($annonce->date_fin)->format('d/m/Y H:i') }}
                                         @else
                                             Non définie
                                         @endif

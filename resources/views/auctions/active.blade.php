@@ -20,44 +20,36 @@
                 <div class="card-body">
                     <form method="GET" action="{{ route('auctions.active') }}" id="filter-form">
                         <div class="row g-3">
-                            <div class="col-md-3">
-                                <div class="input-group input-group-outline">
-                                    <label class="form-label">Catégorie</label>
-                                    <select name="categorie" class="form-control" onchange="this.form.submit()">
-                                        <option value="">Toutes les catégories</option>
-                                        @foreach($categories ?? [] as $categorie)
-                                            <option value="{{ $categorie->id }}" {{ request('categorie') == $categorie->id ? 'selected' : '' }}>
-                                                {{ $categorie->nom }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label fw-bold">Catégorie</label>
+                                <select name="categorie" class="form-control" onchange="this.form.submit()">
+                                    <option value="">Toutes les catégories</option>
+                                    @foreach($categories ?? [] as $categorie)
+                                        <option value="{{ $categorie->id }}" {{ request('categorie') == $categorie->id ? 'selected' : '' }}>
+                                            {{ $categorie->nom }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             </div>
-                            <div class="col-md-2">
-                                <div class="input-group input-group-outline">
-                                    <label class="form-label">Prix min (MAD)</label>
-                                    <input type="number" name="prix_min" class="form-control" value="{{ request('prix_min') }}" step="100" placeholder="Min">
-                                </div>
+                            <div class="col-md-2 mb-3">
+                                <label class="form-label fw-bold">Prix min (MAD)</label>
+                                <input type="number" name="prix_min" class="form-control" value="{{ request('prix_min') }}" step="100" placeholder="Min">
                             </div>
-                            <div class="col-md-2">
-                                <div class="input-group input-group-outline">
-                                    <label class="form-label">Prix max (MAD)</label>
-                                    <input type="number" name="prix_max" class="form-control" value="{{ request('prix_max') }}" step="100" placeholder="Max">
-                                </div>
+                            <div class="col-md-2 mb-3">
+                                <label class="form-label fw-bold">Prix max (MAD)</label>
+                                <input type="number" name="prix_max" class="form-control" value="{{ request('prix_max') }}" step="100" placeholder="Max">
                             </div>
-                            <div class="col-md-3">
-                                <div class="input-group input-group-outline">
-                                    <label class="form-label">État du produit</label>
-                                    <select name="etat" class="form-control" onchange="this.form.submit()">
-                                        <option value="">Tous les états</option>
-                                        <option value="NEUF" {{ request('etat') == 'NEUF' ? 'selected' : '' }}>Neuf</option>
-                                        <option value="TRES_BON_ETAT" {{ request('etat') == 'TRES_BON_ETAT' ? 'selected' : '' }}>Très Bon État</option>
-                                        <option value="BON_ETAT" {{ request('etat') == 'BON_ETAT' ? 'selected' : '' }}>Bon État</option>
-                                        <option value="ACCEPTABLE" {{ request('etat') == 'ACCEPTABLE' ? 'selected' : '' }}>Acceptable</option>
-                                    </select>
-                                </div>
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label fw-bold">État du produit</label>
+                                <select name="etat" class="form-control" onchange="this.form.submit()">
+                                    <option value="">Tous les états</option>
+                                    <option value="NEUF" {{ request('etat') == 'NEUF' ? 'selected' : '' }}>Neuf</option>
+                                    <option value="TRES_BON_ETAT" {{ request('etat') == 'TRES_BON_ETAT' ? 'selected' : '' }}>Très Bon État</option>
+                                    <option value="BON_ETAT" {{ request('etat') == 'BON_ETAT' ? 'selected' : '' }}>Bon État</option>
+                                    <option value="ACCEPTABLE" {{ request('etat') == 'ACCEPTABLE' ? 'selected' : '' }}>Acceptable</option>
+                                </select>
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-md-2 mb-3 d-flex align-items-end">
                                 <button type="submit" class="btn bg-gradient-dark w-100">
                                     <i class="material-symbols-rounded">search</i> Appliquer
                                 </button>
@@ -315,6 +307,11 @@
         .badge {
             font-weight: 500;
             padding: 0.4rem 0.8rem;
+        }
+
+        .form-control:focus {
+            border-color: #e91e63;
+            box-shadow: 0 0 0 0.2rem rgba(233, 30, 99, 0.25);
         }
     </style>
 @endpush

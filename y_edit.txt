@@ -1,0 +1,15 @@
+- les pruit yedhero fel liste dynamique
+- ajout annonce lézem cat , soucat yedhero b select
+- edit produit page mate5demch
+- offer recu voir page matedherch
+- offer recu donee dynamique
+- mes vente mouch dynamique
+- mes vente voir mate5demch
+- page créeer les page fou9 b3adhom (nehi mel nav)
+- prix en dt
+- sous cat matedherch page créer
+- page auctions/active matedherch / filter error/ 
+- filter par status pour admin
+- page mes offres donéé mouch dynamique / voir error
+- page ganéee mouch dynamique / voir mate5demch
+- page acceuil produit mayedheroch (sous forme annonce) / filter par categroy / prix / recherche mate5demch

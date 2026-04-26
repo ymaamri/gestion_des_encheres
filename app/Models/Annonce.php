@@ -175,23 +175,4 @@ class Annonce extends Model
         $this->statut = 'CLOTUREE';
         $this->save();
     }
-
-    /**
- * Get the end date attribute.
- * Returns date_fin directly (already cast to Carbon/datetime).
- */
- public function getDateFinAttribute()
-    {
-        $lastEnchere = $this->encheres()->orderBy('date_fin', 'desc')->first();
-        return $lastEnchere ? $lastEnchere->date_fin : null;
-    }
-
-/**
- * Get the start date attribute.
- * Returns date_debut directly (already cast to Carbon/datetime).
- */
-public function getDateDebutAttribute()
-{
-    return $this->encheres->date_debut;
-}
 }

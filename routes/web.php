@@ -18,31 +18,35 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 // ============================================
-// HELPER FUNCTION - Define ONCE at the top
+// FIXED HELPER – always returns a valid image URL
 // ============================================
 function getProductImageUrl($photos)
 {
-    if (empty($photos) || !is_array($photos) || empty($photos[0])) {
-        // Return a random nice image from Picsum based on timestamp
-        $randomId = (time() % 100) + 1;
+    // If no photos or empty array, return a random placeholder
+    if (empty($photos) || !is_array($photos) || count($photos) === 0) {
+        $randomId = rand(1, 100);
         return 'https://picsum.photos/id/' . $randomId . '/400/300';
     }
 
-    $photo = $photos[0];
+    $firstPhoto = $photos[0];
+    if (empty($firstPhoto)) {
+        $randomId = rand(1, 100);
+        return 'https://picsum.photos/id/' . $randomId . '/400/300';
+    }
 
     // If it's a full URL (starts with http)
-    if (filter_var($photo, FILTER_VALIDATE_URL)) {
-        return $photo;
+    if (filter_var($firstPhoto, FILTER_VALIDATE_URL)) {
+        return $firstPhoto;
     }
 
-    // If it's a local storage path and file exists
-    if (Storage::disk('public')->exists($photo)) {
-        return Storage::url($photo);
+    // If it's a storage path, try to return the public URL
+    if (Storage::disk('public')->exists($firstPhoto)) {
+        return Storage::url($firstPhoto);
     }
 
-    // Return a nice placeholder based on the photo string hash
-    $hashId = abs(crc32($photo)) % 100 + 1;
-    return 'https://picsum.photos/id/' . $hashId . '/400/300';
+    // Fallback to placeholder
+    $randomId = rand(1, 100);
+    return 'https://picsum.photos/id/' . $randomId . '/400/300';
 }
 
 Route::get('/', function () {
@@ -178,10 +182,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 });
 
 // ============================================
-// API ROUTES FOR WELCOME PAGE (PUBLIC ACCESS)
+// API ROUTES FOR WELCOME PAGE (PUBLIC ACCESS) – FIXED
 // ============================================
 
-// Get statistics for hero section
 Route::get('/api/stats', function () {
     return response()->json([
         'total_users' => User::count(),
@@ -192,17 +195,9 @@ Route::get('/api/stats', function () {
     ]);
 });
 
-// Get all categories with product counts
 Route::get('/api/categories', function () {
-    $categories = Categorie::withCount([
-        'produits' => function ($query) {
-            $query->whereHas('annonces', function ($q) {
-                $q->where('statut', 'ACTIVE')
-                    ->where('date_fin', '>', now());
-            });
-        }
-    ])->get();
-
+    $categories = Categorie::all();
+    $result = [];
     $iconMap = [
         'Electronics' => 'fa-laptop',
         'Fashion' => 'fa-tshirt',
@@ -214,22 +209,31 @@ Route::get('/api/categories', function () {
         'Toys & Hobbies' => 'fa-gamepad',
     ];
 
-    return response()->json($categories->map(function ($category) use ($iconMap) {
-        return [
+    foreach ($categories as $category) {
+        $count = Annonce::where('statut', 'ACTIVE')
+            ->where('date_fin', '>', now())
+            ->whereHas('produit', function ($query) use ($category) {
+                $query->whereHas('sousCategorie', function ($sub) use ($category) {
+                    $sub->where('categorie_id', $category->id);
+                });
+            })->count();
+
+        $result[] = [
             'id' => $category->id,
             'nom' => $category->nom,
             'icon' => $iconMap[$category->nom] ?? 'fa-tag',
-            'produits_count' => $category->produits_count,
+            'produits_count' => $count,
         ];
-    }));
+    }
+    return response()->json($result);
 });
 
-// Get products with pagination and search
 Route::get('/api/products', function (Request $request) {
     $query = Annonce::with(['produit', 'encheres', 'vendeur.client'])
         ->where('statut', 'ACTIVE')
         ->where('date_fin', '>', now());
 
+    // Search
     if ($request->filled('search')) {
         $search = $request->search;
         $query->where(function ($q) use ($search) {
@@ -240,6 +244,14 @@ Route::get('/api/products', function (Request $request) {
                         ->orWhere('marque', 'like', '%' . $search . '%')
                         ->orWhere('modele', 'like', '%' . $search . '%');
                 });
+        });
+    }
+
+    // Filter by category
+    if ($request->filled('category_id')) {
+        $categoryId = $request->category_id;
+        $query->whereHas('produit.sousCategorie', function ($q) use ($categoryId) {
+            $q->where('categorie_id', $categoryId);
         });
     }
 
@@ -268,17 +280,14 @@ Route::get('/api/products', function (Request $request) {
     ]);
 });
 
-// Get products by category
+// Optional: keep the old by-category endpoint for compatibility
 Route::get('/api/products/by-category', function (Request $request) {
-    $request->validate([
-        'category_id' => 'required|exists:categories,id'
-    ]);
-
+    $request->validate(['category_id' => 'required|exists:categories,id']);
     $products = Annonce::with(['produit', 'encheres'])
         ->where('statut', 'ACTIVE')
         ->where('date_fin', '>', now())
-        ->whereHas('produit.categorie', function ($q) use ($request) {
-            $q->where('id', $request->category_id);
+        ->whereHas('produit.sousCategorie', function ($q) use ($request) {
+            $q->where('categorie_id', $request->category_id);
         })
         ->orderBy('created_at', 'desc')
         ->limit(12)
@@ -300,7 +309,11 @@ Route::get('/api/products/by-category', function (Request $request) {
     ]);
 });
 
-// Get featured products
+Route::get('/api/subcategories/{categoryId}', function ($categoryId) {
+    $subcategories = \App\Models\SousCategorie::where('categorie_id', $categoryId)->get();
+    return response()->json($subcategories);
+});
+
 Route::get('/api/featured-products', function () {
     $products = Annonce::with(['produit', 'encheres'])
         ->where('statut', 'ACTIVE')
@@ -323,7 +336,7 @@ Route::get('/api/featured-products', function () {
     ]);
 });
 
-// Seller product management + bids received + sales history
+// Seller routes
 Route::middleware(['auth', 'role:vendeur'])
     ->prefix('vendeur')
     ->name('seller.')
@@ -331,11 +344,7 @@ Route::middleware(['auth', 'role:vendeur'])
         Route::resource('products', \App\Http\Controllers\Seller\ProductController::class)->except(['show']);
         Route::get('products/{product}', [\App\Http\Controllers\Seller\ProductController::class, 'show'])->name('products.show');
         Route::get('subcategories/{category}', [\App\Http\Controllers\Seller\ProductController::class, 'getSubcategories'])->name('products.subcategories');
-
-        // Offres reçues sur les annonces du vendeur
         Route::get('/bids', [\App\Http\Controllers\Seller\BidController::class, 'index'])->name('bids.index');
-
-        // NEW: Historique des ventes (enchères clôturées)
         Route::get('/sales', [\App\Http\Controllers\Seller\SalesController::class, 'index'])->name('sales.index');
     });
 

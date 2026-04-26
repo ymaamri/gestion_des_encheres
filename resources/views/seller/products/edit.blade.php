@@ -79,11 +79,12 @@
                         <label>Photos actuelles</label>
                         <div class="row">
                             @foreach($product->photos ?? [] as $photo)
+                                @php $loopIndex = $loop->index; @endphp
                                 <div class="col-md-3 mb-2 position-relative">
                                     <img src="{{ Storage::url($photo) }}" class="img-fluid rounded" style="height: 100px; object-fit: cover;">
                                     <div class="form-check mt-1">
-                                        <input class="form-check-input" type="checkbox" name="delete_photos[]" value="{{ $photo }}" id="del_{{ loop->index }}">
-                                        <label class="form-check-label text-danger" for="del_{{ loop->index }}">
+                                        <input class="form-check-input" type="checkbox" name="delete_photos[]" value="{{ $photo }}" id="del_{{ $loopIndex }}">
+                                        <label class="form-check-label text-danger" for="del_{{ $loopIndex }}">
                                             Supprimer
                                         </label>
                                     </div>

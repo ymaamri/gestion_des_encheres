@@ -44,7 +44,6 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
 
-        /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
         }
@@ -58,7 +57,6 @@
             border-radius: 10px;
         }
 
-        /* Navbar Styles */
         .navbar {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
@@ -142,7 +140,6 @@
             transform: translateY(-2px);
         }
 
-        /* Hero Section */
         .hero {
             min-height: 100vh;
             display: flex;
@@ -204,7 +201,6 @@
             opacity: 0.9;
         }
 
-        /* Floating Animation */
         @keyframes float {
 
             0%,
@@ -221,7 +217,6 @@
             animation: float 3s ease-in-out infinite;
         }
 
-        /* Search Section */
         .search-section {
             background: white;
             border-radius: 20px;
@@ -267,7 +262,6 @@
             transform: scale(1.05);
         }
 
-        /* Category Cards */
         .category-card {
             background: white;
             border-radius: 20px;
@@ -310,7 +304,6 @@
             font-size: 0.9rem;
         }
 
-        /* Product Cards */
         .product-card {
             background: white;
             border-radius: 20px;
@@ -400,7 +393,6 @@
             display: inline-block;
         }
 
-        /* How It Works */
         .how-it-works {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -424,7 +416,6 @@
             margin: 0 auto 1rem;
         }
 
-        /* Testimonials */
         .testimonial-card {
             background: white;
             border-radius: 20px;
@@ -444,7 +435,6 @@
             margin-bottom: 1rem;
         }
 
-        /* Newsletter */
         .newsletter {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border-radius: 20px;
@@ -452,7 +442,6 @@
             text-align: center;
         }
 
-        /* Footer */
         .footer {
             background: #1a202c;
             color: #cbd5e0;
@@ -469,7 +458,6 @@
             color: #667eea;
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
             .hero h1 {
                 font-size: 2.5rem;
@@ -485,7 +473,6 @@
             }
         }
 
-        /* Loading Animation */
         .loading {
             display: inline-block;
             width: 20px;
@@ -500,28 +487,6 @@
             to {
                 transform: rotate(360deg);
             }
-        }
-
-        /* Smooth Reveal */
-        .smooth-reveal {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.6s ease;
-        }
-
-        .smooth-reveal.revealed {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* Image Fallback */
-        .no-image {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
-            color: #999;
-            font-size: 48px;
         }
     </style>
 </head>
@@ -776,6 +741,9 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
+        // Pass authentication status from Laravel to JavaScript
+        window.isAuthenticated = {{ auth()->check() ? 'true' : 'false' }};
+
         // Initialize AOS
         AOS.init({
             duration: 1000,
@@ -793,7 +761,7 @@
             }
         });
 
-        // Load statistics - Using direct URL instead of named route
+        // Load statistics
         function loadStats() {
             $.ajax({
                 url: '/api/stats',
@@ -859,18 +827,18 @@
         let isLoading = false;
         let hasMore = true;
         let currentSearch = '';
+        let currentCategoryId = null;
 
-        // Helper function to get image URL
+        // Helper function to get image URL with fallback
         function getImageUrl(product) {
             if (product.image && product.image !== 'https://via.placeholder.com/300x250?text=No+Image' && product.image !== 'https://via.placeholder.com/300x250?text=Product') {
                 return product.image;
             }
-            // Generate a nice placeholder with product name
             return `https://via.placeholder.com/300x250?text=${encodeURIComponent(product.titre.substring(0, 20))}`;
         }
 
-        // Load products
-        function loadProducts(page = 1, search = '') {
+        // Load products using the main API with search and category filter
+        function loadProducts(page = 1, search = '', categoryId = null) {
             if (isLoading) return;
             isLoading = true;
 
@@ -883,6 +851,9 @@
             let url = '/api/products?page=' + page;
             if (search) {
                 url += '&search=' + encodeURIComponent(search);
+            }
+            if (categoryId) {
+                url += '&category_id=' + categoryId;
             }
 
             $.ajax({
@@ -914,9 +885,9 @@
                                             <span class="bid-count"><i class="fas fa-gavel me-1"></i> ${product.bid_count || 0} enchères</span>
                                             <span class="time-left"><i class="fas fa-clock me-1"></i> ${timeLeft}</span>
                                         </div>
-                                        <a href="/annonces/${product.id}" class="btn-gradient w-100 mt-2" style="padding: 0.6rem;">
+                                        <button class="btn-gradient w-100 mt-2" style="padding: 0.6rem;" onclick="redirectToAuction(${product.id})">
                                             <i class="fas fa-gavel me-2"></i>Participer
-                                        </a>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -953,6 +924,15 @@
             });
         }
 
+        // Redirect to auction detail or login page based on authentication status
+        function redirectToAuction(auctionId) {
+            if (window.isAuthenticated) {
+                window.location.href = '/annonces/' + auctionId;
+            } else {
+                window.location.href = '/login';
+            }
+        }
+
         // Escape HTML to prevent XSS
         function escapeHtml(text) {
             if (!text) return '';
@@ -964,57 +944,25 @@
         // Load more products
         function loadMoreProducts() {
             if (!isLoading && hasMore) {
-                loadProducts(currentPage + 1, currentSearch);
+                loadProducts(currentPage + 1, currentSearch, currentCategoryId);
             }
         }
 
-        // Search products
+        // Search products (resets pagination and category)
         function searchProducts() {
             currentSearch = $('#searchInput').val();
+            currentCategoryId = null;
             currentPage = 1;
-            loadProducts(1, currentSearch);
+            loadProducts(1, currentSearch, null);
         }
 
-        // Filter by category
+        // Filter by category (resets search and pagination)
         function filterByCategory(categoryId) {
+            currentCategoryId = categoryId;
             currentSearch = '';
             $('#searchInput').val('');
-            $.ajax({
-                url: '/api/products/by-category?category_id=' + categoryId,
-                method: 'GET',
-                success: function (response) {
-                    let html = '';
-                    if (response.data && response.data.length > 0) {
-                        response.data.forEach(product => {
-                            const imageUrl = getImageUrl(product);
-                            html += `
-                            <div class="col-md-6 col-lg-4">
-                                <div class="product-card">
-                                    <div class="product-image">
-                                        <img src="${imageUrl}" alt="${escapeHtml(product.titre)}" onerror="this.src='https://via.placeholder.com/300x250?text=Image+non+disponible'">
-                                    </div>
-                                    <div class="product-body">
-                                        <h5 class="product-title">${escapeHtml(product.titre)}</h5>
-                                        <div class="mb-2">
-                                            <span class="product-price">${formatPrice(product.current_price)} MAD</span>
-                                        </div>
-                                        <a href="/annonces/${product.id}" class="btn-gradient w-100 mt-2">Participer</a>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                        });
-                    } else {
-                        html = '<div class="col-12 text-center py-5"><i class="fas fa-box-open fa-3x text-muted mb-3"></i><h5>Aucun produit dans cette catégorie</h5></div>';
-                    }
-                    $('#productsContainer').html(html);
-                    $('#loadMoreBtn').hide();
-                },
-                error: function (xhr) {
-                    console.log('Category filter error:', xhr);
-                    $('#productsContainer').html('<div class="col-12 text-center py-5"><p>Erreur de chargement</p></div>');
-                }
-            });
+            currentPage = 1;
+            loadProducts(1, '', categoryId);
         }
 
         // Load testimonials
@@ -1094,10 +1042,9 @@
         $(document).ready(function () {
             loadStats();
             loadCategories();
-            loadProducts();
+            loadProducts(); // loads first page with no filter
             loadTestimonials();
 
-            // Enter key search
             $('#searchInput').keypress(function (e) {
                 if (e.which === 13) searchProducts();
             });

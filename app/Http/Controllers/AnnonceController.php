@@ -48,11 +48,9 @@ class AnnonceController extends Controller
 
         $categories = Categorie::all();
 
-        // Get seller's existing products
+        // Get seller's own products (via the vendeur_id column)
         $vendeur = Auth::user()->client->vendeur;
-        $sellerProducts = Produit::whereHas('annonces', function ($query) use ($vendeur) {
-            $query->where('vendeur_id', $vendeur->id);
-        })->distinct()->get();
+        $sellerProducts = Produit::where('vendeur_id', $vendeur->id)->get();
 
         return view('annonces.create', compact('categories', 'sellerProducts'));
     }
@@ -85,10 +83,9 @@ class AnnonceController extends Controller
             ]);
             $product = Produit::findOrFail($request->existing_product_id);
 
-            // Verify this product belongs to the seller (through their annonces)
+            // Verify this product belongs to the seller (using vendeur_id)
             $vendeur = Auth::user()->client->vendeur;
-            $productBelongsToSeller = $product->annonces()->where('vendeur_id', $vendeur->id)->exists();
-            if (!$productBelongsToSeller) {
+            if ($product->vendeur_id != $vendeur->id) {
                 return back()->withErrors(['existing_product_id' => 'Ce produit ne vous appartient pas.'])->withInput();
             }
         } else // new product
@@ -105,6 +102,8 @@ class AnnonceController extends Controller
 
         try {
             DB::beginTransaction();
+
+            $vendeur = Auth::user()->client->vendeur;
 
             // Determine the product (existing or new)
             if ($request->product_source === 'existing') {
@@ -127,10 +126,9 @@ class AnnonceController extends Controller
                     'modele' => $request->produit_modele,
                     'etat' => $request->produit_etat,
                     'photos' => $photos,
+                    'vendeur_id' => $vendeur->id,
                 ]);
             }
-
-            $vendeur = Auth::user()->client->vendeur;
 
             $annonce = Annonce::create([
                 'vendeur_id' => $vendeur->id,
@@ -139,6 +137,7 @@ class AnnonceController extends Controller
                 'description' => $validated['description'],
                 'prix_depart' => $validated['prix_depart'],
                 'montant_mise' => $request->montant_mise ?? 1,
+                'date_debut' => null, // will be set by admin during validation
                 'date_fin' => $validated['date_fin'],
                 'statut' => 'EN_ATTENTE',
             ]);
@@ -157,8 +156,8 @@ class AnnonceController extends Controller
      * Display the specified annonce.
      */
     public function show(Annonce $annonce)
-{
-    $annonce->load(['produit', 'produit.sousCategorie.categorie', 'vendeur.client.user']);
+    {
+        $annonce->load(['produit', 'produit.sousCategorie.categorie', 'vendeur.client.user']);
 
         $currentHighestBid = $annonce->getMontantActuel();
 
@@ -278,11 +277,14 @@ class AnnonceController extends Controller
         try {
             $produit = $annonce->produit;
             $annonce->delete();
-            $produit->delete();
 
-            if ($produit->photos && is_array($produit->photos)) {
-                foreach ($produit->photos as $photo) {
-                    Storage::disk('public')->delete($photo);
+            // Only delete the product if it is not used in any other auction
+            if ($produit->annonces()->count() === 0) {
+                $produit->delete();
+                if ($produit->photos && is_array($produit->photos)) {
+                    foreach ($produit->photos as $photo) {
+                        Storage::disk('public')->delete($photo);
+                    }
                 }
             }
 

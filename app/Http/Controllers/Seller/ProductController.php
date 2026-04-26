@@ -6,7 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Produit;
 use App\Models\Categorie;
 use App\Models\SousCategorie;
-use App\Models\Annonce;
+use App\Models\Client;
+use App\Models\Vendeur;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -14,37 +15,19 @@ use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
-    /**
-     * Display a listing of the seller's products.
-     */
     public function index()
     {
         $vendeur = Auth::user()->client->vendeur;
-
-        // Get all product IDs from the seller's auctions
-        $productIds = Annonce::where('vendeur_id', $vendeur->id)
-            ->pluck('produit_id')
-            ->unique();
-
-        $products = Produit::whereIn('id', $productIds)
-            ->latest()
-            ->paginate(12);
-
+        $products = Produit::where('vendeur_id', $vendeur->id)->latest()->paginate(12);
         return view('seller.products.index', compact('products'));
     }
 
-    /**
-     * Show the form for creating a new product.
-     */
     public function create()
     {
         $categories = Categorie::with('sousCategories')->get();
         return view('seller.products.create', compact('categories'));
     }
 
-    /**
-     * Store a newly created product in storage.
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -67,7 +50,27 @@ class ProductController extends Controller
             }
         }
 
-        $produit = Produit::create([
+        // Ensure the user has a client and vendeur record
+        $user = Auth::user();
+        $client = Client::firstOrCreate(
+            ['user_id' => $user->id],
+            [
+                'nom' => $user->nom,
+                'prenom' => $user->prenom ?? '',
+                'statut' => 'ACTIF',
+                'solde' => 0,
+            ]
+        );
+        $vendeur = Vendeur::firstOrCreate(
+            ['client_id' => $client->id],
+            [
+                'note_moyenne' => 0,
+                'nombre_ventes' => 0,
+            ]
+        );
+
+        // Create product with the correct vendeur_id
+        Produit::create([
             'nom' => $validated['nom'],
             'description' => $validated['description'],
             'marque' => $validated['marque'],
@@ -75,51 +78,35 @@ class ProductController extends Controller
             'etat' => $validated['etat'],
             'sous_categorie_id' => $validated['sous_categorie_id'],
             'photos' => $photos,
+            'vendeur_id' => $vendeur->id,
         ]);
 
         return redirect()->route('seller.products.index')
             ->with('success', 'Produit créé avec succès !');
     }
 
-    /**
-     * Display the specified product.
-     */
     public function show(Produit $product)
     {
         $vendeur = Auth::user()->client->vendeur;
-        $belongsToSeller = $product->annonces()->where('vendeur_id', $vendeur->id)->exists();
-        if (!$belongsToSeller) {
+        if ($product->vendeur_id != $vendeur->id)
             abort(403);
-        }
-
         return view('seller.products.show', compact('product'));
     }
 
-    /**
-     * Show the form for editing the specified product.
-     */
     public function edit(Produit $product)
     {
         $vendeur = Auth::user()->client->vendeur;
-        $belongsToSeller = $product->annonces()->where('vendeur_id', $vendeur->id)->exists();
-        if (!$belongsToSeller) {
+        if ($product->vendeur_id != $vendeur->id)
             abort(403);
-        }
-
         $categories = Categorie::with('sousCategories')->get();
         return view('seller.products.edit', compact('product', 'categories'));
     }
 
-    /**
-     * Update the specified product in storage.
-     */
     public function update(Request $request, Produit $product)
     {
         $vendeur = Auth::user()->client->vendeur;
-        $belongsToSeller = $product->annonces()->where('vendeur_id', $vendeur->id)->exists();
-        if (!$belongsToSeller) {
+        if ($product->vendeur_id != $vendeur->id)
             abort(403);
-        }
 
         $validated = $request->validate([
             'nom' => 'required|string|max:255',
@@ -132,7 +119,6 @@ class ProductController extends Controller
             'delete_photos' => 'nullable|array',
         ]);
 
-        // Merge existing photos with new ones
         $photos = $product->photos ?? [];
         if ($request->hasFile('photos')) {
             foreach ($request->file('photos') as $photo) {
@@ -141,8 +127,6 @@ class ProductController extends Controller
                 $photos[] = $path;
             }
         }
-
-        // Remove selected photos
         if ($request->filled('delete_photos')) {
             foreach ($request->delete_photos as $photoToDelete) {
                 if (Storage::disk('public')->exists($photoToDelete)) {
@@ -166,18 +150,12 @@ class ProductController extends Controller
             ->with('success', 'Produit mis à jour avec succès !');
     }
 
-    /**
-     * Remove the specified product from storage.
-     */
     public function destroy(Produit $product)
     {
         $vendeur = Auth::user()->client->vendeur;
-        $belongsToSeller = $product->annonces()->where('vendeur_id', $vendeur->id)->exists();
-        if (!$belongsToSeller) {
+        if ($product->vendeur_id != $vendeur->id)
             abort(403);
-        }
 
-        // Delete associated photo files
         if ($product->photos) {
             foreach ($product->photos as $photo) {
                 if (Storage::disk('public')->exists($photo)) {
@@ -185,16 +163,12 @@ class ProductController extends Controller
                 }
             }
         }
-
         $product->delete();
 
         return redirect()->route('seller.products.index')
             ->with('success', 'Produit supprimé définitivement.');
     }
 
-    /**
-     * Get subcategories for a given category (AJAX).
-     */
     public function getSubcategories($categoryId)
     {
         $subcategories = SousCategorie::where('categorie_id', $categoryId)->get();

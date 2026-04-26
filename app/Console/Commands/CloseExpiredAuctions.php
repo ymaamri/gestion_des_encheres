@@ -13,19 +13,19 @@ class CloseExpiredAuctions extends Command
 
     public function handle()
     {
+        // Utilisation de whereRaw pour éviter les problèmes de timezone
         $expiredAuctions = Annonce::where('statut', 'ACTIVE')
-            ->where('date_fin', '<', now())
+            ->whereRaw('date_fin < NOW()')
             ->get();
 
         foreach ($expiredAuctions as $annonce) {
-            // 1. Clôturer l'annonce
-            $annonce->cloturer(); // méthode existante dans le modèle Annonce
+            // Clôturer l'annonce (utilise la méthode du modèle)
+            $annonce->cloturer();
 
-            // 2. Récupérer le gagnant
+            // Notifications
             $winningBid = $annonce->getHighestBid();
             if ($winningBid && $winningBid->client) {
                 $winnerClient = $winningBid->client;
-                // Notification au gagnant
                 Notification::create([
                     'client_id' => $winnerClient->id,
                     'message' => "Félicitations ! Vous avez remporté l'enchère « {$annonce->titre} » avec un montant de " . number_format($winningBid->montant, 2) . " MAD.",
@@ -34,7 +34,6 @@ class CloseExpiredAuctions extends Command
                     'lue' => false,
                 ]);
 
-                // Notification au vendeur
                 $sellerClient = $annonce->vendeur->client;
                 Notification::create([
                     'client_id' => $sellerClient->id,
@@ -44,7 +43,6 @@ class CloseExpiredAuctions extends Command
                     'lue' => false,
                 ]);
             } else {
-                // Aucune enchère => notification au vendeur
                 Notification::create([
                     'client_id' => $annonce->vendeur->client->id,
                     'message' => "Votre enchère « {$annonce->titre} » s'est terminée sans aucune offre.",
