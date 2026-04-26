@@ -24,7 +24,7 @@
 
     <!-- CSS Files -->
     <link id="pagestyle" href="{{ asset('assets/css/material-dashboard.css') }}" rel="stylesheet" />
-    
+
 
     <style>
         * {
@@ -372,7 +372,6 @@
                         <i class="material-symbols-rounded">dashboard</i>
                         <span>Dashboard</span>
                     </a>
-                    <!-- My Products Link -->
                     <a class="nav-link-custom {{ request()->routeIs('seller.products*') ? 'active' : '' }}"
                         href="{{ route('seller.products.index') }}">
                         <i class="material-symbols-rounded">inventory_2</i>
@@ -382,6 +381,16 @@
                         href="{{ route('annonces.index') }}">
                         <i class="material-symbols-rounded">list_alt</i>
                         <span>Mes Annonces</span>
+                    </a>
+                    <a class="nav-link-custom {{ request()->routeIs('seller.bids.index') ? 'active' : '' }}"
+                        href="{{ route('seller.bids.index') }}">
+                        <i class="material-symbols-rounded">gavel</i>
+                        <span>Offres reçues</span>
+                    </a>
+                    <a class="nav-link-custom {{ request()->routeIs('seller.sales*') ? 'active' : '' }}"
+                        href="{{ route('seller.sales.index') }}">
+                        <i class="material-symbols-rounded">sell</i>
+                        <span>Mes Ventes</span>
                     </a>
                     <a class="nav-link-custom {{ request()->routeIs('annonces.create') ? 'active' : '' }}"
                         href="{{ route('annonces.create') }}">
@@ -528,7 +537,6 @@
                     href="{{ route('dashboard') }}">
                     <i class="material-symbols-rounded">dashboard</i> Dashboard
                 </a>
-                <!-- My Products Link (Mobile) -->
                 <a class="mobile-nav-item {{ request()->routeIs('seller.products*') ? 'active' : '' }}"
                     href="{{ route('seller.products.index') }}">
                     <i class="material-symbols-rounded">inventory_2</i> Mes Produits
@@ -536,6 +544,14 @@
                 <a class="mobile-nav-item {{ request()->routeIs('annonces.index') ? 'active' : '' }}"
                     href="{{ route('annonces.index') }}">
                     <i class="material-symbols-rounded">list_alt</i> Mes Annonces
+                </a>
+                <a class="mobile-nav-item {{ request()->routeIs('seller.bids.index') ? 'active' : '' }}"
+                    href="{{ route('seller.bids.index') }}">
+                    <i class="material-symbols-rounded">gavel</i> Offres reçues
+                </a>
+                <a class="mobile-nav-item {{ request()->routeIs('seller.sales*') ? 'active' : '' }}"
+                    href="{{ route('seller.sales.index') }}">
+                    <i class="material-symbols-rounded">sell</i> Mes Ventes
                 </a>
                 <a class="mobile-nav-item {{ request()->routeIs('annonces.create') ? 'active' : '' }}"
                     href="{{ route('annonces.create') }}">

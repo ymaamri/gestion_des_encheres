@@ -1,0 +1,2 @@
+cd /opt/lampp/htdocs/gestion_des_encheres
+php artisan schedule:work

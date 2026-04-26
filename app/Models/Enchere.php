@@ -93,4 +93,5 @@ class Enchere extends Model
             'date_fin' => $lastEnchere->date_fin,
         ]);
     }
+
 }
