@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Marketplace d'Enchères - La meilleure plateforme pour enchérir et vendre</title>
+    <title>BidMaster - Marketplace d'Enchères</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -44,6 +44,11 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
 
+        a {
+            text-decoration: none !important;
+        }
+
+        /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
         }
@@ -57,6 +62,7 @@
             border-radius: 10px;
         }
 
+        /* Navbar Styles */
         .navbar {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
@@ -140,6 +146,7 @@
             transform: translateY(-2px);
         }
 
+        /* Hero Section */
         .hero {
             min-height: 100vh;
             display: flex;
@@ -201,6 +208,7 @@
             opacity: 0.9;
         }
 
+        /* Floating Animation */
         @keyframes float {
 
             0%,
@@ -217,93 +225,161 @@
             animation: float 3s ease-in-out infinite;
         }
 
-        .search-section {
+        .hero-gavel-icon {
+            font-size: 18rem;
+            color: #46dbb5;
+            filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.3));
+            display: inline-block;
+        }
+
+        /* Search Pill */
+        .search-pill {
             background: white;
-            border-radius: 20px;
-            padding: 2rem;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            margin-top: -50px;
+            border-radius: 50px;
+            padding: 10px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            margin: -40px auto 0;
+            max-width: 850px;
             position: relative;
             z-index: 10;
         }
 
-        .search-input-group {
-            position: relative;
+        .search-pill .search-input-wrapper {
+            display: flex;
+            align-items: center;
+            padding-left: 20px;
+            flex: 1;
         }
 
-        .search-input-group input {
-            height: 60px;
-            border: 2px solid #e2e8f0;
-            border-radius: 50px;
-            padding-left: 30px;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
+        .search-pill i {
+            color: #a0aec0;
+            font-size: 1.2rem;
+            margin-right: 5px;
         }
 
-        .search-input-group input:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .search-btn {
-            position: absolute;
-            right: 5px;
-            top: 5px;
-            height: 50px;
-            width: 50px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .search-pill input {
             border: none;
+            outline: none !important;
+            box-shadow: none !important;
+            width: 100%;
+            padding: 10px;
+            font-size: 1.05rem;
+            color: #4a5568;
+            background: transparent;
+        }
+
+        .search-pill .btn-search-pill {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
+            border: none;
+            border-radius: 40px;
+            padding: 12px 35px;
+            font-weight: 700;
+            font-size: 1.05rem;
             transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            white-space: nowrap;
         }
 
-        .search-btn:hover {
+        .search-pill .btn-search-pill:hover {
             transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+            color: white;
         }
 
+        @media (max-width: 768px) {
+            .search-pill {
+                flex-direction: column;
+                border-radius: 25px;
+                padding: 20px;
+            }
+
+            .search-pill .search-input-wrapper {
+                width: 100%;
+                padding-left: 5px;
+            }
+
+            .search-pill .btn-search-pill {
+                width: 100%;
+                margin-top: 15px;
+                border-radius: 15px;
+                padding: 15px;
+            }
+        }
+
+        /* Categories */
         .category-card {
             background: white;
-            border-radius: 20px;
-            padding: 2rem 1rem;
-            text-align: center;
+            border-radius: 16px;
+            padding: 1.25rem;
             transition: all 0.3s ease;
             cursor: pointer;
-            border: none;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border: 1px solid #edf2f7;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
         }
 
         .category-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.2);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.15);
+            border-color: rgba(102, 126, 234, 0.3);
+            background: #f8fafc;
         }
 
         .category-icon {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 1rem;
-            background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
-            border-radius: 50%;
+            width: 55px;
+            height: 55px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .category-card:hover .category-icon {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
 
         .category-icon i {
-            font-size: 2.5rem;
+            font-size: 1.8rem;
+            color: #667eea;
+            transition: all 0.3s ease;
+        }
+
+        .category-card:hover .category-icon i {
+            color: white;
+        }
+
+        .category-content {
+            flex-grow: 1;
+            text-align: left;
+        }
+
+        .category-card h6 {
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 0.2rem;
+            font-size: 1.05rem;
+            transition: color 0.3s ease;
+        }
+
+        .category-card:hover h6 {
             color: #667eea;
         }
 
-        .category-card h5 {
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-
         .category-card p {
-            color: #718096;
-            font-size: 0.9rem;
+            color: #a0aec0;
+            font-size: 0.85rem;
+            margin-bottom: 0;
         }
 
+        /* Product Cards */
         .product-card {
             background: white;
             border-radius: 20px;
@@ -393,9 +469,15 @@
             display: inline-block;
         }
 
+        /* How It Works */
         .how-it-works {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
+        }
+
+        .how-it-works h2,
+        .how-it-works h4 {
+            color: white !important;
         }
 
         .step-card {
@@ -416,8 +498,15 @@
             margin: 0 auto 1rem;
         }
 
+        /* Testimonials */
+        .testimonials-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
         .testimonial-card {
             background: white;
+            color: #4a5568;
             border-radius: 20px;
             padding: 2rem;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
@@ -435,13 +524,90 @@
             margin-bottom: 1rem;
         }
 
-        .newsletter {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 20px;
-            padding: 3rem;
-            text-align: center;
+        .swiper-pagination-bullet {
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 1;
         }
 
+        .swiper-pagination-bullet-active {
+            background: white;
+            transform: scale(1.2);
+        }
+
+        /* Newsletter */
+        .newsletter {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 30px;
+            padding: 4rem 3rem;
+            text-align: center;
+            color: white;
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .newsletter::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 60%);
+            transform: rotate(30deg);
+            pointer-events: none;
+        }
+
+        .newsletter h3 {
+            color: white !important;
+            font-size: 2.2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .newsletter p {
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-size: 1.1rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .newsletter .input-group {
+            background: white;
+            border-radius: 50px;
+            padding: 5px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 2;
+        }
+
+        .newsletter .form-control {
+            border: none;
+            padding-left: 1.5rem;
+            background: transparent;
+            font-size: 1rem;
+        }
+
+        .newsletter .form-control:focus {
+            box-shadow: none;
+        }
+
+        .newsletter .btn-subscribe {
+            border-radius: 50px !important;
+            padding: 12px 30px;
+            background: #2d3748;
+            color: white;
+            border: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .newsletter .btn-subscribe:hover {
+            background: #1a202c;
+            transform: translateY(-2px);
+        }
+
+        /* Footer */
         .footer {
             background: #1a202c;
             color: #cbd5e0;
@@ -458,6 +624,7 @@
             color: #667eea;
         }
 
+        /* Responsive */
         @media (max-width: 768px) {
             .hero h1 {
                 font-size: 2.5rem;
@@ -467,12 +634,9 @@
                 flex-direction: column;
                 gap: 1rem;
             }
-
-            .search-section {
-                margin-top: 20px;
-            }
         }
 
+        /* Loading Animation */
         .loading {
             display: inline-block;
             width: 20px;
@@ -487,6 +651,41 @@
             to {
                 transform: rotate(360deg);
             }
+        }
+
+        /* Scroll to Top Button */
+        #scrollTopBtn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+        }
+
+        #scrollTopBtn.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        #scrollTopBtn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
         }
     </style>
 </head>
@@ -524,7 +723,8 @@
                                 <i class="fas fa-tachometer-alt me-2"></i>Dashboard
                             </a>
                         @else
-                            <a href="{{ route('login') }}" class="btn-outline-gradient">Connexion</a>
+                            <a href="#" class="btn-outline-gradient" data-bs-toggle="modal"
+                                data-bs-target="#loginModal">Connexion</a>
                             @if (Route::has('register'))
                                 <a href="{{ route('register') }}" class="btn-gradient">Inscription</a>
                             @endif
@@ -560,8 +760,7 @@
                 </div>
                 <div class="col-lg-6 text-center" data-aos="fade-left">
                     <div class="floating">
-                        <img src="https://cdn-icons-png.flaticon.com/512/10012/10012129.png" alt="Auction"
-                            class="img-fluid" style="max-width: 80%;">
+                        <i class="fas fa-gavel hero-gavel-icon"></i>
                     </div>
                 </div>
             </div>
@@ -569,19 +768,15 @@
     </section>
 
     <!-- Search Section -->
-    <div class="container" style="margin-top: -50px;">
-        <div class="search-section" data-aos="fade-up">
-            <div class="row">
-                <div class="col-12">
-                    <div class="search-input-group">
-                        <input type="text" id="searchInput" class="form-control"
-                            placeholder="Rechercher un produit, une marque ou une catégorie...">
-                        <button class="search-btn" onclick="searchProducts()">
-                            <i class="fas fa-search"></i>
-                        </button>
-                    </div>
-                </div>
+    <div class="container">
+        <div class="search-pill" data-aos="fade-up" data-aos-delay="200">
+            <div class="search-input-wrapper">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Que recherchez-vous ?">
             </div>
+            <button class="btn btn-search-pill" onclick="searchProducts()">
+                Rechercher
+            </button>
         </div>
     </div>
 
@@ -589,8 +784,8 @@
     <section class="py-5" id="categories">
         <div class="container">
             <div class="text-center mb-5" data-aos="fade-up">
-                <h2 class="fw-bold mb-3">Catégories Populaires</h2>
-                <p class="text-muted">Explorez nos catégories et trouvez ce qui vous passionne</p>
+                <h2 class="fw-bold mb-3 text-white">Catégories Populaires</h2>
+                <p class="text-white" style="opacity: 0.9;">Explorez nos catégories et trouvez ce qui vous passionne</p>
             </div>
             <div class="row g-4" id="categoriesContainer">
                 <!-- Categories will be loaded here -->
@@ -609,9 +804,10 @@
                 <!-- Products will be loaded here -->
             </div>
             <div class="text-center mt-4">
-                <button class="btn-gradient" onclick="loadMoreProducts()" id="loadMoreBtn">
-                    <i class="fas fa-sync-alt me-2"></i>Charger plus
-                </button>
+                <a href="{{ route('auctions.active') }}" class="btn-gradient d-inline-block text-decoration-none"
+                    id="viewAllBtn">
+                    <i class="fas fa-list me-2"></i>Voir tous les produits
+                </a>
             </div>
         </div>
     </section>
@@ -650,11 +846,11 @@
     </section>
 
     <!-- Testimonials -->
-    <section class="py-5">
+    <section class="py-5 testimonials-section">
         <div class="container">
             <div class="text-center mb-5" data-aos="fade-up">
-                <h2 class="fw-bold mb-3">Ce que nos clients disent</h2>
-                <p class="text-muted">Des milliers de clients satisfaits</p>
+                <h2 class="fw-bold mb-3 text-white">Ce que nos clients disent</h2>
+                <p class="text-white" style="opacity: 0.9;">Des milliers de clients satisfaits</p>
             </div>
             <div class="swiper testimonial-swiper">
                 <div class="swiper-wrapper" id="testimonialsContainer">
@@ -666,18 +862,21 @@
     </section>
 
     <!-- Newsletter -->
-    <section class="py-5">
+    <section class="py-5 my-5">
         <div class="container">
             <div class="newsletter" data-aos="zoom-in">
+                <i class="material-symbols-rounded mb-3"
+                    style="font-size: 3rem; color: rgba(255,255,255,0.9); position: relative; z-index: 2;">mark_email_read</i>
                 <h3 class="fw-bold mb-3">Ne manquez aucune enchère !</h3>
-                <p class="mb-4">Recevez les meilleures offres directement dans votre boîte mail</p>
+                <p class="mb-4">Recevez les meilleures offres directement dans votre boîte mail.</p>
                 <div class="row justify-content-center">
-                    <div class="col-md-6">
+                    <div class="col-md-7 col-lg-6">
                         <div class="input-group">
-                            <input type="email" class="form-control" placeholder="Votre adresse email"
+                            <input type="email" class="form-control" placeholder="Entrez votre adresse email..."
                                 id="newsletterEmail">
-                            <button class="btn btn-light" onclick="subscribeNewsletter()">
-                                <i class="fas fa-paper-plane me-2"></i>S'abonner
+                            <button class="btn btn-subscribe" onclick="subscribeNewsletter()">
+                                <i class="material-symbols-rounded me-2"
+                                    style="font-size: 1.2rem; vertical-align: middle;">send</i> S'abonner
                             </button>
                         </div>
                     </div>
@@ -703,7 +902,7 @@
                 <div class="col-md-2 mb-4">
                     <h6 class="text-white mb-3">Liens rapides</h6>
                     <ul class="list-unstyled">
-                        <li><a href="#">Accueil</a></li>
+                        <li><a href="{{ url('/') }}">Accueil</a></li>
                         <li><a href="#products">Produits</a></li>
                         <li><a href="#categories">Catégories</a></li>
                         <li><a href="#">Contact</a></li>
@@ -734,6 +933,16 @@
         </div>
     </footer>
 
+    <!-- Login Modal -->
+    @guest
+        @include('components.login-modal')
+    @endguest
+
+    <!-- Scroll to Top Button -->
+    <button id="scrollTopBtn" title="Retour en haut">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
@@ -741,9 +950,6 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
-        // Pass authentication status from Laravel to JavaScript
-        window.isAuthenticated = {{ auth()->check() ? 'true' : 'false' }};
-
         // Initialize AOS
         AOS.init({
             duration: 1000,
@@ -803,13 +1009,15 @@
                     let html = '';
                     data.forEach(category => {
                         html += `
-                        <div class="col-md-3 col-6">
+                        <div class="col-lg-3 col-md-4 col-sm-6" data-aos="fade-up">
                             <div class="category-card" onclick="filterByCategory(${category.id})">
                                 <div class="category-icon">
-                                    <i class="fas ${category.icon || 'fa-tag'}"></i>
+                                    <i class="fas ${(category.icon || 'fa-tag').toLowerCase()}"></i>
                                 </div>
-                                <h5>${escapeHtml(category.nom)}</h5>
-                                <p>${category.produits_count || 0} produits</p>
+                                <div class="category-content">
+                                    <h6>${escapeHtml(category.nom)}</h6>
+                                    <p>${category.produits_count || 0} produits</p>
+                                </div>
                             </div>
                         </div>
                     `;
@@ -827,9 +1035,8 @@
         let isLoading = false;
         let hasMore = true;
         let currentSearch = '';
-        let currentCategoryId = null;
 
-        // Helper function to get image URL with fallback
+        // Helper function to get image URL
         function getImageUrl(product) {
             if (product.image && product.image !== 'https://via.placeholder.com/300x250?text=No+Image' && product.image !== 'https://via.placeholder.com/300x250?text=Product') {
                 return product.image;
@@ -837,8 +1044,8 @@
             return `https://via.placeholder.com/300x250?text=${encodeURIComponent(product.titre.substring(0, 20))}`;
         }
 
-        // Load products using the main API with search and category filter
-        function loadProducts(page = 1, search = '', categoryId = null) {
+        // Load products using your existing API
+        function loadProducts(page = 1, search = '') {
             if (isLoading) return;
             isLoading = true;
 
@@ -851,9 +1058,6 @@
             let url = '/api/products?page=' + page;
             if (search) {
                 url += '&search=' + encodeURIComponent(search);
-            }
-            if (categoryId) {
-                url += '&category_id=' + categoryId;
             }
 
             $.ajax({
@@ -885,16 +1089,16 @@
                                             <span class="bid-count"><i class="fas fa-gavel me-1"></i> ${product.bid_count || 0} enchères</span>
                                             <span class="time-left"><i class="fas fa-clock me-1"></i> ${timeLeft}</span>
                                         </div>
-                                        <button class="btn-gradient w-100 mt-2" style="padding: 0.6rem;" onclick="redirectToAuction(${product.id})">
+                                        <a href="/annonces/${product.id}" class="btn-gradient w-100 mt-2" style="padding: 0.6rem;">
                                             <i class="fas fa-gavel me-2"></i>Participer
-                                        </button>
+                                        </a>
                                     </div>
                                 </div>
                             </div>
                         `;
                         });
                     } else {
-                        html = '<div class="col-12 text-center py-5"><i class="fas fa-box-open fa-3x text-muted mb-3"></i><h5>Aucun produit trouvé</h5><p class="text-muted">Essayez une autre recherche ou consultez nos catégories.</p></div>';
+                        html = '<div class="col-12 text-center py-5"><i class="fas fa-box-open fa-3x text-muted mb-3"></i><h5>Aucun produit trouvé</h5></div>';
                     }
 
                     if (page === 1) {
@@ -924,48 +1128,64 @@
             });
         }
 
-        // Redirect to auction detail or login page based on authentication status
-        function redirectToAuction(auctionId) {
-            if (window.isAuthenticated) {
-                window.location.href = '/annonces/' + auctionId;
-            } else {
-                window.location.href = '/login';
-            }
-        }
-
         // Escape HTML to prevent XSS
         function escapeHtml(text) {
             if (!text) return '';
             const div = document.createElement('div');
-            div.textContent = text;
+            div.innerText = text;
             return div.innerHTML;
         }
 
-        // Load more products
-        function loadMoreProducts() {
-            if (!isLoading && hasMore) {
-                loadProducts(currentPage + 1, currentSearch, currentCategoryId);
-            }
-        }
-
-        // Search products (resets pagination and category)
+        // Search products
         function searchProducts() {
             currentSearch = $('#searchInput').val();
-            currentCategoryId = null;
             currentPage = 1;
-            loadProducts(1, currentSearch, null);
+            loadProducts(1, currentSearch);
         }
 
-        // Filter by category (resets search and pagination)
+        // Filter by category (using your existing endpoint)
         function filterByCategory(categoryId) {
-            currentCategoryId = categoryId;
             currentSearch = '';
             $('#searchInput').val('');
-            currentPage = 1;
-            loadProducts(1, '', categoryId);
+            $.ajax({
+                url: '/api/products/by-category?category_id=' + categoryId,
+                method: 'GET',
+                success: function (response) {
+                    let html = '';
+                    if (response.data && response.data.length > 0) {
+                        response.data.forEach(product => {
+                            const imageUrl = getImageUrl(product);
+                            html += `
+                            <div class="col-md-6 col-lg-4">
+                                <div class="product-card">
+                                    <div class="product-image">
+                                        <img src="${imageUrl}" alt="${escapeHtml(product.titre)}" onerror="this.src='https://via.placeholder.com/300x250?text=Image+non+disponible'">
+                                    </div>
+                                    <div class="product-body">
+                                        <h5 class="product-title">${escapeHtml(product.titre)}</h5>
+                                        <div class="mb-2">
+                                            <span class="product-price">${formatPrice(product.current_price)} MAD</span>
+                                        </div>
+                                        <a href="/annonces/${product.id}" class="btn-gradient w-100 mt-2">Participer</a>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        });
+                    } else {
+                        html = '<div class="col-12 text-center py-5"><h5>Aucun produit trouvé</h5></div>';
+                    }
+                    $('#productsContainer').html(html);
+                    $('#viewAllBtn').hide(); // Hide "Voir tous les produits" when filtering
+                },
+                error: function (xhr) {
+                    console.log('Category filter error:', xhr);
+                    $('#productsContainer').html('<div class="col-12 text-center py-5"><p>Erreur de chargement</p></div>');
+                }
+            });
         }
 
-        // Load testimonials
+        // Load testimonials (static for now)
         function loadTestimonials() {
             const testimonials = [
                 { name: "Marie Laurent", rating: 5, text: "Excellente plateforme ! J'ai trouvé des articles rares à des prix imbattables.", avatar: "https://randomuser.me/api/portraits/women/1.jpg" },
@@ -999,7 +1219,8 @@
                 autoplay: { delay: 5000 },
                 pagination: { el: '.swiper-pagination', clickable: true },
                 slidesPerView: 1,
-                breakpoints: { 768: { slidesPerView: 2 }, 1024: { slidesPerView: 3 } }
+                spaceBetween: 30,
+                breakpoints: { 768: { slidesPerView: 2, spaceBetween: 30 }, 1024: { slidesPerView: 3, spaceBetween: 40 } }
             });
         }
 
@@ -1027,7 +1248,7 @@
             }
         }
 
-        // Smooth scroll
+        // Smooth scroll for anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -1038,13 +1259,30 @@
             });
         });
 
+        // Scroll to Top Logic
+        $(window).scroll(function () {
+            if ($(this).scrollTop() > 300) {
+                $('#scrollTopBtn').addClass('show');
+            } else {
+                $('#scrollTopBtn').removeClass('show');
+            }
+        });
+
+        $('#scrollTopBtn').click(function () {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
         // Initialize
         $(document).ready(function () {
             loadStats();
             loadCategories();
-            loadProducts(); // loads first page with no filter
+            loadProducts();
             loadTestimonials();
 
+            // Enter key search
             $('#searchInput').keypress(function (e) {
                 if (e.which === 13) searchProducts();
             });

@@ -31,72 +31,62 @@
             font-family: 'Inter', sans-serif;
         }
 
-        /* Top Navbar Styles */
-        .top-navbar {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 0;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1030;
+        /* Navbar Styles from Welcome Page */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
             box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            padding: 1rem 0;
+            transition: all 0.3s ease;
         }
 
-        .navbar-container {
-            padding: 0.75rem 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
+        .navbar.scrolled {
+            padding: 0.5rem 0;
+            background: white;
         }
 
         .navbar-brand {
-            font-size: 1.5rem;
-            font-weight: 800;
-            color: white !important;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .navbar-brand i {
             font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        .navbar-menu {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-
-        .nav-item-custom {
+        .nav-link {
+            font-weight: 500;
+            color: #4a5568 !important;
+            transition: all 0.3s ease;
             position: relative;
         }
 
-        .nav-link-custom {
-            color: rgba(255, 255, 255, 0.9) !important;
-            padding: 0.6rem 1.2rem !important;
-            border-radius: 50px !important;
-            transition: all 0.3s ease;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            text-decoration: none;
+        .nav-link:hover {
+            color: #667eea !important;
         }
 
-        .nav-link-custom:hover {
-            background: rgba(255, 255, 255, 0.15);
-            color: white !important;
-            transform: translateY(-2px);
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 2px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
         }
 
-        .nav-link-custom.active {
-            background: rgba(255, 255, 255, 0.25);
-            color: white !important;
+        .nav-link:hover::after {
+            width: 80%;
+        }
+
+        .nav-link.active {
+            color: #667eea !important;
+        }
+
+        .nav-link.active::after {
+            width: 80%;
         }
 
         /* Dropdown Menu */
@@ -117,7 +107,12 @@
             padding: 0.5rem;
         }
 
-        .nav-item-custom:hover .dropdown-menu-custom {
+        .dropdown-toggle-custom {
+            cursor: pointer;
+        }
+
+        .dropdown-toggle-custom:hover .dropdown-menu-custom,
+        .dropdown-menu-custom.show {
             opacity: 1;
             visibility: visible;
             transform: translateY(0);
@@ -132,6 +127,7 @@
             align-items: center;
             gap: 0.75rem;
             text-decoration: none;
+            white-space: normal;
         }
 
         .dropdown-item-custom:hover {
@@ -144,6 +140,20 @@
             color: #667eea;
         }
 
+        #notificationsDropdown {
+            width: 320px;
+            max-width: 90vw;
+            padding: 0;
+            overflow: hidden;
+            right: 0;
+            margin-right: 15px;
+        }
+
+        #userMenuDropdown {
+            right: 0 !important;
+            margin-right: 15px;
+        }
+
         /* User Menu */
         .user-menu {
             display: flex;
@@ -154,36 +164,24 @@
         .user-avatar {
             width: 40px;
             height: 40px;
-            background: rgba(255, 255, 255, 0.2);
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: all 0.3s ease;
+            cursor: pointer;
         }
 
         .user-avatar:hover {
-            background: rgba(255, 255, 255, 0.3);
+            background: #e9ecef;
             transform: scale(1.05);
         }
 
         .user-avatar i {
             font-size: 1.5rem;
-            color: white;
-        }
-
-        .user-info {
-            color: white;
-        }
-
-        .user-name {
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-
-        .user-role {
-            font-size: 0.7rem;
-            opacity: 0.8;
+            color: #4a5568;
         }
 
         /* Notification Badge */
@@ -212,94 +210,6 @@
             background: #f8f9fa;
         }
 
-        /* Mobile Menu Button */
-        .mobile-menu-btn {
-            display: none;
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-
-        /* Mobile Sidebar */
-        .mobile-sidebar {
-            position: fixed;
-            top: 0;
-            left: -280px;
-            width: 280px;
-            height: 100%;
-            background: white;
-            z-index: 1050;
-            transition: left 0.3s ease;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-            overflow-y: auto;
-        }
-
-        .mobile-sidebar.open {
-            left: 0;
-        }
-
-        .mobile-sidebar-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 1.5rem;
-            color: white;
-        }
-
-        .mobile-sidebar-content {
-            padding: 1rem;
-        }
-
-        .mobile-nav-item {
-            display: block;
-            padding: 0.75rem 1rem;
-            color: #4a5568;
-            text-decoration: none;
-            border-radius: 12px;
-            margin-bottom: 0.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .mobile-nav-item:hover,
-        .mobile-nav-item.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .mobile-nav-item i {
-            margin-right: 0.75rem;
-        }
-
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1040;
-            display: none;
-        }
-
-        .overlay.show {
-            display: block;
-        }
-
-        /* Responsive */
-        @media (max-width: 992px) {
-            .navbar-menu {
-                display: none;
-            }
-
-            .mobile-menu-btn {
-                display: block;
-            }
-
-            .user-info {
-                display: none;
-            }
-        }
-
         /* Breadcrumb */
         .breadcrumb-custom {
             background: white;
@@ -320,299 +230,237 @@
         .card-custom:hover {
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
+
+        /* Buttons matching home page */
+        .btn-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+            color: white;
+        }
+
+        .btn-outline-gradient {
+            background: transparent;
+            border: 2px solid #667eea;
+            color: #667eea;
+            padding: 0.7rem 1.8rem;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-gradient:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+            transform: translateY(-2px);
+        }
+
+        /* Custom Theme Gradient Background */
+        .bg-gradient-theme {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
     </style>
 
     @stack('styles')
 </head>
 
 <body>
-    <!-- Top Navigation Bar -->
-    <nav class="top-navbar">
-        <div class="navbar-container">
-            <!-- Mobile Menu Button -->
-            <button class="mobile-menu-btn" onclick="toggleMobileSidebar()">
-                <i class="material-symbols-rounded">menu</i>
-            </button>
-
-            <!-- Brand -->
-            <a class="navbar-brand" href="{{ route('dashboard') }}">
-                <i class="material-symbols-rounded">gavel</i>
-                <span>BidMaster</span>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="{{ url('/') }}">
+                <i class="fas fa-gavel text-primary"></i>
+                BidMaster
             </a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto">
+                    @auth
+                        @role('admin')
+                        <li class="nav-item">
+                            <a class="nav-link px-3 {{ request()->routeIs('dashboard') ? 'active' : '' }}"
+                                href="{{ route('dashboard') }}">Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link px-3 {{ request()->routeIs('admin.users*') ? 'active' : '' }}"
+                                href="{{ route('admin.users.index') }}">Utilisateurs</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link px-3 {{ request()->routeIs('admin.categories*') ? 'active' : '' }}"
+                                href="{{ route('admin.categories.index') }}">Catégories</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link px-3 {{ request()->routeIs('admin.auctions*') ? 'active' : '' }}"
+                                href="{{ route('admin.auctions.index') }}">Enchères</a>
+                        </li>
+                        @endrole
 
-            <!-- Desktop Navigation Menu -->
-            <div class="navbar-menu">
-                @auth
-                    @role('admin')
-                    <a class="nav-link-custom {{ request()->routeIs('dashboard') ? 'active' : '' }}"
-                        href="{{ route('dashboard') }}">
-                        <i class="material-symbols-rounded">dashboard</i>
-                        <span>Dashboard</span>
-                    </a>
-                    <a class="nav-link-custom {{ request()->routeIs('admin.users*') ? 'active' : '' }}"
-                        href="{{ route('admin.users.index') }}">
-                        <i class="material-symbols-rounded">people</i>
-                        <span>Utilisateurs</span>
-                    </a>
-                    <a class="nav-link-custom {{ request()->routeIs('admin.categories*') ? 'active' : '' }}"
-                        href="{{ route('admin.categories.index') }}">
-                        <i class="material-symbols-rounded">category</i>
-                        <span>Catégories</span>
-                    </a>
-                    <a class="nav-link-custom {{ request()->routeIs('admin.auctions*') ? 'active' : '' }}"
-                        href="{{ route('admin.auctions.index') }}">
-                        <i class="material-symbols-rounded">gavel</i>
-                        <span>Enchères</span>
-                    </a>
-                    @endrole
+                        @role('vendeur')
+                        <li class="nav-item">
+                            <a class="nav-link px-3 {{ request()->routeIs('dashboard') ? 'active' : '' }}"
+                                href="{{ route('dashboard') }}">Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link px-3 {{ request()->routeIs('seller.products*') ? 'active' : '' }}"
+                                href="{{ route('seller.products.index') }}">Mes Produits</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link px-3 {{ request()->routeIs('annonces.index') ? 'active' : '' }}"
+                                href="{{ route('annonces.index') }}">Mes Annonces</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link px-3 {{ request()->routeIs('seller.bids.index') ? 'active' : '' }}"
+                                href="{{ route('seller.bids.index') }}">Offres reçues</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link px-3 {{ request()->routeIs('seller.sales*') ? 'active' : '' }}"
+                                href="{{ route('seller.sales.index') }}">Mes Ventes</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link px-3 {{ request()->routeIs('annonces.create') ? 'active' : '' }}"
+                                href="{{ route('annonces.create') }}">Créer</a>
+                        </li>
+                        @endrole
 
-                    @role('vendeur')
-                    <a class="nav-link-custom {{ request()->routeIs('dashboard') ? 'active' : '' }}"
-                        href="{{ route('dashboard') }}">
-                        <i class="material-symbols-rounded">dashboard</i>
-                        <span>Dashboard</span>
-                    </a>
-                    <a class="nav-link-custom {{ request()->routeIs('seller.products*') ? 'active' : '' }}"
-                        href="{{ route('seller.products.index') }}">
-                        <i class="material-symbols-rounded">inventory_2</i>
-                        <span>Mes Produits</span>
-                    </a>
-                    <a class="nav-link-custom {{ request()->routeIs('annonces.index') ? 'active' : '' }}"
-                        href="{{ route('annonces.index') }}">
-                        <i class="material-symbols-rounded">list_alt</i>
-                        <span>Mes Annonces</span>
-                    </a>
-                    <a class="nav-link-custom {{ request()->routeIs('seller.bids.index') ? 'active' : '' }}"
-                        href="{{ route('seller.bids.index') }}">
-                        <i class="material-symbols-rounded">gavel</i>
-                        <span>Offres reçues</span>
-                    </a>
-                    <a class="nav-link-custom {{ request()->routeIs('seller.sales*') ? 'active' : '' }}"
-                        href="{{ route('seller.sales.index') }}">
-                        <i class="material-symbols-rounded">sell</i>
-                        <span>Mes Ventes</span>
-                    </a>
-                    <a class="nav-link-custom {{ request()->routeIs('annonces.create') ? 'active' : '' }}"
-                        href="{{ route('annonces.create') }}">
-                        <i class="material-symbols-rounded">add_circle</i>
-                        <span>Créer</span>
-                    </a>
-                    @endrole
+                        @role('client')
+                        <li class="nav-item">
+                            <a class="nav-link px-3 {{ request()->routeIs('dashboard') ? 'active' : '' }}"
+                                href="{{ route('dashboard') }}">Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link px-3 {{ request()->routeIs('auctions.active') ? 'active' : '' }}"
+                                href="{{ route('auctions.active') }}">Enchères Actives</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link px-3 {{ request()->routeIs('my.bids') ? 'active' : '' }}"
+                                href="{{ route('my.bids') }}">Mes Offres</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link px-3 {{ request()->routeIs('my.won') ? 'active' : '' }}"
+                                href="{{ route('my.won') }}">Gagnées</a>
+                        </li>
+                        @endrole
+                    @else
+                        <li class="nav-item">
+                            <a class="nav-link px-3" href="{{ url('/') }}#home">Accueil</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link px-3" href="{{ url('/') }}#products">Produits</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link px-3" href="{{ url('/') }}#categories">Catégories</a>
+                        </li>
+                    @endauth
+                </ul>
 
-                    @role('client')
-                    <a class="nav-link-custom {{ request()->routeIs('dashboard') ? 'active' : '' }}"
-                        href="{{ route('dashboard') }}">
-                        <i class="material-symbols-rounded">dashboard</i>
-                        <span>Dashboard</span>
-                    </a>
-                    <a class="nav-link-custom {{ request()->routeIs('auctions.active') ? 'active' : '' }}"
-                        href="{{ route('auctions.active') }}">
-                        <i class="material-symbols-rounded">gavel</i>
-                        <span>Enchères</span>
-                    </a>
-                    <a class="nav-link-custom {{ request()->routeIs('my.bids') ? 'active' : '' }}"
-                        href="{{ route('my.bids') }}">
-                        <i class="material-symbols-rounded">history</i>
-                        <span>Mes Offres</span>
-                    </a>
-                    <a class="nav-link-custom {{ request()->routeIs('my.won') ? 'active' : '' }}"
-                        href="{{ route('my.won') }}">
-                        <i class="material-symbols-rounded">emoji_events</i>
-                        <span>Gagnées</span>
-                    </a>
-                    @endrole
-                @endauth
-            </div>
-
-            <!-- User Menu -->
-            <div class="user-menu">
-                @auth
-                    <!-- Notifications -->
-                    <div class="nav-item-custom">
-                        <div class="notification-badge" onclick="toggleNotifications()">
-                            <div class="user-avatar">
-                                <i class="material-symbols-rounded">notifications</i>
-                            </div>
-                            @php
-                                $unreadCount = Auth::check() && Auth::user()->client ? Auth::user()->client->notifications()->where('lue', false)->count() : 0;
-                            @endphp
-                            @if($unreadCount > 0)
-                                <span class="badge-count">{{ $unreadCount }}</span>
-                            @endif
-                        </div>
-                        <div class="dropdown-menu-custom" id="notificationsDropdown">
-                            <div style="padding: 0.75rem 1rem; border-bottom: 1px solid #e2e8f0;">
-                                <strong>Notifications</strong>
+                <div class="user-menu mt-3 mt-lg-0">
+                    @auth
+                        <!-- Notifications -->
+                        <div class="nav-item dropdown-toggle-custom" onclick="toggleNotifications()">
+                            <div class="notification-badge">
+                                <div class="user-avatar">
+                                    <i class="material-symbols-rounded">notifications</i>
+                                </div>
+                                @php
+                                    $unreadCount = Auth::check() && Auth::user()->client ? Auth::user()->client->notifications()->where('lue', false)->count() : 0;
+                                @endphp
                                 @if($unreadCount > 0)
-                                    <form method="POST" action="{{ route('notifications.mark-all-read') }}"
-                                        class="d-inline float-end">
-                                        @csrf
-                                        <button type="submit" class="btn btn-link btn-sm p-0">Tout marquer lu</button>
-                                    </form>
+                                    <span class="badge-count">{{ $unreadCount }}</span>
                                 @endif
                             </div>
-                            <div style="max-height: 300px; overflow-y: auto;">
-                                @forelse(Auth::check() && Auth::user()->client ? Auth::user()->client->notifications()->latest()->take(5)->get() : [] as $notification)
-                                    <a class="dropdown-item-custom" href="{{ route('notifications.mark', $notification) }}"
-                                        style="border-bottom: 1px solid #f0f0f0;">
-                                        <div>
-                                            <div style="font-size: 0.85rem;">{{ $notification->message }}</div>
-                                            <small
-                                                style="font-size: 0.7rem; color: #a0aec0;">{{ $notification->created_at->diffForHumans() }}</small>
-                                        </div>
-                                    </a>
-                                @empty
-                                    <div style="padding: 1rem; text-align: center; color: #a0aec0;">
-                                        Aucune notification
-                                    </div>
-                                @endforelse
-                            </div>
-                            @if(Auth::check() && Auth::user()->client && Auth::user()->client->notifications()->count() > 0)
-                                <div style="padding: 0.75rem; text-align: center; border-top: 1px solid #e2e8f0;">
-                                    <a href="{{ route('notifications.index') }}"
-                                        style="color: #667eea; text-decoration: none;">Voir toutes les notifications</a>
+                            <div class="dropdown-menu-custom" id="notificationsDropdown">
+                                <div style="padding: 1rem; border-bottom: 1px solid #e2e8f0; background: #f8f9fa;">
+                                    <strong style="color: #4a5568;">Notifications</strong>
+                                    @if($unreadCount > 0)
+                                        <form method="POST" action="{{ route('notifications.mark-all-read') }}"
+                                            class="d-inline float-end">
+                                            @csrf
+                                            <button type="submit" class="btn btn-link btn-sm p-0 text-decoration-none"
+                                                style="color: #667eea;">Tout lu</button>
+                                        </form>
+                                    @endif
                                 </div>
-                            @endif
-                        </div>
-                    </div>
-
-                    <!-- User Dropdown -->
-                    <div class="nav-item-custom">
-                        <div class="user-avatar">
-                            <i class="material-symbols-rounded">account_circle</i>
-                        </div>
-                        <div class="dropdown-menu-custom" style="right: 0; left: auto;">
-                            <div style="padding: 1rem; border-bottom: 1px solid #e2e8f0;">
-                                <div><strong>{{ Auth::user()->nom }} {{ Auth::user()->prenom }}</strong></div>
-                                <small style="color: #a0aec0;">{{ Auth::user()->email }}</small>
+                                <div style="max-height: 320px; overflow-y: auto;">
+                                    @forelse(Auth::check() && Auth::user()->client ? Auth::user()->client->notifications()->latest()->take(5)->get() : [] as $notification)
+                                        <a class="dropdown-item-custom" href="{{ route('notifications.mark', $notification) }}"
+                                            style="border-bottom: 1px solid #f0f0f0; border-radius: 0; transform: none; padding: 1rem;">
+                                            <div style="width: 100%;">
+                                                <div
+                                                    style="font-size: 0.85rem; color: #4a5568; line-height: 1.4; margin-bottom: 0.3rem;">
+                                                    {{ $notification->message }}</div>
+                                                <small style="font-size: 0.7rem; color: #a0aec0;">
+                                                    <i
+                                                        class="far fa-clock me-1"></i>{{ $notification->created_at->diffForHumans() }}
+                                                </small>
+                                            </div>
+                                        </a>
+                                    @empty
+                                        <div style="padding: 2rem 1rem; text-align: center; color: #a0aec0;">
+                                            <i class="far fa-bell-slash mb-2" style="font-size: 1.5rem;"></i><br>
+                                            Aucune notification
+                                        </div>
+                                    @endforelse
+                                </div>
+                                @if(Auth::check() && Auth::user()->client && Auth::user()->client->notifications()->count() > 0)
+                                    <div
+                                        style="padding: 0.75rem; text-align: center; border-top: 1px solid #e2e8f0; background: #f8f9fa;">
+                                        <a href="{{ route('notifications.index') }}"
+                                            style="color: #667eea; text-decoration: none; font-size: 0.85rem; font-weight: 600;">Voir
+                                            toutes les notifications</a>
+                                    </div>
+                                @endif
                             </div>
-                            <a class="dropdown-item-custom" href="{{ route('profile.edit') }}">
-                                <i class="material-symbols-rounded">person</i>
-                                <span>Mon Profil</span>
-                            </a>
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <button type="submit" class="dropdown-item-custom"
-                                    style="width: 100%; background: none; border: none; cursor: pointer;">
-                                    <i class="material-symbols-rounded">logout</i>
-                                    <span>Déconnexion</span>
-                                </button>
-                            </form>
                         </div>
-                    </div>
-                @endauth
+
+                        <!-- User Dropdown -->
+                        <div class="nav-item dropdown-toggle-custom ms-3" onclick="toggleUserMenu()">
+                            <div class="user-avatar">
+                                <i class="material-symbols-rounded">account_circle</i>
+                            </div>
+                            <div class="dropdown-menu-custom" id="userMenuDropdown" style="right: 0; left: auto;">
+                                <div style="padding: 1rem; border-bottom: 1px solid #e2e8f0;">
+                                    <div><strong>{{ Auth::user()->nom }} {{ Auth::user()->prenom }}</strong></div>
+                                    <small style="color: #a0aec0;">{{ Auth::user()->email }}</small>
+                                </div>
+                                <a class="dropdown-item-custom" href="{{ route('profile.edit') }}">
+                                    <i class="material-symbols-rounded">person</i> Mon Profil
+                                </a>
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button type="submit" class="dropdown-item-custom"
+                                        style="width: 100%; background: none; border: none; cursor: pointer;">
+                                        <i class="material-symbols-rounded">logout</i> Déconnexion
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    @endauth
+
+                    @guest
+                        <a href="#" class="btn btn-outline-gradient me-2" data-bs-toggle="modal"
+                            data-bs-target="#loginModal">Connexion</a>
+                        <a href="{{ route('register') }}" class="btn btn-gradient">Inscription</a>
+                    @endguest
+                </div>
             </div>
         </div>
     </nav>
 
-    <!-- Mobile Sidebar -->
-    <div class="mobile-sidebar" id="mobileSidebar">
-        <div class="mobile-sidebar-header">
-            <h5 class="mb-0">BidMaster</h5>
-            <small>Marketplace d'Enchères</small>
-        </div>
-        <div class="mobile-sidebar-content">
-            @auth
-                @role('admin')
-                <a class="mobile-nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}"
-                    href="{{ route('dashboard') }}">
-                    <i class="material-symbols-rounded">dashboard</i> Dashboard
-                </a>
-                <a class="mobile-nav-item {{ request()->routeIs('admin.users*') ? 'active' : '' }}"
-                    href="{{ route('admin.users.index') }}">
-                    <i class="material-symbols-rounded">people</i> Utilisateurs
-                </a>
-                <a class="mobile-nav-item {{ request()->routeIs('admin.categories*') ? 'active' : '' }}"
-                    href="{{ route('admin.categories.index') }}">
-                    <i class="material-symbols-rounded">category</i> Catégories
-                </a>
-                <a class="mobile-nav-item {{ request()->routeIs('admin.auctions*') ? 'active' : '' }}"
-                    href="{{ route('admin.auctions.index') }}">
-                    <i class="material-symbols-rounded">gavel</i> Enchères
-                </a>
-                @endrole
-
-                @role('vendeur')
-                <a class="mobile-nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}"
-                    href="{{ route('dashboard') }}">
-                    <i class="material-symbols-rounded">dashboard</i> Dashboard
-                </a>
-                <a class="mobile-nav-item {{ request()->routeIs('seller.products*') ? 'active' : '' }}"
-                    href="{{ route('seller.products.index') }}">
-                    <i class="material-symbols-rounded">inventory_2</i> Mes Produits
-                </a>
-                <a class="mobile-nav-item {{ request()->routeIs('annonces.index') ? 'active' : '' }}"
-                    href="{{ route('annonces.index') }}">
-                    <i class="material-symbols-rounded">list_alt</i> Mes Annonces
-                </a>
-                <a class="mobile-nav-item {{ request()->routeIs('seller.bids.index') ? 'active' : '' }}"
-                    href="{{ route('seller.bids.index') }}">
-                    <i class="material-symbols-rounded">gavel</i> Offres reçues
-                </a>
-                <a class="mobile-nav-item {{ request()->routeIs('seller.sales*') ? 'active' : '' }}"
-                    href="{{ route('seller.sales.index') }}">
-                    <i class="material-symbols-rounded">sell</i> Mes Ventes
-                </a>
-                <a class="mobile-nav-item {{ request()->routeIs('annonces.create') ? 'active' : '' }}"
-                    href="{{ route('annonces.create') }}">
-                    <i class="material-symbols-rounded">add_circle</i> Créer une Annonce
-                </a>
-                @endrole
-
-                @role('client')
-                <a class="mobile-nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}"
-                    href="{{ route('dashboard') }}">
-                    <i class="material-symbols-rounded">dashboard</i> Dashboard
-                </a>
-                <a class="mobile-nav-item {{ request()->routeIs('auctions.active') ? 'active' : '' }}"
-                    href="{{ route('auctions.active') }}">
-                    <i class="material-symbols-rounded">gavel</i> Enchères Actives
-                </a>
-                <a class="mobile-nav-item {{ request()->routeIs('my.bids') ? 'active' : '' }}"
-                    href="{{ route('my.bids') }}">
-                    <i class="material-symbols-rounded">history</i> Mes Offres
-                </a>
-                <a class="mobile-nav-item {{ request()->routeIs('my.won') ? 'active' : '' }}" href="{{ route('my.won') }}">
-                    <i class="material-symbols-rounded">emoji_events</i> Enchères Gagnées
-                </a>
-                @endrole
-
-                <hr>
-                <a class="mobile-nav-item" href="{{ route('profile.edit') }}">
-                    <i class="material-symbols-rounded">person</i> Mon Profil
-                </a>
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button type="submit" class="mobile-nav-item"
-                        style="width: 100%; text-align: left; background: none; border: none; cursor: pointer;">
-                        <i class="material-symbols-rounded">logout</i> Déconnexion
-                    </button>
-                </form>
-            @endauth
-        </div>
-    </div>
-
-    <!-- Overlay -->
-    <div class="overlay" id="overlay" onclick="closeMobileSidebar()"></div>
-
     <!-- Main Content -->
-    <main class="main-content">
-        <!-- Breadcrumb -->
-        <div class="breadcrumb-custom">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <h4 class="mb-0 fw-bold">@yield('page-title', 'Tableau de Bord')</h4>
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb mb-0 mt-2">
-                            <li class="breadcrumb-item"><a href="{{ route('dashboard') }}"
-                                    style="text-decoration: none; color: #667eea;">Accueil</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">@yield('breadcrumb', 'Dashboard')
-                            </li>
-                        </ol>
-                    </nav>
-                </div>
-            </div>
-        </div>
+    <main class="main-content" style="margin-top: 100px;">
 
         <!-- Alerts -->
         @if(session('success'))
@@ -645,6 +493,11 @@
         @yield('content')
     </main>
 
+    <!-- Login Modal (for guests) -->
+    @guest
+        @include('components.login-modal')
+    @endguest
+
     <!-- Scripts -->
     <script src="{{ asset('assets/js/core/popper.min.js') }}"></script>
     <script src="{{ asset('assets/js/core/bootstrap.min.js') }}"></script>
@@ -653,21 +506,6 @@
     <script src="{{ asset('assets/js/material-dashboard.min.js') }}"></script>
 
     <script>
-        // Mobile Sidebar Functions
-        function toggleMobileSidebar() {
-            const sidebar = document.getElementById('mobileSidebar');
-            const overlay = document.getElementById('overlay');
-            sidebar.classList.toggle('open');
-            overlay.classList.toggle('show');
-        }
-
-        function closeMobileSidebar() {
-            const sidebar = document.getElementById('mobileSidebar');
-            const overlay = document.getElementById('overlay');
-            sidebar.classList.remove('open');
-            overlay.classList.remove('show');
-        }
-
         // Notifications Dropdown
         function toggleNotifications() {
             const dropdown = document.getElementById('notificationsDropdown');
@@ -685,18 +523,42 @@
             }
         }
 
+        // User Menu Dropdown
+        function toggleUserMenu() {
+            const dropdown = document.getElementById('userMenuDropdown');
+            if (dropdown.style.opacity === '1') {
+                dropdown.style.opacity = '0';
+                dropdown.style.visibility = 'hidden';
+            } else {
+                document.querySelectorAll('.dropdown-menu-custom').forEach(menu => {
+                    menu.style.opacity = '0';
+                    menu.style.visibility = 'hidden';
+                });
+                dropdown.style.opacity = '1';
+                dropdown.style.visibility = 'visible';
+            }
+        }
+
         // Close dropdowns when clicking outside
         document.addEventListener('click', function (event) {
-            if (!event.target.closest('.notification-badge') && !event.target.closest('#notificationsDropdown')) {
-                const dropdown = document.getElementById('notificationsDropdown');
-                if (dropdown) {
-                    dropdown.style.opacity = '0';
-                    dropdown.style.visibility = 'hidden';
-                }
+            if (!event.target.closest('.dropdown-toggle-custom')) {
+                document.querySelectorAll('.dropdown-menu-custom').forEach(menu => {
+                    menu.style.opacity = '0';
+                    menu.style.visibility = 'hidden';
+                });
             }
         });
 
-        // Smooth scroll
+        // Navbar scroll effect
+        window.addEventListener('scroll', function () {
+            if (window.scrollY > 50) {
+                document.querySelector('.navbar').classList.add('scrolled');
+            } else {
+                document.querySelector('.navbar').classList.remove('scrolled');
+            }
+        });
+
+        // Smooth scroll for anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();

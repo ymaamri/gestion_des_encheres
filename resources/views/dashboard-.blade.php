@@ -12,11 +12,11 @@
         <div class="row">
             <!-- Welcome Section -->
             <div class="col-12 mb-4">
-                <div class="card bg-gradient-dark shadow-lg">
+                <div class="card bg-gradient-theme shadow-lg border-0 rounded-4">
                     <div class="card-body p-4">
                         <div class="row align-items-center">
                             <div class="col-md-8">
-                                <h4 class="text-white mb-2">Bonjour, {{ Auth::user()->nom }}! 👋</h4>
+                                <h4 class="text-white mb-2 fw-bold">Bonjour, {{ Auth::user()->nom }}! 👋</h4>
                                 <p class="text-white opacity-8 mb-0">Bienvenue sur votre tableau de bord administrateur. Voici
                                     un résumé de votre plateforme d'enchères.</p>
                             </div>
@@ -30,132 +30,143 @@
 
             <!-- Statistics Cards -->
             <div class="col-xl-3 col-sm-6 mb-4">
-                <div class="card h-100">
-                    <div class="card-body p-3">
-                        <div class="d-flex justify-content-between align-items-center">
+                <div class="card shadow-sm border-0 h-100 rounded-4">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <p class="text-sm mb-0 text-uppercase text-secondary font-weight-bold">Utilisateurs</p>
-                                <h3 class="font-weight-bolder mt-2 mb-0">{{ $stats['total_users'] ?? 0 }}</h3>
-                                <p class="text-xs text-success mb-0 mt-2">
-                                    <i class="material-symbols-rounded text-success" style="font-size: 14px;">trending_up</i>
-                                    +12% ce mois
-                                </p>
+                                <p class="text-xs font-weight-bold mb-1 text-uppercase text-secondary"
+                                    style="letter-spacing: 0.5px;">Utilisateurs</p>
+                                <h2 class="font-weight-bolder mb-1 text-dark">{{ $stats['total_users'] ?? 0 }}</h2>
+                                <p class="text-xs font-weight-bold mb-0" style="color: #48bb78;">+12% ce mois</p>
                             </div>
-                            <div class="icon icon-shape bg-gradient-primary shadow-primary text-center rounded-circle">
-                                <i class="material-symbols-rounded text-white opacity-10">people</i>
+                            <div class="icon-shape rounded-circle d-flex align-items-center justify-content-center"
+                                style="width: 48px; height: 48px; background: rgba(102, 126, 234, 0.1);">
+                                <i class="material-symbols-rounded" style="font-size: 24px; color: #667eea;">people</i>
                             </div>
                         </div>
                     </div>
-                    <div class="card-footer bg-transparent p-2">
-                        <a href="{{ route('admin.users.index') }}" class="text-primary text-sm">Gérer les utilisateurs →</a>
+                    <div class="card-footer bg-transparent border-0 px-4 pb-4 pt-0">
+                        <a href="{{ route('admin.users.index') }}" class="text-sm font-weight-bold"
+                            style="color: #667eea !important; text-decoration: none;">Gérer les utilisateurs →</a>
                     </div>
                 </div>
             </div>
 
             <div class="col-xl-3 col-sm-6 mb-4">
-                <div class="card h-100">
-                    <div class="card-body p-3">
-                        <div class="d-flex justify-content-between align-items-center">
+                <div class="card shadow-sm border-0 h-100 rounded-4">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <p class="text-sm mb-0 text-uppercase text-secondary font-weight-bold">Total Enchères</p>
-                                <h3 class="font-weight-bolder mt-2 mb-0">{{ $stats['total_auctions'] ?? 0 }}</h3>
-                                <p class="text-xs text-info mb-0 mt-2">
-                                    <i class="material-symbols-rounded text-info" style="font-size: 14px;">gavel</i>
-                                    {{ $stats['active_auctions'] ?? 0 }} actives
-                                </p>
+                                <p class="text-xs font-weight-bold mb-1 text-uppercase text-secondary"
+                                    style="letter-spacing: 0.5px;">Total Enchères</p>
+                                <h2 class="font-weight-bolder mb-1 text-dark">{{ $stats['total_auctions'] ?? 0 }}</h2>
+                                <p class="text-xs font-weight-bold mb-0" style="color: #4299e1;">
+                                    {{ $stats['active_auctions'] ?? 0 }} actives</p>
                             </div>
-                            <div class="icon icon-shape bg-gradient-success shadow-success text-center rounded-circle">
-                                <i class="material-symbols-rounded text-white opacity-10">gavel</i>
+                            <div class="icon-shape rounded-circle d-flex align-items-center justify-content-center"
+                                style="width: 48px; height: 48px; background: rgba(66, 153, 225, 0.1);">
+                                <i class="material-symbols-rounded" style="font-size: 24px; color: #4299e1;">gavel</i>
                             </div>
                         </div>
                     </div>
-                    <div class="card-footer bg-transparent p-2">
-                        <a href="{{ route('admin.auctions.index') }}" class="text-success text-sm">Gérer les enchères →</a>
+                    <div class="card-footer bg-transparent border-0 px-4 pb-4 pt-0">
+                        <a href="{{ route('admin.auctions.index') }}" class="text-sm font-weight-bold"
+                            style="color: #667eea !important; text-decoration: none;">Gérer les enchères →</a>
                     </div>
                 </div>
             </div>
 
             <div class="col-xl-3 col-sm-6 mb-4">
-                <div class="card h-100">
-                    <div class="card-body p-3">
-                        <div class="d-flex justify-content-between align-items-center">
+                <div class="card shadow-sm border-0 h-100 rounded-4">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <p class="text-sm mb-0 text-uppercase text-secondary font-weight-bold">Total Offres</p>
-                                <h3 class="font-weight-bolder mt-2 mb-0">{{ number_format($stats['total_bids'] ?? 0) }}</h3>
-                                <p class="text-xs text-warning mb-0 mt-2">
-                                    <i class="material-symbols-rounded text-warning" style="font-size: 14px;">paid</i>
-                                    Volume total: {{ number_format(($stats['total_bids'] ?? 0) * 1000, 0) }} MAD
-                                </p>
+                                <p class="text-xs font-weight-bold mb-1 text-uppercase text-secondary"
+                                    style="letter-spacing: 0.5px;">Total Offres</p>
+                                <h2 class="font-weight-bolder mb-1 text-dark">{{ number_format($stats['total_bids'] ?? 0) }}
+                                </h2>
+                                <p class="text-xs font-weight-bold mb-0" style="color: #ed8936;">Volume:
+                                    {{ number_format(($stats['total_bids'] ?? 0) * 1000, 0) }} MAD</p>
                             </div>
-                            <div class="icon icon-shape bg-gradient-warning shadow-warning text-center rounded-circle">
-                                <i class="material-symbols-rounded text-white opacity-10">paid</i>
+                            <div class="icon-shape rounded-circle d-flex align-items-center justify-content-center"
+                                style="width: 48px; height: 48px; background: rgba(237, 137, 54, 0.1);">
+                                <i class="material-symbols-rounded" style="font-size: 24px; color: #ed8936;">paid</i>
                             </div>
                         </div>
                     </div>
-                    <div class="card-footer bg-transparent p-2">
-                        <a href="{{ route('admin.auctions.index') }}" class="text-warning text-sm">Voir les offres →</a>
+                    <div class="card-footer bg-transparent border-0 px-4 pb-4 pt-0">
+                        <a href="{{ route('admin.auctions.index') }}" class="text-sm font-weight-bold"
+                            style="color: #667eea !important; text-decoration: none;">Voir les offres →</a>
                     </div>
                 </div>
             </div>
 
             <div class="col-xl-3 col-sm-6 mb-4">
-                <div class="card h-100">
-                    <div class="card-body p-3">
-                        <div class="d-flex justify-content-between align-items-center">
+                <div class="card shadow-sm border-0 h-100 rounded-4">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <p class="text-sm mb-0 text-uppercase text-secondary font-weight-bold">Catégories</p>
-                                <h3 class="font-weight-bolder mt-2 mb-0">{{ \App\Models\Categorie::count() }}</h3>
-                                <p class="text-xs text-danger mb-0 mt-2">
-                                    <i class="material-symbols-rounded text-danger" style="font-size: 14px;">category</i>
-                                    {{ \App\Models\SousCategorie::count() }} sous-catégories
-                                </p>
+                                <p class="text-xs font-weight-bold mb-1 text-uppercase text-secondary"
+                                    style="letter-spacing: 0.5px;">Catégories</p>
+                                <h2 class="font-weight-bolder mb-1 text-dark">{{ \App\Models\Categorie::count() }}</h2>
+                                <p class="text-xs font-weight-bold mb-0" style="color: #f56565;">
+                                    {{ \App\Models\SousCategorie::count() }} sous-catégories</p>
                             </div>
-                            <div class="icon icon-shape bg-gradient-danger shadow-danger text-center rounded-circle">
-                                <i class="material-symbols-rounded text-white opacity-10">category</i>
+                            <div class="icon-shape rounded-circle d-flex align-items-center justify-content-center"
+                                style="width: 48px; height: 48px; background: rgba(245, 101, 101, 0.1);">
+                                <i class="material-symbols-rounded" style="font-size: 24px; color: #f56565;">category</i>
                             </div>
                         </div>
                     </div>
-                    <div class="card-footer bg-transparent p-2">
-                        <a href="{{ route('admin.categories.index') }}" class="text-danger text-sm">Gérer les catégories →</a>
+                    <div class="card-footer bg-transparent border-0 px-4 pb-4 pt-0">
+                        <a href="{{ route('admin.categories.index') }}" class="text-sm font-weight-bold"
+                            style="color: #667eea !important; text-decoration: none;">Gérer les catégories →</a>
                     </div>
                 </div>
             </div>
 
             <!-- Recent Users -->
             <div class="col-lg-6 mb-4">
-                <div class="card h-100">
-                    <div class="card-header pb-0 d-flex justify-content-between align-items-center">
-                        <h6><i class="material-symbols-rounded me-1">people</i> Derniers Utilisateurs Inscrits</h6>
-                        <a href="{{ route('admin.users.index') }}" class="text-primary text-sm">Voir tout →</a>
+                <div class="card shadow-sm border-0 rounded-4 h-100">
+                    <div
+                        class="card-header bg-white border-bottom-0 pb-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0 fw-bold text-dark d-flex align-items-center"><i class="material-symbols-rounded me-2"
+                                style="color: #667eea;">people</i> Derniers Utilisateurs Inscrits</h6>
+                        <a href="{{ route('admin.users.index') }}" class="text-sm font-weight-bold"
+                            style="color: #667eea; text-decoration: none;">Voir tout →</a>
                     </div>
-                    <div class="card-body p-0">
-                        <div class="table-responsive">
+                    <div class="card-body px-0 pt-2 pb-2">
+                        <div class="table-responsive p-0">
                             <table class="table align-items-center mb-0">
                                 <thead>
                                     <tr>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Utilisateur</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Rôle</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Date</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 px-4">
+                                            Utilisateur</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Rôle
+                                        </th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Date
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach(\App\Models\User::latest()->take(5)->get() as $user)
                                         <tr>
-                                            <td>
+                                            <td class="px-4">
                                                 <div class="d-flex px-2 py-1">
                                                     <div class="d-flex flex-column justify-content-center">
-                                                        <h6 class="mb-0 text-sm">{{ $user->nom }} {{ $user->prenom }}</h6>
+                                                        <h6 class="mb-0 text-sm fw-bold text-dark">{{ $user->nom }}
+                                                            {{ $user->prenom }}</h6>
                                                         <p class="text-xs text-secondary mb-0">{{ $user->email }}</p>
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td>
+                                            <td class="align-middle">
                                                 <span
                                                     class="badge badge-sm bg-gradient-{{ $user->role == 'admin' ? 'danger' : ($user->role == 'vendeur' ? 'warning' : 'info') }}">
                                                     {{ ucfirst($user->role) }}
                                                 </span>
                                             </td>
-                                            <td>
+                                            <td class="align-middle">
                                                 <span class="text-secondary text-xs">{{ $user->created_at->diffForHumans() }}</span>
                                             </td>
                                         </tr>
@@ -169,19 +180,25 @@
 
             <!-- Recent Auctions -->
             <div class="col-lg-6 mb-4">
-                <div class="card h-100">
-                    <div class="card-header pb-0 d-flex justify-content-between align-items-center">
-                        <h6><i class="material-symbols-rounded me-1">gavel</i> Dernières Enchères</h6>
-                        <a href="{{ route('admin.auctions.index') }}" class="text-primary text-sm">Voir tout →</a>
+                <div class="card shadow-sm border-0 rounded-4 h-100">
+                    <div
+                        class="card-header bg-white border-bottom-0 pb-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0 fw-bold text-dark d-flex align-items-center"><i class="material-symbols-rounded me-2"
+                                style="color: #667eea;">gavel</i> Dernières Enchères</h6>
+                        <a href="{{ route('admin.auctions.index') }}" class="text-sm font-weight-bold"
+                            style="color: #667eea; text-decoration: none;">Voir tout →</a>
                     </div>
-                    <div class="card-body p-0">
-                        <div class="table-responsive">
+                    <div class="card-body px-0 pt-2 pb-2">
+                        <div class="table-responsive p-0">
                             <table class="table align-items-center mb-0">
                                 <thead>
                                     <tr>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Annonce</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Prix Actuel</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Statut</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 px-4">
+                                            Annonce</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Prix
+                                            Actuel</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Statut
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -190,7 +207,7 @@
                                             $productImage = \App\Helpers\ImageHelper::getProductImage($annonce->produit);
                                         @endphp
                                         <tr>
-                                            <td>
+                                            <td class="px-4">
                                                 <div class="d-flex px-2 py-1">
                                                     <div>
                                                         <img src="{{ $productImage }}"
@@ -198,16 +215,17 @@
                                                             style="width: 40px; height: 40px; object-fit: cover;">
                                                     </div>
                                                     <div class="d-flex flex-column justify-content-center">
-                                                        <h6 class="mb-0 text-sm">{{ Str::limit($annonce->titre, 25) }}</h6>
+                                                        <h6 class="mb-0 text-sm fw-bold text-dark">
+                                                            {{ Str::limit($annonce->titre, 25) }}</h6>
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td>
+                                            <td class="align-middle">
                                                 <span
                                                     class="text-primary text-sm font-weight-bold">{{ number_format($annonce->getMontantActuel(), 2) }}
                                                     MAD</span>
                                             </td>
-                                            <td>
+                                            <td class="align-middle">
                                                 <span
                                                     class="badge badge-sm bg-gradient-{{ $annonce->statut == 'ACTIVE' ? 'success' : ($annonce->statut == 'CLOTUREE' ? 'secondary' : 'warning') }}">
                                                     {{ $annonce->statut }}
@@ -227,19 +245,20 @@
         @role('vendeur')
         <!-- Seller Dashboard -->
         <div class="row">
-            <!-- Welcome Section -->
+            <!-- Welcome Banner -->
             <div class="col-12 mb-4">
-                <div class="card bg-gradient-dark shadow-lg">
+                <div class="card bg-gradient-theme shadow-lg border-0 rounded-4">
                     <div class="card-body p-4">
                         <div class="row align-items-center">
                             <div class="col-md-8">
-                                <h4 class="text-white mb-2">Bonjour, {{ Auth::user()->nom }}! 🛒</h4>
+                                <h4 class="text-white mb-2 fw-bold">Bonjour, {{ Auth::user()->nom }}! 🛒</h4>
                                 <p class="text-white opacity-8 mb-0">Gérez vos ventes, suivez vos performances et créez de
                                     nouvelles annonces.</p>
                             </div>
                             <div class="col-md-4 text-end">
-                                <a href="{{ route('annonces.create') }}" class="btn bg-gradient-light mb-0">
-                                    <i class="material-symbols-rounded">add_circle</i> Nouvelle Annonce
+                                <a href="{{ route('annonces.create') }}"
+                                    class="btn-gradient d-inline-block text-decoration-none">
+                                    <i class="material-symbols-rounded align-middle me-1">add_circle</i> Nouvelle Annonce
                                 </a>
                             </div>
                         </div>
@@ -247,39 +266,45 @@
                 </div>
             </div>
 
-            <!-- Statistics -->
+            <!-- Statistics Cards -->
             <div class="col-xl-3 col-sm-6 mb-4">
-                <div class="card h-100">
-                    <div class="card-body p-3">
-                        <div class="d-flex justify-content-between align-items-center">
+                <div class="card shadow-sm border-0 h-100 rounded-4">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <p class="text-sm mb-0 text-uppercase text-secondary">Mes Annonces</p>
-                                <h3 class="font-weight-bolder mt-2 mb-0">{{ $stats['total_listings'] ?? 0 }}</h3>
-                                <p class="text-xs text-success mb-0 mt-2">{{ $stats['active_listings'] ?? 0 }} annonces actives
-                                </p>
+                                <p class="text-xs font-weight-bold mb-1 text-uppercase text-secondary"
+                                    style="letter-spacing: 0.5px;">Mes Annonces</p>
+                                <h2 class="font-weight-bolder mb-1 text-dark">{{ $stats['total_listings'] ?? 0 }}</h2>
+                                <p class="text-xs font-weight-bold mb-0" style="color: #667eea;">
+                                    {{ $stats['active_listings'] ?? 0 }} annonces actives</p>
                             </div>
-                            <div class="icon icon-shape bg-gradient-primary shadow-primary rounded-circle">
-                                <i class="material-symbols-rounded text-white">inventory_2</i>
+                            <div class="icon-shape rounded-circle d-flex align-items-center justify-content-center"
+                                style="width: 48px; height: 48px; background: rgba(102, 126, 234, 0.1);">
+                                <i class="material-symbols-rounded" style="font-size: 24px; color: #667eea;">inventory_2</i>
                             </div>
                         </div>
                     </div>
-                    <div class="card-footer bg-transparent p-2">
-                        <a href="{{ route('annonces.index') }}" class="text-primary text-sm">Gérer mes annonces →</a>
+                    <div class="card-footer bg-transparent border-0 px-4 pb-4 pt-0">
+                        <a href="{{ route('annonces.index') }}" class="text-sm font-weight-bold"
+                            style="color: #667eea !important; text-decoration: none;">Gérer mes annonces →</a>
                     </div>
                 </div>
             </div>
 
             <div class="col-xl-3 col-sm-6 mb-4">
-                <div class="card h-100">
-                    <div class="card-body p-3">
-                        <div class="d-flex justify-content-between align-items-center">
+                <div class="card shadow-sm border-0 h-100 rounded-4">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <p class="text-sm mb-0 text-uppercase text-secondary">Ventes Totales</p>
-                                <h3 class="font-weight-bolder mt-2 mb-0">{{ $stats['total_sales'] ?? 0 }}</h3>
-                                <p class="text-xs text-info mb-0 mt-2">+{{ $stats['total_sales'] * 15 ?? 0 }}% ce mois</p>
+                                <p class="text-xs font-weight-bold mb-1 text-uppercase text-secondary"
+                                    style="letter-spacing: 0.5px;">Ventes Totales</p>
+                                <h2 class="font-weight-bolder mb-1 text-dark">{{ $stats['total_sales'] ?? 0 }}</h2>
+                                <p class="text-xs font-weight-bold mb-0" style="color: #4299e1;">
+                                    +{{ ($stats['total_sales'] ?? 0) * 15 }}% ce mois</p>
                             </div>
-                            <div class="icon icon-shape bg-gradient-success shadow-success rounded-circle">
-                                <i class="material-symbols-rounded text-white">store</i>
+                            <div class="icon-shape rounded-circle d-flex align-items-center justify-content-center"
+                                style="width: 48px; height: 48px; background: rgba(66, 153, 225, 0.1);">
+                                <i class="material-symbols-rounded" style="font-size: 24px; color: #4299e1;">store</i>
                             </div>
                         </div>
                     </div>
@@ -287,21 +312,24 @@
             </div>
 
             <div class="col-xl-3 col-sm-6 mb-4">
-                <div class="card h-100">
-                    <div class="card-body p-3">
-                        <div class="d-flex justify-content-between align-items-center">
+                <div class="card shadow-sm border-0 h-100 rounded-4">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <p class="text-sm mb-0 text-uppercase text-secondary">Note Moyenne</p>
-                                <h3 class="font-weight-bolder mt-2 mb-0">{{ number_format($stats['rating'] ?? 0, 1) }}/5</h3>
-                                <p class="text-xs text-warning mb-0 mt-2">
+                                <p class="text-xs font-weight-bold mb-1 text-uppercase text-secondary"
+                                    style="letter-spacing: 0.5px;">Note Moyenne</p>
+                                <h2 class="font-weight-bolder mb-1 text-dark">{{ number_format($stats['rating'] ?? 0, 1) }}/5
+                                </h2>
+                                <p class="text-xs mb-0">
                                     @for($i = 1; $i <= 5; $i++)
                                         <i class="material-symbols-rounded"
-                                            style="font-size: 12px; color: {{ $i <= round($stats['rating'] ?? 0) ? '#ffc107' : '#dee2e6' }}">star</i>
+                                            style="font-size: 14px; color: {{ $i <= round($stats['rating'] ?? 0) ? '#f6ad55' : '#e2e8f0' }}">star</i>
                                     @endfor
                                 </p>
                             </div>
-                            <div class="icon icon-shape bg-gradient-warning shadow-warning rounded-circle">
-                                <i class="material-symbols-rounded text-white">star</i>
+                            <div class="icon-shape rounded-circle d-flex align-items-center justify-content-center"
+                                style="width: 48px; height: 48px; background: rgba(246, 173, 85, 0.1);">
+                                <i class="material-symbols-rounded" style="font-size: 24px; color: #f6ad55;">star</i>
                             </div>
                         </div>
                     </div>
@@ -309,18 +337,19 @@
             </div>
 
             <div class="col-xl-3 col-sm-6 mb-4">
-                <div class="card h-100">
-                    <div class="card-body p-3">
-                        <div class="d-flex justify-content-between align-items-center">
+                <div class="card shadow-sm border-0 h-100 rounded-4">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <p class="text-sm mb-0 text-uppercase text-secondary">Chiffre d'Affaires</p>
-                                <h3 class="font-weight-bolder mt-2 mb-0">
-                                    {{ number_format(($stats['total_sales'] ?? 0) * 1000, 0) }} MAD
-                                </h3>
-                                <p class="text-xs text-danger mb-0 mt-2">Mois en cours</p>
+                                <p class="text-xs font-weight-bold mb-1 text-uppercase text-secondary"
+                                    style="letter-spacing: 0.5px;">Chiffre d'Affaires</p>
+                                <h2 class="font-weight-bolder mb-1 text-dark">
+                                    {{ number_format(($stats['total_sales'] ?? 0) * 1000, 0) }} MAD</h2>
+                                <p class="text-xs font-weight-bold mb-0" style="color: #4fd1c5;">Mois en cours</p>
                             </div>
-                            <div class="icon icon-shape bg-gradient-danger shadow-danger rounded-circle">
-                                <i class="material-symbols-rounded text-white">payments</i>
+                            <div class="icon-shape rounded-circle d-flex align-items-center justify-content-center"
+                                style="width: 48px; height: 48px; background: rgba(79, 209, 197, 0.1);">
+                                <i class="material-symbols-rounded" style="font-size: 24px; color: #4fd1c5;">payments</i>
                             </div>
                         </div>
                     </div>
@@ -329,87 +358,109 @@
 
             <!-- My Products List -->
             <div class="col-12 mb-4">
-                <div class="card">
-                    <div class="card-header pb-0 d-flex justify-content-between align-items-center">
-                        <h6><i class="material-symbols-rounded me-1">inventory_2</i> Mes Annonces Récentes</h6>
-                        <a href="{{ route('annonces.index') }}" class="text-primary text-sm">Voir toutes mes annonces →</a>
+                <div class="card shadow-sm border-0 rounded-4">
+                    <div
+                        class="card-header bg-white border-bottom-0 pb-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0 fw-bold text-dark d-flex align-items-center"><i class="material-symbols-rounded me-2"
+                                style="color: #667eea;">inventory_2</i> Mes Annonces Récentes</h6>
+                        <a href="{{ route('annonces.index') }}" class="text-sm font-weight-bold"
+                            style="color: #667eea; text-decoration: none;">Voir toutes mes annonces →</a>
                     </div>
-                    <div class="card-body p-0">
-                        <div class="table-responsive">
+                    <div class="card-body px-0 pt-2 pb-2">
+                        <div class="table-responsive p-0">
                             <table class="table align-items-center mb-0">
                                 <thead>
                                     <tr>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Produit</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Prix Actuel</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Enchères</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Statut</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Fin dans</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 px-4">
+                                            Produit</th>
+                                        <th
+                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                            Prix Actuel</th>
+                                        <th
+                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                            Enchères</th>
+                                        <th
+                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                            Statut</th>
+                                        <th
+                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                            Fin dans</th>
                                         <th class="text-secondary opacity-7"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @php
-                                        $sellerAuctions = Auth::user()->client->vendeur->annonces()->with('produit', 'mises')->latest()->take(5)->get();
+                                        $sellerAuctions = Auth::user()->client->vendeur->annonces()->with('produit', 'encheres')->latest()->take(5)->get();
                                     @endphp
                                     @forelse($sellerAuctions as $annonce)
                                         @php
                                             $productImage = \App\Helpers\ImageHelper::getProductImage($annonce->produit);
                                         @endphp
                                         <tr>
-                                            <td>
+                                            <td class="px-4">
                                                 <div class="d-flex px-2 py-1">
-                                                    <img src="{{ $productImage }}" class="avatar avatar-sm me-3 border-radius-lg"
-                                                        alt="product" style="width: 40px; height: 40px; object-fit: cover;">
+                                                    <img src="{{ $productImage }}" class="avatar avatar-sm me-3" alt="product"
+                                                        style="width: 40px; height: 40px; object-fit: cover; border-radius: 8px;">
                                                     <div class="d-flex flex-column justify-content-center">
-                                                        <h6 class="mb-0 text-sm">{{ Str::limit($annonce->titre, 30) }}</h6>
+                                                        <h6 class="mb-0 text-sm fw-bold text-dark">
+                                                            {{ Str::limit($annonce->titre, 30) }}</h6>
                                                         <p class="text-xs text-secondary mb-0">{{ $annonce->produit->nom }}</p>
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td>
+                                            <td class="align-middle text-center">
                                                 <span
                                                     class="text-primary text-sm font-weight-bold">{{ number_format($annonce->getMontantActuel(), 2) }}
                                                     MAD</span>
                                             </td>
-                                            <td>
-                                                <span
-                                                    class="badge badge-sm bg-gradient-info">{{ $annonce->mises()->count() }}</span>
+                                            <td class="align-middle text-center">
+                                                <span class="badge"
+                                                    style="background-color: #764ba2; border-radius: 8px; font-weight: 600; padding: 6px 10px; color: white;">{{ $annonce->encheres()->count() }}</span>
                                             </td>
-                                            <td>
+                                            <td class="align-middle text-center">
                                                 @if($annonce->statut == 'ACTIVE')
-                                                    <span class="badge badge-sm bg-gradient-success">Active</span>
+                                                    <span class="badge"
+                                                        style="background-color: #48bb78; border-radius: 8px; font-weight: 600; padding: 6px 10px; color: white;">ACTIVE</span>
                                                 @elseif($annonce->statut == 'EN_ATTENTE')
-                                                    <span class="badge badge-sm bg-gradient-warning">En attente</span>
+                                                    <span class="badge"
+                                                        style="background-color: #ed8936; border-radius: 8px; font-weight: 600; padding: 6px 10px; color: white;">EN
+                                                        ATTENTE</span>
                                                 @elseif($annonce->statut == 'CLOTUREE')
-                                                    <span class="badge badge-sm bg-gradient-secondary">Clôturée</span>
+                                                    <span class="badge"
+                                                        style="background-color: #718096; border-radius: 8px; font-weight: 600; padding: 6px 10px; color: white;">CLÔTURÉE</span>
                                                 @else
-                                                    <span class="badge badge-sm bg-gradient-danger">Bloquée</span>
+                                                    <span class="badge"
+                                                        style="background-color: #f56565; border-radius: 8px; font-weight: 600; padding: 6px 10px; color: white;">BLOQUÉE</span>
                                                 @endif
                                             </td>
-                                            <td>
-                                                @if($annonce->statut == 'ACTIVE' && $annonce->date_fin)
-                                                    <span
-                                                        class="text-warning text-sm">{{ \Carbon\Carbon::parse($annonce->date_fin)->diffForHumans() }}</span>
+                                            <td class="align-middle text-center">
+                                                @if($annonce->statut == 'ACTIVE')
+                                                    <span class="text-sm font-weight-bold"
+                                                        style="color: #667eea;">{{ \Carbon\Carbon::parse($annonce->date_fin)->diffForHumans() }}</span>
                                                 @else
-                                                    <span class="text-secondary text-sm">Terminée</span>
+                                                    <span class="text-sm font-weight-bold text-secondary">Terminée</span>
                                                 @endif
                                             </td>
-                                            <td class="align-middle">
-                                                <a href="{{ route('annonces.show', $annonce) }}"
-                                                    class="btn btn-link text-secondary mb-0">
+                                            <td class="align-middle text-center">
+                                                <a href="{{ route('annonces.show', $annonce) }}" class="text-secondary"
+                                                    style="font-size: 20px;">
                                                     <i class="material-symbols-rounded">visibility</i>
                                                 </a>
                                             </td>
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="6" class="text-center py-4">
-                                                <i class="material-symbols-rounded" style="font-size: 48px;">inventory_2</i>
-                                                <p class="mt-2">Vous n'avez pas encore d'annonces.</p>
-                                                <a href="{{ route('annonces.create') }}"
-                                                    class="btn btn-sm bg-gradient-primary mt-2">
-                                                    Créer ma première annonce
-                                                </a>
+                                            <td colspan="6" class="text-center py-5">
+                                                <div class="d-flex flex-column align-items-center justify-content-center">
+                                                    <i class="material-symbols-rounded text-secondary mb-3"
+                                                        style="font-size: 48px; opacity: 0.5;">inventory_2</i>
+                                                    <h6 class="text-dark font-weight-bold">Aucune annonce trouvée</h6>
+                                                    <p class="text-sm text-secondary mb-3">Commencez à vendre vos produits dès
+                                                        maintenant.</p>
+                                                    <a href="{{ route('annonces.create') }}"
+                                                        class="btn-gradient d-inline-block text-decoration-none px-3 py-2">Créer ma
+                                                        première annonce</a>
+                                                </div>
                                             </td>
                                         </tr>
                                     @endforelse
@@ -422,43 +473,51 @@
 
             <!-- Tips for Sellers -->
             <div class="col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h6><i class="material-symbols-rounded me-1">tips_and_updates</i> Conseils pour Réussir vos Ventes</h6>
+                <div class="card shadow-sm border-0 rounded-4">
+                    <div class="card-header bg-white border-bottom-0 pt-4 px-4 pb-0">
+                        <h6 class="mb-0 fw-bold text-dark d-flex align-items-center"><i
+                                class="material-symbols-rounded me-2 text-warning">tips_and_updates</i> Conseils pour Réussir
+                            vos Ventes</h6>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body p-4">
                         <div class="row">
-                            <div class="col-md-4 mb-3">
-                                <div class="d-flex">
-                                    <div class="icon icon-shape bg-gradient-info rounded-circle me-3">
-                                        <i class="material-symbols-rounded text-white">photo_camera</i>
+                            <div class="col-md-4 mb-3 mb-md-0">
+                                <div class="d-flex align-items-center p-3 rounded-3 border h-100" style="background: #f8f9fa;">
+                                    <div class="icon-shape rounded-circle d-flex align-items-center justify-content-center me-3 flex-shrink-0"
+                                        style="width: 48px; height: 48px; background: rgba(102, 126, 234, 0.1);">
+                                        <i class="material-symbols-rounded"
+                                            style="font-size: 24px; color: #667eea;">photo_camera</i>
                                     </div>
                                     <div>
-                                        <h6 class="mb-0">Photos de qualité</h6>
-                                        <small class="text-muted">Les annonces avec photos ont 85% plus de chances de
-                                            vendre</small>
+                                        <h6 class="mb-1 text-dark font-weight-bold">Photos de qualité</h6>
+                                        <p class="text-xs text-secondary mb-0">Les annonces avec photos ont 85% plus de chances
+                                            de vendre</p>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4 mb-3">
-                                <div class="d-flex">
-                                    <div class="icon icon-shape bg-gradient-success rounded-circle me-3">
-                                        <i class="material-symbols-rounded text-white">price_check</i>
+                            <div class="col-md-4 mb-3 mb-md-0">
+                                <div class="d-flex align-items-center p-3 rounded-3 border h-100" style="background: #f8f9fa;">
+                                    <div class="icon-shape rounded-circle d-flex align-items-center justify-content-center me-3 flex-shrink-0"
+                                        style="width: 48px; height: 48px; background: rgba(118, 75, 162, 0.1);">
+                                        <i class="material-symbols-rounded"
+                                            style="font-size: 24px; color: #764ba2;">price_check</i>
                                     </div>
                                     <div>
-                                        <h6 class="mb-0">Prix compétitifs</h6>
-                                        <small class="text-muted">Fixez un prix de départ attractif</small>
+                                        <h6 class="mb-1 text-dark font-weight-bold">Prix compétitifs</h6>
+                                        <p class="text-xs text-secondary mb-0">Fixez un prix de départ attractif</p>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4 mb-3">
-                                <div class="d-flex">
-                                    <div class="icon icon-shape bg-gradient-warning rounded-circle me-3">
-                                        <i class="material-symbols-rounded text-white">description</i>
+                            <div class="col-md-4">
+                                <div class="d-flex align-items-center p-3 rounded-3 border h-100" style="background: #f8f9fa;">
+                                    <div class="icon-shape rounded-circle d-flex align-items-center justify-content-center me-3 flex-shrink-0"
+                                        style="width: 48px; height: 48px; background: rgba(79, 209, 197, 0.1);">
+                                        <i class="material-symbols-rounded"
+                                            style="font-size: 24px; color: #4fd1c5;">description</i>
                                     </div>
                                     <div>
-                                        <h6 class="mb-0">Description détaillée</h6>
-                                        <small class="text-muted">Décrivez précisément l'état du produit</small>
+                                        <h6 class="mb-1 text-dark font-weight-bold">Description détaillée</h6>
+                                        <p class="text-xs text-secondary mb-0">Décrivez précisément l'état du produit</p>
                                     </div>
                                 </div>
                             </div>
@@ -474,17 +533,18 @@
         <div class="row">
             <!-- Welcome Section -->
             <div class="col-12 mb-4">
-                <div class="card bg-gradient-dark shadow-lg">
+                <div class="card bg-gradient-theme shadow-lg border-0 rounded-4">
                     <div class="card-body p-4">
                         <div class="row align-items-center">
                             <div class="col-md-8">
-                                <h4 class="text-white mb-2">Bonjour, {{ Auth::user()->nom }}! 🎯</h4>
+                                <h4 class="text-white mb-2 fw-bold">Bonjour, {{ Auth::user()->nom }}! 🎯</h4>
                                 <p class="text-white opacity-8 mb-0">Découvrez les meilleures enchères, suivez vos offres et
                                     remportez des lots exceptionnels.</p>
                             </div>
                             <div class="col-md-4 text-end">
-                                <a href="{{ route('auctions.active') }}" class="btn bg-gradient-light mb-0">
-                                    <i class="material-symbols-rounded">gavel</i> Explorer les Enchères
+                                <a href="{{ route('auctions.active') }}"
+                                    class="btn-gradient d-inline-block text-decoration-none">
+                                    <i class="material-symbols-rounded align-middle me-1">gavel</i> Explorer les Enchères
                                 </a>
                             </div>
                         </div>
@@ -494,56 +554,67 @@
 
             <!-- Statistics -->
             <div class="col-xl-3 col-sm-6 mb-4">
-                <div class="card h-100">
-                    <div class="card-body p-3">
-                        <div class="d-flex justify-content-between align-items-center">
+                <div class="card shadow-sm border-0 h-100 rounded-4">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <p class="text-sm mb-0 text-uppercase text-secondary">Mes Offres</p>
-                                <h3 class="font-weight-bolder mt-2 mb-0">{{ $stats['total_bids'] ?? 0 }}</h3>
-                                <p class="text-xs text-success mb-0 mt-2">{{ $stats['active_bids'] ?? 0 }} offres en tête</p>
+                                <p class="text-xs font-weight-bold mb-1 text-uppercase text-secondary"
+                                    style="letter-spacing: 0.5px;">Mes Offres</p>
+                                <h2 class="font-weight-bolder mb-1 text-dark">{{ $stats['total_bids'] ?? 0 }}</h2>
+                                <p class="text-xs font-weight-bold mb-0" style="color: #48bb78;">
+                                    {{ $stats['active_bids'] ?? 0 }} offres en tête</p>
                             </div>
-                            <div class="icon icon-shape bg-gradient-primary shadow-primary rounded-circle">
-                                <i class="material-symbols-rounded text-white">gavel</i>
+                            <div class="icon-shape rounded-circle d-flex align-items-center justify-content-center"
+                                style="width: 48px; height: 48px; background: rgba(102, 126, 234, 0.1);">
+                                <i class="material-symbols-rounded" style="font-size: 24px; color: #667eea;">gavel</i>
                             </div>
                         </div>
                     </div>
-                    <div class="card-footer bg-transparent p-2">
-                        <a href="{{ route('my.bids') }}" class="text-primary text-sm">Voir mes offres →</a>
+                    <div class="card-footer bg-transparent border-0 px-4 pb-4 pt-0">
+                        <a href="{{ route('my.bids') }}" class="text-sm font-weight-bold"
+                            style="color: #667eea !important; text-decoration: none;">Voir mes offres →</a>
                     </div>
                 </div>
             </div>
 
             <div class="col-xl-3 col-sm-6 mb-4">
-                <div class="card h-100">
-                    <div class="card-body p-3">
-                        <div class="d-flex justify-content-between align-items-center">
+                <div class="card shadow-sm border-0 h-100 rounded-4">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <p class="text-sm mb-0 text-uppercase text-secondary">Enchères Gagnées</p>
-                                <h3 class="font-weight-bolder mt-2 mb-0">{{ $stats['won_auctions'] ?? 0 }}</h3>
-                                <p class="text-xs text-info mb-0 mt-2">Félicitations! 🏆</p>
+                                <p class="text-xs font-weight-bold mb-1 text-uppercase text-secondary"
+                                    style="letter-spacing: 0.5px;">Enchères Gagnées</p>
+                                <h2 class="font-weight-bolder mb-1 text-dark">{{ $stats['won_auctions'] ?? 0 }}</h2>
+                                <p class="text-xs font-weight-bold mb-0" style="color: #4299e1;">Félicitations! 🏆</p>
                             </div>
-                            <div class="icon icon-shape bg-gradient-success shadow-success rounded-circle">
-                                <i class="material-symbols-rounded text-white">emoji_events</i>
+                            <div class="icon-shape rounded-circle d-flex align-items-center justify-content-center"
+                                style="width: 48px; height: 48px; background: rgba(66, 153, 225, 0.1);">
+                                <i class="material-symbols-rounded" style="font-size: 24px; color: #4299e1;">emoji_events</i>
                             </div>
                         </div>
                     </div>
-                    <div class="card-footer bg-transparent p-2">
-                        <a href="{{ route('my.won') }}" class="text-success text-sm">Voir mes gains →</a>
+                    <div class="card-footer bg-transparent border-0 px-4 pb-4 pt-0">
+                        <a href="{{ route('my.won') }}" class="text-sm font-weight-bold"
+                            style="color: #667eea !important; text-decoration: none;">Voir mes gains →</a>
                     </div>
                 </div>
             </div>
 
             <div class="col-xl-3 col-sm-6 mb-4">
-                <div class="card h-100">
-                    <div class="card-body p-3">
-                        <div class="d-flex justify-content-between align-items-center">
+                <div class="card shadow-sm border-0 h-100 rounded-4">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <p class="text-sm mb-0 text-uppercase text-secondary">Mon Solde</p>
-                                <h3 class="font-weight-bolder mt-2 mb-0">{{ number_format($stats['balance'] ?? 0, 2) }} MAD</h3>
-                                <p class="text-xs text-warning mb-0 mt-2">Disponible</p>
+                                <p class="text-xs font-weight-bold mb-1 text-uppercase text-secondary"
+                                    style="letter-spacing: 0.5px;">Mon Solde</p>
+                                <h2 class="font-weight-bolder mb-1 text-dark">{{ number_format($stats['balance'] ?? 0, 2) }} MAD
+                                </h2>
+                                <p class="text-xs font-weight-bold mb-0" style="color: #ed8936;">Disponible</p>
                             </div>
-                            <div class="icon icon-shape bg-gradient-warning shadow-warning rounded-circle">
-                                <i class="material-symbols-rounded text-white">account_balance_wallet</i>
+                            <div class="icon-shape rounded-circle d-flex align-items-center justify-content-center"
+                                style="width: 48px; height: 48px; background: rgba(237, 137, 54, 0.1);">
+                                <i class="material-symbols-rounded"
+                                    style="font-size: 24px; color: #ed8936;">account_balance_wallet</i>
                             </div>
                         </div>
                     </div>
@@ -551,18 +622,20 @@
             </div>
 
             <div class="col-xl-3 col-sm-6 mb-4">
-                <div class="card h-100">
-                    <div class="card-body p-3">
-                        <div class="d-flex justify-content-between align-items-center">
+                <div class="card shadow-sm border-0 h-100 rounded-4">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <p class="text-sm mb-0 text-uppercase text-secondary">Taux de Réussite</p>
-                                <h3 class="font-weight-bolder mt-2 mb-0">
+                                <p class="text-xs font-weight-bold mb-1 text-uppercase text-secondary"
+                                    style="letter-spacing: 0.5px;">Taux de Réussite</p>
+                                <h2 class="font-weight-bolder mb-1 text-dark">
                                     {{ $stats['total_bids'] > 0 ? round(($stats['won_auctions'] / $stats['total_bids']) * 100) : 0 }}%
-                                </h3>
-                                <p class="text-xs text-danger mb-0 mt-2">Victoires / Total offres</p>
+                                </h2>
+                                <p class="text-xs font-weight-bold mb-0" style="color: #f56565;">Victoires / Total offres</p>
                             </div>
-                            <div class="icon icon-shape bg-gradient-danger shadow-danger rounded-circle">
-                                <i class="material-symbols-rounded text-white">insights</i>
+                            <div class="icon-shape rounded-circle d-flex align-items-center justify-content-center"
+                                style="width: 48px; height: 48px; background: rgba(245, 101, 101, 0.1);">
+                                <i class="material-symbols-rounded" style="font-size: 24px; color: #f56565;">insights</i>
                             </div>
                         </div>
                     </div>
@@ -571,10 +644,13 @@
 
             <!-- Active Auctions Grid -->
             <div class="col-12 mb-4">
-                <div class="card">
-                    <div class="card-header pb-0 d-flex justify-content-between align-items-center">
-                        <h6><i class="material-symbols-rounded me-1">gavel</i> Enchères Actives pour Vous</h6>
-                        <a href="{{ route('auctions.active') }}" class="text-primary text-sm">Voir toutes les enchères →</a>
+                <div class="card shadow-sm border-0 rounded-4">
+                    <div
+                        class="card-header bg-white border-bottom-0 pb-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0 fw-bold text-dark d-flex align-items-center"><i class="material-symbols-rounded me-2"
+                                style="color: #667eea;">gavel</i> Enchères Actives pour Vous</h6>
+                        <a href="{{ route('auctions.active') }}" class="text-sm font-weight-bold"
+                            style="color: #667eea; text-decoration: none;">Voir toutes les enchères →</a>
                     </div>
                     <div class="card-body">
                         <div class="row">
@@ -591,14 +667,14 @@
                                     $images = \App\Helpers\ImageHelper::getProductImages($auction->produit);
                                     $firstPhoto = $images[0] ?? 'https://via.placeholder.com/300x200?text=No+Image';
                                     $currentBid = $auction->getMontantActuel();
-                                    $bidCount = $auction->mises()->count();
+                                    $bidCount = $auction->encheres()->count();
                                     $timeLeft = \Carbon\Carbon::parse($auction->date_fin);
                                     $isEndingSoon = $timeLeft->diffInHours(now()) <= 24;
                                 @endphp
                                 <div class="col-md-6 col-lg-4 mb-4">
-                                    <div class="card h-100 auction-card">
+                                    <div class="card h-100 auction-card border-0 shadow-sm rounded-4 overflow-hidden">
                                         <div class="position-relative">
-                                            <img src="{{ $firstPhoto }}" class="card-img-top"
+                                            <img src="{{ $firstPhoto }}" class="card-img-top w-100"
                                                 style="height: 200px; object-fit: cover;" alt="{{ $auction->titre }}">
                                             <div class="position-absolute top-0 end-0 m-2">
                                                 <span class="badge bg-gradient-info">{{ $bidCount }} enchère(s)</span>
@@ -613,7 +689,7 @@
                                             @endif
                                         </div>
                                         <div class="card-body">
-                                            <h6 class="card-title mb-1">{{ Str::limit($auction->titre, 50) }}</h6>
+                                            <h6 class="card-title mb-1 fw-bold">{{ Str::limit($auction->titre, 50) }}</h6>
                                             <div class="d-flex justify-content-between align-items-center mb-2">
                                                 <div>
                                                     <small class="text-muted">Prix actuel</small>
@@ -625,10 +701,12 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="card-footer bg-transparent">
+                                        <div class="card-footer bg-transparent border-0 pt-0 pb-4 px-4">
                                             <a href="{{ route('annonces.show', $auction) }}"
-                                                class="btn bg-gradient-primary w-100 mb-0">
-                                                <i class="material-symbols-rounded">gavel</i> Participer
+                                                class="btn-gradient w-100 mb-0 py-2 d-flex justify-content-center align-items-center text-white"
+                                                style="border-radius: 12px; text-decoration: none;">
+                                                <i class="material-symbols-rounded me-2" style="font-size: 18px;">gavel</i>
+                                                Participer
                                             </a>
                                         </div>
                                     </div>
@@ -668,6 +746,23 @@
 
         .auction-card:hover .card-img-top {
             transform: scale(1.05);
+        }
+
+        .btn-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            font-weight: 600;
+            padding: 0.6rem 1.5rem;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(102, 126, 234, 0.4);
+            color: white;
         }
     </style>
 @endpush

@@ -10,20 +10,20 @@
         <div class="col-12">
             <!-- Celebration Banner -->
             @if($wonAuctions->count() > 0)
-                <div class="card bg-gradient-success mb-4">
-                    <div class="card-body py-4">
+                <div class="card mb-4 border-0 shadow-sm rounded-4" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+                    <div class="card-body py-4 px-5">
                         <div class="row align-items-center">
                             <div class="col-md-8">
-                                <h3 class="text-white mb-2">
-                                    <i class="material-symbols-rounded me-2">emoji_events</i> 
+                                <h3 class="mb-2" style="color: #4a5568; font-weight: 800;">
+                                    <i class="material-symbols-rounded me-2" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">emoji_events</i> 
                                     Félicitations !
                                 </h3>
-                                <p class="text-white opacity-9 mb-0">
-                                    Vous avez remporté {{ $wonAuctions->total() }} enchère(s). Contactez les vendeurs pour finaliser vos achats.
+                                <p style="color: #718096; font-size: 1.1rem;" class="mb-0">
+                                    Vous avez remporté {{ $wonAuctions->count() }} enchère(s). Contactez les vendeurs pour finaliser vos achats.
                                 </p>
                             </div>
                             <div class="col-md-4 text-end">
-                                <i class="material-symbols-rounded text-white" style="font-size: 80px;">celebration</i>
+                                <i class="material-symbols-rounded" style="font-size: 80px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; opacity: 0.8;">celebration</i>
                             </div>
                         </div>
                     </div>
@@ -32,30 +32,30 @@
 
             <!-- Statistics Summary -->
             @if($wonAuctions->count() > 0)
-                <div class="row mb-4">
+                <div class="row mb-4 g-4">
                     <div class="col-md-4">
-                        <div class="card">
-                            <div class="card-body text-center">
-                                <h2 class="text-success mb-0">{{ $wonAuctions->total() }}</h2>
-                                <p class="text-muted mb-0">Enchères gagnées</p>
+                        <div class="card h-100 border-0 shadow-sm rounded-4">
+                            <div class="card-body text-center d-flex flex-column justify-content-center py-4">
+                                <h2 class="mb-2 fw-bold" style="color: #4a5568;">{{ $wonAuctions->count() }}</h2>
+                                <p class="text-muted fw-bold text-uppercase small mb-0">Enchères gagnées</p>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <div class="card">
-                            <div class="card-body text-center">
-                                <h2 class="text-primary mb-0">
+                        <div class="card h-100 border-0 shadow-sm rounded-4">
+                            <div class="card-body text-center d-flex flex-column justify-content-center py-4">
+                                <h2 class="mb-2 fw-bold" style="color: #4a5568;">
                                     {{ number_format($wonAuctions->sum(function($mise) { return $mise->montant; }), 2) }} MAD
                                 </h2>
-                                <p class="text-muted mb-0">Montant total gagné</p>
+                                <p class="text-muted fw-bold text-uppercase small mb-0">Montant total investi</p>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <div class="card">
-                            <div class="card-body text-center">
-                                <h2 class="text-info mb-0">{{ number_format($wonAuctions->avg(function($mise) { return $mise->montant; }), 2) }} MAD</h2>
-                                <p class="text-muted mb-0">Moyenne par enchère</p>
+                        <div class="card h-100 border-0 shadow-sm rounded-4">
+                            <div class="card-body text-center d-flex flex-column justify-content-center py-4">
+                                <h2 class="mb-2 fw-bold" style="color: #4a5568;">{{ number_format($wonAuctions->avg(function($mise) { return $mise->montant; }), 2) }} MAD</h2>
+                                <p class="text-muted fw-bold text-uppercase small mb-0">Moyenne par enchère</p>
                             </div>
                         </div>
                     </div>
@@ -63,23 +63,21 @@
             @endif
 
             <!-- Won Auctions Grid -->
-            <div class="card my-4">
-                <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-                    <div class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
-                        <h6 class="text-white text-capitalize ps-3 mb-0">
-                            <i class="material-symbols-rounded me-1">emoji_events</i> Mes Enchères Gagnées 🏆
-                        </h6>
-                        <div class="me-3">
-                            <div class="input-group input-group-sm">
-                                <span class="input-group-text text-body">
-                                    <i class="material-symbols-rounded">search</i>
-                                </span>
-                                <input type="text" id="wonSearch" class="form-control" placeholder="Rechercher...">
-                            </div>
+            <div class="card my-4 shadow-sm border-0 rounded-4">
+                <div class="card-header bg-white border-bottom pt-4 pb-3 px-4 rounded-top-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+                    <h5 class="mb-3 mb-md-0 fw-bold d-flex align-items-center" style="color: #4a5568;">
+                        <i class="material-symbols-rounded me-2 fs-4" style="color: #f6ad55;">emoji_events</i> Mes Enchères Gagnées
+                    </h5>
+                    <div style="min-width: 250px;">
+                        <div class="input-group input-group-outline bg-white rounded-3 overflow-hidden shadow-sm">
+                            <span class="input-group-text bg-transparent border-0 px-3">
+                                <i class="material-symbols-rounded text-muted">search</i>
+                            </span>
+                            <input type="text" id="wonSearch" class="form-control border-0 px-1 py-2 text-dark" placeholder="Rechercher..." style="background: transparent;">
                         </div>
                     </div>
                 </div>
-                <div class="card-body px-0 pb-2">
+                <div class="card-body bg-light rounded-bottom-4 p-4">
                     @if($wonAuctions->count() > 0)
                         <div class="row g-4 p-3">
                             @foreach($wonAuctions as $mise)
@@ -91,76 +89,79 @@
                                     $savedPercent = $annonce->prix_depart > 0 ? round(($savedAmount / $annonce->prix_depart) * 100) : 0;
                                 @endphp
                                 <div class="col-md-6 col-lg-4">
-                                    <div class="card h-100 won-card">
+                                    <div class="card h-100 won-card border-0 shadow-sm rounded-4 overflow-hidden">
                                         <div class="position-relative">
-                                            <img src="{{ $firstPhoto }}" class="card-img-top" style="height: 220px; object-fit: cover;" alt="{{ $annonce->titre }}">
-                                            <div class="position-absolute top-0 end-0 m-2">
-                                                <span class="badge bg-gradient-success">
-                                                    <i class="material-symbols-rounded" style="font-size: 14px;">emoji_events</i> Gagnée !
+                                            <img src="{{ $firstPhoto }}" class="card-img-top w-100" style="height: 240px; object-fit: cover;" alt="{{ $annonce->titre }}">
+                                            
+                                            <!-- Gradient overlay -->
+                                            <div class="position-absolute bottom-0 start-0 w-100 p-3" style="background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);">
+                                                @if($savedPercent > 0)
+                                                    <span class="badge border-0 fw-bold px-2 py-1 shadow-sm rounded-pill" style="background: rgba(245, 101, 101, 0.9); color: white;">
+                                                        <i class="material-symbols-rounded align-middle" style="font-size: 14px;">savings</i> -{{ $savedPercent }}%
+                                                    </span>
+                                                @endif
+                                            </div>
+
+                                            <div class="position-absolute top-0 end-0 m-3">
+                                                <span class="badge fw-bold px-3 py-2 shadow-sm rounded-pill fs-6 border border-2 border-white" style="background: rgba(255, 255, 255, 0.95); color: #38a169;">
+                                                    <i class="material-symbols-rounded align-middle me-1">emoji_events</i> GAGNÉE
                                                 </span>
                                             </div>
-                                            @if($savedPercent > 0)
-                                                <div class="position-absolute bottom-0 start-0 m-2">
-                                                    <span class="badge bg-gradient-danger">
-                                                        <i class="material-symbols-rounded" style="font-size: 14px;">savings</i> -{{ $savedPercent }}%
-                                                    </span>
-                                                </div>
-                                            @endif
                                         </div>
-                                        <div class="card-body">
-                                            <h5 class="card-title mb-2">{{ Str::limit($annonce->titre, 50) }}</h5>
-                                            <p class="card-text text-muted small mb-3">{{ Str::limit($annonce->description, 80) }}</p>
+                                        
+                                        <div class="card-body p-4">
+                                            <h5 class="card-title text-dark fw-bold mb-2" style="line-height: 1.3;">{{ Str::limit($annonce->titre, 40) }}</h5>
+                                            <p class="card-text text-muted small mb-4">{{ Str::limit($annonce->description, 70) }}</p>
                                             
-                                            <div class="row mb-3">
-                                                <div class="col-6">
-                                                    <small class="text-muted d-block">Prix de départ</small>
-                                                    <strong class="text-secondary">{{ number_format($annonce->prix_depart, 2) }} MAD</strong>
+                                            <div class="d-flex justify-content-between align-items-end mb-3 pb-3 border-bottom border-light">
+                                                <div>
+                                                    <small class="text-muted d-block fw-semibold mb-1">Prix de départ</small>
+                                                    <span class="text-secondary fw-bold text-decoration-line-through">{{ number_format($annonce->prix_depart, 2) }} MAD</span>
                                                 </div>
-                                                <div class="col-6 text-end">
-                                                    <small class="text-muted d-block">Prix gagnant</small>
-                                                    <strong class="text-success h5 mb-0">{{ number_format($mise->montant, 2) }} MAD</strong>
+                                                <div class="text-end">
+                                                    <small class="text-success d-block fw-bold mb-1">Votre offre gagnante</small>
+                                                    <span class="text-success fw-bold fs-5 mb-0">{{ number_format($mise->montant, 2) }} MAD</span>
                                                 </div>
                                             </div>
 
                                             @if($savedAmount > 0)
-                                                <div class="alert alert-success py-2 mb-3">
-                                                    <i class="material-symbols-rounded" style="font-size: 16px;">savings</i>
-                                                    Économie : {{ number_format($savedAmount, 2) }} MAD ({{ $savedPercent }}%)
+                                                <div class="alert py-2 mb-3 px-3 d-flex align-items-center rounded-3 border-0 fw-semibold" style="background: #f0fdf4; color: #166534;">
+                                                    <i class="material-symbols-rounded me-2" style="font-size: 20px;">savings</i>
+                                                    Vous avez économisé {{ number_format($savedAmount, 2) }} MAD !
                                                 </div>
                                             @endif
 
-                                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                                <div>
-                                                    <span class="badge bg-gradient-secondary">
-                                                        <i class="material-symbols-rounded" style="font-size: 12px;">category</i> 
-                                                        {{ $annonce->produit->categorie->nom ?? 'Général' }}
-                                                    </span>
-                                                    <span class="badge bg-gradient-dark ms-1">
-                                                        <i class="material-symbols-rounded" style="font-size: 12px;">inventory_2</i>
-                                                        @switch($annonce->produit->etat)
-                                                            @case('NEUF') Neuf @break
-                                                            @case('TRES_BON_ETAT') Très bon @break
-                                                            @case('BON_ETAT') Bon @break
-                                                            @default Acceptable
-                                                        @endswitch
-                                                    </span>
-                                                </div>
-                                                <div class="text-warning small">
-                                                    <i class="material-symbols-rounded" style="font-size: 14px;">star</i>
+                                            <div class="d-flex flex-wrap gap-2 mb-1">
+                                                <span class="badge bg-light text-dark border px-2 py-1 fw-medium rounded-3">
+                                                    <i class="material-symbols-rounded align-middle text-muted" style="font-size: 14px;">category</i> 
+                                                    {{ $annonce->produit->categorie->nom ?? 'Général' }}
+                                                </span>
+                                                <span class="badge bg-light text-dark border px-2 py-1 fw-medium rounded-3">
+                                                    <i class="material-symbols-rounded align-middle text-muted" style="font-size: 14px;">inventory_2</i>
+                                                    @switch($annonce->produit->etat)
+                                                        @case('NEUF') Neuf @break
+                                                        @case('TRES_BON_ETAT') Très bon @break
+                                                        @case('BON_ETAT') Bon @break
+                                                        @default Acceptable
+                                                    @endswitch
+                                                </span>
+                                                <span class="badge bg-light text-dark border px-2 py-1 fw-medium rounded-3 ms-auto">
+                                                    <i class="material-symbols-rounded align-middle text-warning" style="font-size: 14px;">star</i>
                                                     {{ number_format($annonce->vendeur->note_moyenne, 1) }}
-                                                </div>
+                                                </span>
                                             </div>
                                         </div>
-                                        <div class="card-footer bg-transparent border-top-0 pt-0">
+
+                                        <div class="card-footer bg-white border-0 pt-0 pb-4 px-4">
                                             <div class="row g-2">
-                                                <div class="col-7">
-                                                    <a href="{{ route('annonces.show', $annonce) }}" class="btn bg-gradient-info w-100">
-                                                        <i class="material-symbols-rounded">visibility</i> Voir
+                                                <div class="col-8">
+                                                    <a href="{{ route('annonces.show', $annonce) }}" class="btn-gradient w-100 mb-0 py-2 d-flex justify-content-center align-items-center text-white rounded-3" style="text-decoration: none;">
+                                                        <i class="material-symbols-rounded me-2" style="font-size: 18px;">visibility</i> Voir l'annonce
                                                     </a>
                                                 </div>
-                                                <div class="col-5">
-                                                    <button class="btn bg-gradient-success w-100" onclick="contactSeller('{{ $annonce->vendeur->client->user->email }}', '{{ addslashes($annonce->titre) }}')">
-                                                        <i class="material-symbols-rounded">mail</i>
+                                                <div class="col-4">
+                                                    <button class="btn-outline-gradient w-100 mb-0 py-2 fw-bold d-flex justify-content-center align-items-center bg-white rounded-3" onclick="contactSeller('{{ $annonce->vendeur->client->user->email }}', '{{ addslashes($annonce->titre) }}')" title="Contacter le vendeur">
+                                                        <i class="material-symbols-rounded" style="font-size: 18px;">mail</i>
                                                     </button>
                                                 </div>
                                             </div>
@@ -170,10 +171,12 @@
                             @endforeach
                         </div>
                         
-                        <!-- Pagination -->
-                        <div class="px-3 pt-3">
-                            {{ $wonAuctions->links() }}
-                        </div>
+                        <!-- Pagination (if applicable) -->
+                        @if(method_exists($wonAuctions, 'links'))
+                            <div class="px-3 pt-3">
+                                {{ $wonAuctions->links() }}
+                            </div>
+                        @endif
                     @else
                         <div class="text-center py-5">
                             <i class="material-symbols-rounded" style="font-size: 80px; color: #cbd5e0;">emoji_events</i>
@@ -181,8 +184,8 @@
                             <p class="text-muted mb-0">Vous n'avez pas encore gagné d'enchères.</p>
                             <p class="text-muted">Participez aux enchères actives pour avoir une chance de gagner !</p>
                             <div class="mt-4">
-                                <a href="{{ route('auctions.active') }}" class="btn bg-gradient-primary">
-                                    <i class="material-symbols-rounded">gavel</i> Explorer les enchères actives
+                                <a href="{{ route('auctions.active') }}" class="btn-gradient d-inline-block text-decoration-none rounded-3">
+                                    <i class="material-symbols-rounded align-middle me-1">gavel</i> Explorer les enchères actives
                                 </a>
                             </div>
                         </div>
@@ -192,50 +195,55 @@
 
             <!-- Tips for Winners -->
             @if($wonAuctions->count() > 0)
-                <div class="card mt-4">
-                    <div class="card-header">
-                        <h6><i class="material-symbols-rounded me-1">tips_and_updates</i> Prochaines étapes</h6>
+                <div class="card mt-4 border-0 shadow-sm rounded-4">
+                    <div class="card-header bg-white border-bottom pt-4 pb-3 px-4 rounded-top-4">
+                        <h5 class="mb-0 fw-bold d-flex align-items-center">
+                            <i class="material-symbols-rounded me-2 text-warning fs-4">tips_and_updates</i> Prochaines étapes
+                        </h5>
                     </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-4 mb-3">
-                                <div class="d-flex">
-                                    <div class="icon icon-shape bg-gradient-success rounded-circle me-3">
-                                        <i class="material-symbols-rounded text-white">mail</i>
+                    <div class="card-body p-4">
+                        <div class="row g-4">
+                            <div class="col-md-4">
+                                <div class="d-flex p-3 rounded-3 border h-100 align-items-center" style="background: #f8f9fa;">
+                                    <div class="icon icon-shape rounded-circle shadow-sm me-3 flex-shrink-0 d-flex justify-content-center align-items-center" style="width: 48px; height: 48px; background: rgba(102, 126, 234, 0.1);">
+                                        <i class="material-symbols-rounded" style="color: #667eea;">mail</i>
                                     </div>
                                     <div>
-                                        <h6 class="mb-0">1. Contactez le vendeur</h6>
-                                        <small class="text-muted">Utilisez le bouton email pour contacter le vendeur et organiser la livraison</small>
+                                        <h6 class="mb-1 fw-bold" style="color: #4a5568;">1. Contactez le vendeur</h6>
+                                        <small class="text-muted d-block lh-sm">Utilisez le bouton email pour contacter le vendeur et organiser la livraison</small>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4 mb-3">
-                                <div class="d-flex">
-                                    <div class="icon icon-shape bg-gradient-info rounded-circle me-3">
-                                        <i class="material-symbols-rounded text-white">payments</i>
+                            <div class="col-md-4">
+                                <div class="d-flex p-3 rounded-3 border h-100 align-items-center" style="background: #f8f9fa;">
+                                    <div class="icon icon-shape rounded-circle shadow-sm me-3 flex-shrink-0 d-flex justify-content-center align-items-center" style="width: 48px; height: 48px; background: rgba(118, 75, 162, 0.1);">
+                                        <i class="material-symbols-rounded" style="color: #764ba2;">payments</i>
                                     </div>
                                     <div>
-                                        <h6 class="mb-0">2. Finalisez le paiement</h6>
-                                        <small class="text-muted">Convenez du mode de paiement avec le vendeur</small>
+                                        <h6 class="mb-1 fw-bold" style="color: #4a5568;">2. Finalisez le paiement</h6>
+                                        <small class="text-muted d-block lh-sm">Convenez du mode de paiement avec le vendeur</small>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4 mb-3">
-                                <div class="d-flex">
-                                    <div class="icon icon-shape bg-gradient-warning rounded-circle me-3">
-                                        <i class="material-symbols-rounded text-white">local_shipping</i>
+                            <div class="col-md-4">
+                                <div class="d-flex p-3 rounded-3 border h-100 align-items-center" style="background: #f8f9fa;">
+                                    <div class="icon icon-shape rounded-circle shadow-sm me-3 flex-shrink-0 d-flex justify-content-center align-items-center" style="width: 48px; height: 48px; background: rgba(79, 209, 197, 0.1);">
+                                        <i class="material-symbols-rounded" style="color: #4fd1c5;">local_shipping</i>
                                     </div>
                                     <div>
-                                        <h6 class="mb-0">3. Recevez votre produit</h6>
-                                        <small class="text-muted">Organisez la livraison ou la remise en main propre</small>
+                                        <h6 class="mb-1 fw-bold" style="color: #4a5568;">3. Recevez votre produit</h6>
+                                        <small class="text-muted d-block lh-sm">Organisez la livraison ou la remise en main propre</small>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <hr class="my-3">
-                        <div class="alert alert-info mb-0">
-                            <i class="material-symbols-rounded">info</i>
-                            <strong>Conseil :</strong> Laissez un avis au vendeur après avoir reçu votre produit pour l'aider à améliorer ses services !
+                        <hr class="my-4 border-light">
+                        <div class="border-0 shadow-sm d-flex align-items-center mb-0 px-4 py-3 rounded-3" style="background: #f8f9fa; border-left: 4px solid #667eea !important;">
+                            <i class="material-symbols-rounded me-3 fs-4" style="color: #667eea;">info</i>
+                            <div class="text-dark">
+                                <strong class="d-block mb-1" style="color: #4a5568;">Conseil d'expert :</strong>
+                                <span class="text-muted">Laissez un avis au vendeur après avoir reçu votre produit pour l'aider à améliorer ses services !</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -254,7 +262,7 @@
 
     .won-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
     }
 
     .card-img-top {
@@ -268,6 +276,31 @@
     .badge {
         font-weight: 500;
         padding: 0.4rem 0.8rem;
+    }
+
+    .btn-gradient {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        color: white;
+        font-weight: 600;
+        transition: all 0.2s ease;
+    }
+    .btn-gradient:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        color: white;
+    }
+    .btn-outline-gradient {
+        background: white;
+        border: 2px solid #667eea;
+        color: #667eea;
+        font-weight: 600;
+        transition: all 0.2s ease;
+    }
+    .btn-outline-gradient:hover {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-color: transparent;
+        color: white;
     }
 </style>
 @endpush

@@ -1,3 +1,4 @@
+{{-- /opt/lampp/htdocs/gestion_des_encheres/resources/views/admin/auctions/index.blade.php --}}
 @extends('layouts.app')
 
 @section('title', 'Gestion des Enchères')
@@ -7,12 +8,14 @@
 @section('content')
 <div class="row">
     <div class="col-12">
-        <div class="card my-4">
+        <div class="card my-4 border-0 shadow-sm rounded-4">
             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-                <div class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
-                    <h6 class="text-white text-capitalize ps-3 mb-0">Toutes les Enchères</h6>
+                <div class="bg-gradient-theme shadow-lg border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center rounded-4">
+                    <h6 class="text-white text-capitalize ps-3 mb-0 fw-bold">
+                        <i class="material-symbols-rounded me-1 align-middle">gavel</i> Toutes les Enchères
+                    </h6>
                     <div class="me-3">
-                        <select id="statusFilter" class="form-control form-control-sm w-auto d-inline-block me-2">
+                        <select id="statusFilter" class="form-control form-control-sm w-auto d-inline-block me-2 rounded-3 border-0 bg-white text-dark fw-semibold" style="padding: 0.4rem 1rem;">
                             <option value="">Tous les statuts</option>
                             <option value="EN_ATTENTE">En attente</option>
                             <option value="ACTIVE">Active</option>
@@ -39,7 +42,7 @@
                         </thead>
                         <tbody>
                             @forelse($auctions as $annonce)
-                            <tr data-status="{{ $annonce->statut }}">
+                            <tr data-status="{{ $annonce->statut }}" class="align-middle">
                                 <td>
                                     <div class="d-flex px-2 py-1">
                                         @php
@@ -47,17 +50,17 @@
                                             $firstPhoto = !empty($photos) ? Storage::url($photos[0]) : 'https://via.placeholder.com/40x40';
                                         @endphp
                                         <div>
-                                            <img src="{{ $firstPhoto }}" class="avatar avatar-sm me-3 border-radius-lg" alt="produit">
+                                            <img src="{{ $firstPhoto }}" class="avatar avatar-sm me-3 border-radius-lg" alt="produit" style="width: 40px; height: 40px; object-fit: cover; border-radius: 10px;">
                                         </div>
                                         <div class="d-flex flex-column justify-content-center">
-                                            <h6 class="mb-0 text-sm">{{ Str::limit($annonce->titre, 40) }}</h6>
-                                            <p class="text-xs text-secondary mb-0">{{ $annonce->produit->nom ?? 'N/A' }}</p>
+                                            <h6 class="mb-0 text-sm fw-bold text-dark">{{ Str::limit($annonce->titre, 40) }}</h6>
+                                            <p class="text-xs text-secondary mb-0">{{ $annonce->produit->nom }}</p>
                                         </div>
                                     </div>
                                 </td>
                                 <td>
-                                    <p class="text-xs font-weight-bold mb-0">{{ $annonce->vendeur->client->nom ?? 'N/A' }}</p>
-                                    <p class="text-xs text-secondary mb-0">Note: {{ number_format($annonce->vendeur->note_moyenne ?? 0, 1) }}/5</p>
+                                    <p class="text-xs font-weight-bold mb-0 text-dark">{{ $annonce->vendeur->client->nom }}</p>
+                                    <p class="text-xs text-secondary mb-0">Note: {{ number_format($annonce->vendeur->note_moyenne, 1) }}/5</p>
                                 </td>
                                 <td class="align-middle text-center">
                                     <span class="text-secondary text-xs font-weight-bold">{{ number_format($annonce->prix_depart, 2) }} MAD</span>
@@ -68,39 +71,33 @@
                                 <td class="align-middle text-center">
                                     @switch($annonce->statut)
                                         @case('EN_ATTENTE')
-                                            <span class="badge badge-sm bg-gradient-warning">En attente</span>
+                                            <span class="badge badge-sm bg-gradient-warning px-3 py-1 rounded-pill">En attente</span>
                                             @break
                                         @case('ACTIVE')
-                                            <span class="badge badge-sm bg-gradient-success">Active</span>
+                                            <span class="badge badge-sm bg-gradient-success px-3 py-1 rounded-pill">Active</span>
                                             @break
                                         @case('CLOTUREE')
-                                            <span class="badge badge-sm bg-gradient-secondary">Clôturée</span>
+                                            <span class="badge badge-sm bg-gradient-secondary px-3 py-1 rounded-pill">Clôturée</span>
                                             @break
                                         @case('BLOQUEE')
-                                            <span class="badge badge-sm bg-gradient-danger">Bloquée</span>
+                                            <span class="badge badge-sm bg-gradient-danger px-3 py-1 rounded-pill">Bloquée</span>
                                             @break
-                                        @default
-                                            <span class="badge badge-sm bg-gradient-secondary">{{ $annonce->statut }}</span>
                                     @endswitch
                                 </td>
                                 <td class="align-middle text-center">
                                     <span class="text-secondary text-xs font-weight-bold">
-                                        @if($annonce->date_fin)
-                                            {{ \Carbon\Carbon::parse($annonce->date_fin)->format('d/m/Y H:i') }}
-                                        @else
-                                            Non définie
-                                        @endif
+                                        {{ \Carbon\Carbon::parse($annonce->date_fin)->format('d/m/Y H:i') }}
                                     </span>
                                 </td>
                                 <td class="align-middle text-center">
-                                    <span class="badge badge-sm bg-gradient-info">{{ $annonce->encheres()->count() }}</span>
+                                    <span class="badge badge-sm bg-gradient-info px-3 py-1 rounded-pill">{{ $annonce->encheres()->count() }}</span>
                                 </td>
-                                <td class="align-middle">
+                                <td class="align-middle text-center">
                                     <div class="dropdown">
                                         <button class="btn btn-link text-secondary mb-0" type="button" data-bs-toggle="dropdown">
                                             <i class="material-symbols-rounded">more_vert</i>
                                         </button>
-                                        <ul class="dropdown-menu dropdown-menu-end px-2 py-3">
+                                        <ul class="dropdown-menu dropdown-menu-end px-2 py-3 shadow-sm border-0 rounded-3">
                                             <li>
                                                 <a class="dropdown-item border-radius-md" href="{{ route('annonces.show', $annonce) }}" target="_blank">
                                                     <i class="material-symbols-rounded me-2">visibility</i> Voir
@@ -142,10 +139,10 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="8" class="text-center py-4">
-                                    <i class="material-symbols-rounded" style="font-size: 48px;">gavel</i>
+                                <td colspan="8" class="text-center py-5">
+                                    <i class="material-symbols-rounded" style="font-size: 48px; color: #cbd5e0;">gavel</i>
                                     <p class="text-secondary mt-2">Aucune enchère trouvée.</p>
-                                </td>
+                                 </td>
                             </tr>
                             @endforelse
                         </tbody>

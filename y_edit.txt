@@ -13,3 +13,41 @@
 - page mes offres donéé mouch dynamique / voir error
 - page ganéee mouch dynamique / voir mate5demch
 - page acceuil produit mayedheroch (sous forme annonce) / filter par categroy / prix / recherche mate5demch
+
+
+
+
+
+
+-----
+page acceuil
+recherche
+animation cards/more smaller
+Ne manquez aucune enchère !
+les avis
+taswira Enchérissez sur des
+voir produit
+tenzel 3al category
+
+login/register
+salima, register
+
+dashboard seller:
+icons mouch centrée
+
+font size yekber
+
+créer new announce 
+
+
+http://127.0.0.1:8000/notifications
+Unauthorized access. You need to have one of these roles: client
+
+
+notifications
+félicitation win
+
+
+profile
+
+navbar
