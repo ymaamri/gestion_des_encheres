@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Helpers\ImageHelper;
 
 class Produit extends Model
 {
@@ -45,24 +46,15 @@ class Produit extends Model
         );
     }
 
-    // ✅ FIXED: Relationship with Annonce
+    // Relationship with Annonce
     public function annonces()
     {
         return $this->hasMany(Annonce::class, 'produit_id', 'id');
     }
 
-    // Helper to get first image URL
+    // Helper to get first image URL - NOW USES IMAGEHELPER
     public function getFirstPhotoUrl()
     {
-        $photos = $this->photos;
-        if (!empty($photos) && is_array($photos) && !empty($photos[0])) {
-            if (filter_var($photos[0], FILTER_VALIDATE_URL)) {
-                return $photos[0];
-            }
-            if (\Storage::disk('public')->exists($photos[0])) {
-                return \Storage::url($photos[0]);
-            }
-        }
-        return 'https://picsum.photos/id/' . (($this->id % 100) + 1) . '/400/300';
+        return ImageHelper::getProductImage($this);
     }
 }

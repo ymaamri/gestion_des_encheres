@@ -12,7 +12,7 @@
         <div class="row">
             <!-- Welcome Section -->
             <div class="col-12 mb-4">
-                <div class="card bg-gradient-dark shadow-lg">
+                <div class="card bg-gradient-theme shadow-lg">
                     <div class="card-body p-4">
                         <div class="row align-items-center">
                             <div class="col-md-8">
@@ -315,7 +315,8 @@
                             <div>
                                 <p class="text-sm mb-0 text-uppercase text-secondary">Chiffre d'Affaires</p>
                                 <h3 class="font-weight-bolder mt-2 mb-0">
-                                    {{ number_format(($stats['total_sales'] ?? 0) * 1000, 0) }} MAD</h3>
+                                    {{ number_format(($stats['total_sales'] ?? 0) * 1000, 0) }} MAD
+                                </h3>
                                 <p class="text-xs text-danger mb-0 mt-2">Mois en cours</p>
                             </div>
                             <div class="icon icon-shape bg-gradient-danger shadow-danger rounded-circle">

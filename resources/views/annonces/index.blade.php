@@ -229,11 +229,75 @@
                         @endforeach
                     </div>
                     
-                    <!-- Pagination -->
-                    @if($annonces->hasPages())
-                    <div class="px-3 pt-3">
-                        {{ $annonces->links() }}
-                    </div>
+                    <!-- Custom Enhanced Pagination -->
+                    @if($annonces->lastPage() > 1)
+                        <div class="d-flex justify-content-center mt-5 pt-3">
+                            <nav aria-label="Navigation des pages">
+                                <ul class="pagination pagination-custom mb-0">
+                                    {{-- Previous Page Link --}}
+                                    @if($annonces->onFirstPage())
+                                        <li class="page-item disabled">
+                                            <span class="page-link" aria-hidden="true">
+                                                <i class="material-symbols-rounded align-middle fs-6">chevron_left</i>
+                                            </span>
+                                        </li>
+                                    @else
+                                        <li class="page-item">
+                                            <a class="page-link" href="{{ $annonces->previousPageUrl() }}" rel="prev" aria-label="Précédent">
+                                                <i class="material-symbols-rounded align-middle fs-6">chevron_left</i>
+                                            </a>
+                                        </li>
+                                    @endif
+
+                                    {{-- Pagination Elements --}}
+                                    @php
+                                        $start = max(1, $annonces->currentPage() - 2);
+                                        $end = min($annonces->lastPage(), $annonces->currentPage() + 2);
+                                        
+                                        if ($start > 1) {
+                                            echo '<li class="page-item"><a class="page-link" href="' . $annonces->url(1) . '">1</a></li>';
+                                            if ($start > 2) {
+                                                echo '<li class="page-item disabled"><span class="page-link dots">...</span></li>';
+                                            }
+                                        }
+                                        
+                                        for ($i = $start; $i <= $end; $i++) {
+                                            $activeClass = ($annonces->currentPage() == $i) ? 'active' : '';
+                                            echo '<li class="page-item ' . $activeClass . '"><a class="page-link" href="' . $annonces->url($i) . '">' . $i . '</a></li>';
+                                        }
+                                        
+                                        if ($end < $annonces->lastPage()) {
+                                            if ($end < $annonces->lastPage() - 1) {
+                                                echo '<li class="page-item disabled"><span class="page-link dots">...</span></li>';
+                                            }
+                                            echo '<li class="page-item"><a class="page-link" href="' . $annonces->url($annonces->lastPage()) . '">' . $annonces->lastPage() . '</a></li>';
+                                        }
+                                    @endphp
+
+                                    {{-- Next Page Link --}}
+                                    @if($annonces->hasMorePages())
+                                        <li class="page-item">
+                                            <a class="page-link" href="{{ $annonces->nextPageUrl() }}" rel="next" aria-label="Suivant">
+                                                <i class="material-symbols-rounded align-middle fs-6">chevron_right</i>
+                                            </a>
+                                        </li>
+                                    @else
+                                        <li class="page-item disabled">
+                                            <span class="page-link" aria-hidden="true">
+                                                <i class="material-symbols-rounded align-middle fs-6">chevron_right</i>
+                                            </span>
+                                        </li>
+                                    @endif
+                                </ul>
+                            </nav>
+                        </div>
+                        
+                        <!-- Results Info -->
+                        <div class="text-center mt-3">
+                            <small class="text-muted">
+                                Affichage de {{ $annonces->firstItem() }} à {{ $annonces->lastItem() }} sur {{ $annonces->total() }} résultats
+                            </small>
+                        </div>
                     @endif
                 @else
                     <div class="text-center py-5">
@@ -397,6 +461,88 @@
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         border-color: transparent;
         color: white;
+    }
+
+    /* Custom Pagination Styles */
+    .pagination-custom {
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .pagination-custom .page-item {
+        margin: 0;
+    }
+
+    .pagination-custom .page-link {
+        background: white;
+        border: none;
+        color: #4a5568;
+        font-weight: 500;
+        padding: 0.65rem 1rem;
+        min-width: 42px;
+        text-align: center;
+        border-radius: 12px !important;
+        transition: all 0.25s ease-in-out;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        margin: 0 2px;
+        font-size: 0.95rem;
+    }
+
+    .pagination-custom .page-link i {
+        font-size: 1.25rem;
+        vertical-align: middle;
+        line-height: 1;
+    }
+
+    .pagination-custom .page-item:not(.disabled) .page-link:hover {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(102, 126, 234, 0.25);
+    }
+
+    .pagination-custom .page-item.active .page-link {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        box-shadow: 0 4px 10px rgba(102, 126, 234, 0.4);
+        font-weight: 600;
+    }
+
+    .pagination-custom .page-item.disabled .page-link {
+        background: #f1f3f5;
+        color: #adb5bd;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+
+    .pagination-custom .page-link.dots {
+        background: transparent;
+        box-shadow: none;
+        cursor: default;
+        font-weight: 400;
+        letter-spacing: 1px;
+    }
+
+    .pagination-custom .page-link.dots:hover {
+        background: transparent;
+        color: #4a5568;
+        transform: none;
+        box-shadow: none;
+    }
+
+    /* Responsive pagination */
+    @media (max-width: 576px) {
+        .pagination-custom .page-link {
+            padding: 0.5rem 0.75rem;
+            min-width: 36px;
+            font-size: 0.85rem;
+        }
+        
+        .pagination-custom {
+            gap: 0.25rem;
+        }
     }
 </style>
 @endpush

@@ -55,6 +55,21 @@
                         </div>
                     </div>
                     <div class="card-body p-4">
+                        <!-- ✅ CATEGORY SELECT - now always visible -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Catégorie <span class="text-danger">*</span></label>
+                            <select name="categorie_id" id="categorie_id"
+                                class="form-select @error('categorie_id') is-invalid @enderror" required>
+                                <option value="">Sélectionner une catégorie</option>
+                                @foreach($categories as $categorie)
+                                    <option value="{{ $categorie->id }}" {{ old('categorie_id') == $categorie->id ? 'selected' : '' }}>
+                                        {{ $categorie->nom }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('categorie_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                        </div>
+
                         <!-- Product Source Selection -->
                         <div class="mb-4">
                             <label class="fw-bold mb-2">Source du produit :</label>
@@ -94,8 +109,7 @@
                                 <div class="text-danger small mt-1">{{ $message }}</div>
                             @enderror
                             <div id="product_prefill_info" class="alert alert-info mt-2" style="display: none;">
-                                <i class="material-symbols-rounded">info</i> Les détails du produit seront automatiquement
-                                utilisés.
+                                <i class="material-symbols-rounded">info</i> Les détails du produit seront automatiquement utilisés.
                             </div>
                         </div>
 
@@ -103,26 +117,18 @@
                         <div id="new_product_block" style="display: none;">
                             <div class="row g-3">
                                 <div class="col-md-6">
-                                    <label class="form-label fw-semibold">Nom du Produit <span
-                                            class="text-danger">*</span></label>
+                                    <label class="form-label fw-semibold">Nom du Produit <span class="text-danger">*</span></label>
                                     <input type="text" name="produit_nom"
                                         class="form-control @error('produit_nom') is-invalid @enderror"
                                         value="{{ old('produit_nom') }}">
                                     @error('produit_nom')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label fw-semibold">Catégorie <span
-                                            class="text-danger">*</span></label>
-                                    <select name="categorie_id" id="categorie_id"
-                                        class="form-select @error('categorie_id') is-invalid @enderror" required>
-                                        <option value="">Sélectionner une catégorie</option>
-                                        @foreach($categories as $categorie)
-                                            <option value="{{ $categorie->id }}" {{ old('categorie_id') == $categorie->id ? 'selected' : '' }}>
-                                                {{ $categorie->nom }}
-                                            </option>
-                                        @endforeach
+                                    <label class="form-label fw-semibold">Sous-catégorie</label>
+                                    <select name="produit_sous_categorie_id" id="produit_sous_categorie_id" class="form-select">
+                                        <option value="">-- Aucune sous-catégorie --</option>
                                     </select>
-                                    @error('categorie_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                    <small class="text-muted">Sélectionnez d'abord une catégorie ci-dessus</small>
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label fw-semibold">Marque</label>
@@ -143,11 +149,9 @@
                                     <select name="produit_etat"
                                         class="form-select @error('produit_etat') is-invalid @enderror" required>
                                         <option value="">Sélectionner l'état</option>
-                                        <option value="NEUF" {{ old('produit_etat') == 'NEUF' ? 'selected' : '' }}>Neuf
-                                        </option>
+                                        <option value="NEUF" {{ old('produit_etat') == 'NEUF' ? 'selected' : '' }}>Neuf</option>
                                         <option value="TRES_BON_ETAT" {{ old('produit_etat') == 'TRES_BON_ETAT' ? 'selected' : '' }}>Très Bon État</option>
-                                        <option value="BON_ETAT" {{ old('produit_etat') == 'BON_ETAT' ? 'selected' : '' }}>Bon
-                                            État</option>
+                                        <option value="BON_ETAT" {{ old('produit_etat') == 'BON_ETAT' ? 'selected' : '' }}>Bon État</option>
                                         <option value="ACCEPTABLE" {{ old('produit_etat') == 'ACCEPTABLE' ? 'selected' : '' }}>Acceptable</option>
                                     </select>
                                     @error('produit_etat')<div class="invalid-feedback">{{ $message }}</div>@enderror
@@ -158,21 +162,6 @@
                                         class="form-control @error('produit_description') is-invalid @enderror"
                                         rows="3">{{ old('produit_description') }}</textarea>
                                     @error('produit_description')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                                </div>
-                                <!-- Sous-catégorie (pour nouveau produit) -->
-                                <div id="new_product_sous_categorie_block" class="col-12" style="display: none;">
-                                    <label class="form-label fw-semibold">Sous-catégorie</label>
-                                    <select name="produit_sous_categorie_id" id="produit_sous_categorie_id"
-                                        class="form-select">
-                                        <option value="">-- Aucune sous-catégorie --</option>
-                                    </select>
-                                    <small class="text-muted">Sélectionnez d'abord une catégorie ci-dessus</small>
-                                </div>
-                                <!-- For existing products, we don't allow changing subcategory here -->
-                                <div id="existing_product_subcategory_info" class="col-12 alert alert-secondary mt-2"
-                                    style="display: none;">
-                                    <i class="material-symbols-rounded">info</i> La sous-catégorie du produit existant sera
-                                    conservée.
                                 </div>
                             </div>
                         </div>
@@ -196,24 +185,20 @@
                     <div class="card-body p-4">
                         <div class="row g-3">
                             <div class="col-12">
-                                <label class="form-label fw-semibold">Titre de l'annonce <span
-                                        class="text-danger">*</span></label>
+                                <label class="form-label fw-semibold">Titre de l'annonce <span class="text-danger">*</span></label>
                                 <input type="text" name="titre" class="form-control @error('titre') is-invalid @enderror"
-                                    value="{{ old('titre') }}" placeholder="Un titre accrocheur pour votre enchère"
-                                    required>
+                                    value="{{ old('titre') }}" placeholder="Un titre accrocheur pour votre enchère" required>
                                 @error('titre')<div class="invalid-feedback">{{ $message }}</div>@enderror
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-semibold">Prix de départ (MAD) <span
-                                        class="text-danger">*</span></label>
+                                <label class="form-label fw-semibold">Prix de départ (MAD) <span class="text-danger">*</span></label>
                                 <input type="number" name="prix_depart"
                                     class="form-control @error('prix_depart') is-invalid @enderror" step="0.01" min="0"
                                     value="{{ old('prix_depart') }}" placeholder="0.00" required>
                                 @error('prix_depart')<div class="invalid-feedback">{{ $message }}</div>@enderror
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-semibold">Date et heure de fin <span
-                                        class="text-danger">*</span></label>
+                                <label class="form-label fw-semibold">Date et heure de fin <span class="text-danger">*</span></label>
                                 <input type="datetime-local" name="date_fin"
                                     class="form-control @error('date_fin') is-invalid @enderror"
                                     value="{{ old('date_fin') }}" required>
@@ -228,8 +213,7 @@
                             <div class="col-12">
                                 <label class="form-label fw-semibold">Description de l'annonce</label>
                                 <textarea name="description" class="form-control @error('description') is-invalid @enderror"
-                                    rows="3"
-                                    placeholder="Conditions particulières, livraison, etc.">{{ old('description') }}</textarea>
+                                    rows="3" placeholder="Conditions particulières, livraison, etc.">{{ old('description') }}</textarea>
                                 @error('description')<div class="invalid-feedback">{{ $message }}</div>@enderror
                             </div>
                         </div>
@@ -248,8 +232,8 @@
                                 <i class="material-symbols-rounded text-white">photo_camera</i>
                             </div>
                             <div>
-                                <h5 class="mb-0 fw-bold" style="color: #2d3748;">Photos</h5>
-                                <p class="text-muted small mb-0">Max 5 photos</p>
+                                <h5 class="mb-0 fw-bold" style="color: #2d3748;">Photo</h5>
+                                <p class="text-muted small mb-0"></p>
                             </div>
                         </div>
                     </div>
@@ -378,122 +362,121 @@
 @endpush
 
 @push('scripts')
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const radioExisting = document.getElementById('source_existing');
-            const radioNew = document.getElementById('source_new');
-            const existingBlock = document.getElementById('existing_product_block');
-            const newBlock = document.getElementById('new_product_block');
-            const existingProductSelect = document.getElementById('existing_product_id');
-            const categorySelect = document.getElementById('categorie_id');
-            const subcategorySelect = document.getElementById('produit_sous_categorie_id');
-            const newProductSubcatBlock = document.getElementById('new_product_sous_categorie_block');
-            const existingSubcatInfo = document.getElementById('existing_product_subcategory_info');
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const radioExisting = document.getElementById('source_existing');
+        const radioNew = document.getElementById('source_new');
+        const existingBlock = document.getElementById('existing_product_block');
+        const newBlock = document.getElementById('new_product_block');
+        const existingProductSelect = document.getElementById('existing_product_id');
+        const categorySelect = document.getElementById('categorie_id');
+        const subcategorySelect = document.getElementById('produit_sous_categorie_id');
+        const newProductSubcatBlock = document.getElementById('new_product_subcat_block');
 
-            // Toggle visibility based on radio selection
-            function toggleProductBlocks() {
-                if (radioExisting.checked) {
-                    existingBlock.style.display = 'block';
-                    newBlock.style.display = 'none';
-                    newProductSubcatBlock.style.display = 'none';
-                    existingSubcatInfo.style.display = 'block';
-                    // Disable new product fields
-                    document.querySelectorAll('#new_product_block input, #new_product_block select, #new_product_block textarea').forEach(field => {
-                        field.disabled = true;
-                    });
-                    // Enable existing product select
-                    existingProductSelect.disabled = false;
-                    // Remove required attributes from new product fields
-                    let nomField = document.querySelector('input[name="produit_nom"]');
-                    let etatField = document.querySelector('select[name="produit_etat"]');
-                    if (nomField) nomField.required = false;
-                    if (etatField) etatField.required = false;
-                } else {
-                    existingBlock.style.display = 'none';
-                    newBlock.style.display = 'block';
-                    newProductSubcatBlock.style.display = 'block';
-                    existingSubcatInfo.style.display = 'none';
-                    // Enable new product fields
-                    document.querySelectorAll('#new_product_block input, #new_product_block select, #new_product_block textarea').forEach(field => {
-                        field.disabled = false;
-                    });
-                    existingProductSelect.disabled = true;
-                    let nomField = document.querySelector('input[name="produit_nom"]');
-                    let etatField = document.querySelector('select[name="produit_etat"]');
-                    if (nomField) nomField.required = true;
-                    if (etatField) etatField.required = true;
-                }
+        // Toggle visibility based on radio selection
+        function toggleProductBlocks() {
+            if (radioExisting.checked) {
+                existingBlock.style.display = 'block';
+                newBlock.style.display = 'none';
+                // Disable new product fields
+                document.querySelectorAll('#new_product_block input, #new_product_block select, #new_product_block textarea').forEach(field => {
+                    field.disabled = true;
+                });
+                // Enable existing product select
+                existingProductSelect.disabled = false;
+                // Remove required attributes from new product fields
+                let nomField = document.querySelector('input[name="produit_nom"]');
+                let etatField = document.querySelector('select[name="produit_etat"]');
+                if (nomField) nomField.required = false;
+                if (etatField) etatField.required = false;
+                // Keep category select enabled
+                categorySelect.disabled = false;
+            } else {
+                existingBlock.style.display = 'none';
+                newBlock.style.display = 'block';
+                // Enable new product fields
+                document.querySelectorAll('#new_product_block input, #new_product_block select, #new_product_block textarea').forEach(field => {
+                    field.disabled = false;
+                });
+                existingProductSelect.disabled = true;
+                let nomField = document.querySelector('input[name="produit_nom"]');
+                let etatField = document.querySelector('select[name="produit_etat"]');
+                if (nomField) nomField.required = true;
+                if (etatField) etatField.required = true;
+                // Keep category select enabled
+                categorySelect.disabled = false;
+            }
+        }
+
+        radioExisting.addEventListener('change', toggleProductBlocks);
+        radioNew.addEventListener('change', toggleProductBlocks);
+        toggleProductBlocks();
+
+        // Prefill info when selecting existing product (just for UX)
+        existingProductSelect.addEventListener('change', function () {
+            const infoDiv = document.getElementById('product_prefill_info');
+            if (this.value) {
+                infoDiv.style.display = 'block';
+            } else {
+                infoDiv.style.display = 'none';
+            }
+        });
+
+        // Dynamically load subcategories when category changes (only if creating new product)
+        function loadSubcategories() {
+            const categoryId = categorySelect.value;
+            if (!categoryId) {
+                subcategorySelect.innerHTML = '<option value="">-- Aucune sous-catégorie --</option>';
+                return;
             }
 
-            radioExisting.addEventListener('change', toggleProductBlocks);
-            radioNew.addEventListener('change', toggleProductBlocks);
-            toggleProductBlocks();
-
-            // Prefill info when selecting existing product (just for UX)
-            existingProductSelect.addEventListener('change', function () {
-                const infoDiv = document.getElementById('product_prefill_info');
-                if (this.value) {
-                    infoDiv.style.display = 'block';
-                } else {
-                    infoDiv.style.display = 'none';
-                }
-            });
-
-            // Dynamically load subcategories when category changes (only if creating new product)
-            function loadSubcategories() {
-                const categoryId = categorySelect.value;
-                if (!categoryId) {
-                    subcategorySelect.innerHTML = '<option value="">-- Aucune sous-catégorie --</option>';
-                    return;
-                }
-
-                fetch(`/api/subcategories/${categoryId}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        let options = '<option value="">-- Aucune sous-catégorie --</option>';
-                        data.forEach(sub => {
-                            options += `<option value="${sub.id}">${sub.nom}</option>`;
-                        });
-                        subcategorySelect.innerHTML = options;
-                    })
-                    .catch(error => {
-                        console.error('Error loading subcategories:', error);
-                        subcategorySelect.innerHTML = '<option value="">-- Erreur de chargement --</option>';
+            fetch(`/api/subcategories/${categoryId}`)
+                .then(response => response.json())
+                .then(data => {
+                    let options = '<option value="">-- Aucune sous-catégorie --</option>';
+                    data.forEach(sub => {
+                        options += `<option value="${sub.id}">${sub.nom}</option>`;
                     });
-            }
+                    subcategorySelect.innerHTML = options;
+                })
+                .catch(error => {
+                    console.error('Error loading subcategories:', error);
+                    subcategorySelect.innerHTML = '<option value="">-- Erreur de chargement --</option>';
+                });
+        }
 
-            categorySelect.addEventListener('change', function () {
-                // Only load subcategories if we are in "new product" mode
-                if (radioNew.checked) {
-                    loadSubcategories();
-                }
-            });
-
-            // If new product mode is active initially, load subcategories for the selected category
-            if (radioNew.checked && categorySelect.value) {
+        categorySelect.addEventListener('change', function () {
+            // Only load subcategories if we are in "new product" mode
+            if (radioNew.checked) {
                 loadSubcategories();
             }
         });
 
-        // File list display function
-        function updateFileList(input) {
-            const fileList = document.getElementById('file-list');
-            fileList.innerHTML = '';
+        // If new product mode is active initially, load subcategories for the selected category
+        if (radioNew.checked && categorySelect.value) {
+            loadSubcategories();
+        }
+    });
 
-            if (input.files && input.files.length > 0) {
-                if (input.files.length > 5) {
-                    alert('Vous ne pouvez sélectionner que 5 images maximum.');
-                    input.value = '';
-                    return;
-                }
+    // File list display function
+    function updateFileList(input) {
+        const fileList = document.getElementById('file-list');
+        fileList.innerHTML = '';
 
-                for (let i = 0; i < input.files.length; i++) {
-                    const badge = document.createElement('div');
-                    badge.className = 'file-badge';
-                    badge.innerHTML = '<i class="material-symbols-rounded" style="font-size: 16px;">image</i><span>' + input.files[i].name + '</span>';
-                    fileList.appendChild(badge);
-                }
+        if (input.files && input.files.length > 0) {
+            if (input.files.length > 5) {
+                alert('Vous ne pouvez sélectionner que 5 images maximum.');
+                input.value = '';
+                return;
+            }
+
+            for (let i = 0; i < input.files.length; i++) {
+                const badge = document.createElement('div');
+                badge.className = 'file-badge';
+                badge.innerHTML = '<i class="material-symbols-rounded" style="font-size: 16px;">image</i><span>' + input.files[i].name + '</span>';
+                fileList.appendChild(badge);
             }
         }
-    </script>
+    }
+</script>
 @endpush

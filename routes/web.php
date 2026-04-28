@@ -16,43 +16,18 @@ use App\Models\Enchere;
 use App\Models\Categorie;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use App\Helpers\ImageHelper; // <-- ADD THIS LINE
 
 // ============================================
-// FIXED HELPER – always returns a valid image URL
+// HOME ROUTE
 // ============================================
-function getProductImageUrl($photos)
-{
-    // If no photos or empty array, return a random placeholder
-    if (empty($photos) || !is_array($photos) || count($photos) === 0) {
-        $randomId = rand(1, 100);
-        return 'https://picsum.photos/id/' . $randomId . '/400/300';
-    }
-
-    $firstPhoto = $photos[0];
-    if (empty($firstPhoto)) {
-        $randomId = rand(1, 100);
-        return 'https://picsum.photos/id/' . $randomId . '/400/300';
-    }
-
-    // If it's a full URL (starts with http)
-    if (filter_var($firstPhoto, FILTER_VALIDATE_URL)) {
-        return $firstPhoto;
-    }
-
-    // If it's a storage path, try to return the public URL
-    if (Storage::disk('public')->exists($firstPhoto)) {
-        return Storage::url($firstPhoto);
-    }
-
-    // Fallback to placeholder
-    $randomId = rand(1, 100);
-    return 'https://picsum.photos/id/' . $randomId . '/400/300';
-}
-
 Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
+// ============================================
+// DASHBOARD
+// ============================================
 Route::get('/dashboard', function () {
     $user = auth()->user();
 
@@ -125,14 +100,18 @@ Route::get('/dashboard', function () {
     }
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// Profile routes
+// ============================================
+// PROFILE ROUTES
+// ============================================
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// Annonces routes (for sellers)
+// ============================================
+// ANNONCES ROUTES (SELLER)
+// ============================================
 Route::middleware(['auth'])->prefix('annonces')->group(function () {
     Route::get('/', [AnnonceController::class, 'index'])->name('annonces.index');
     Route::get('/create', [AnnonceController::class, 'create'])->name('annonces.create');
@@ -143,7 +122,9 @@ Route::middleware(['auth'])->prefix('annonces')->group(function () {
     Route::delete('/{annonce}', [AnnonceController::class, 'destroy'])->name('annonces.destroy');
 });
 
-// Public auction routes (for buyers)
+// ============================================
+// PUBLIC AUCTION ROUTES (BUYER)
+// ============================================
 Route::middleware(['auth', 'role:client'])->group(function () {
     Route::get('/auctions/active', [PublicAuctionController::class, 'active'])->name('auctions.active');
     Route::get('/my-bids', [EnchereController::class, 'myBids'])->name('my.bids');
@@ -154,7 +135,9 @@ Route::middleware(['auth', 'role:client'])->group(function () {
     Route::post('/notifications/{notification}/mark-read', [NotificationController::class, 'markAsRead'])->name('notifications.mark');
 });
 
-// Admin routes
+// ============================================
+// ADMIN ROUTES
+// ============================================
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
     Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
@@ -182,7 +165,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 });
 
 // ============================================
-// API ROUTES FOR WELCOME PAGE (PUBLIC ACCESS) – FIXED
+// API ROUTES FOR WELCOME PAGE (PUBLIC)
 // ============================================
 
 Route::get('/api/stats', function () {
@@ -233,7 +216,6 @@ Route::get('/api/products', function (Request $request) {
         ->where('statut', 'ACTIVE')
         ->where('date_fin', '>', now());
 
-    // Search
     if ($request->filled('search')) {
         $search = $request->search;
         $query->where(function ($q) use ($search) {
@@ -247,7 +229,6 @@ Route::get('/api/products', function (Request $request) {
         });
     }
 
-    // Filter by category
     if ($request->filled('category_id')) {
         $categoryId = $request->category_id;
         $query->whereHas('produit.sousCategorie', function ($q) use ($categoryId) {
@@ -259,7 +240,6 @@ Route::get('/api/products', function (Request $request) {
 
     return response()->json([
         'data' => $products->map(function ($annonce) {
-            $photos = $annonce->produit->photos ?? [];
             return [
                 'id' => $annonce->id,
                 'titre' => $annonce->titre,
@@ -268,7 +248,7 @@ Route::get('/api/products', function (Request $request) {
                 'original_price' => $annonce->prix_depart,
                 'bid_count' => $annonce->encheres()->count(),
                 'date_fin' => $annonce->date_fin,
-                'image' => getProductImageUrl($photos),
+                'image' => ImageHelper::getProductImage($annonce->produit),   // ✅ FIXED
                 'category' => $annonce->produit->categorie->nom ?? 'Non catégorisé',
                 'seller_name' => $annonce->vendeur->client->nom ?? 'Vendeur',
                 'seller_rating' => $annonce->vendeur->note_moyenne ?? 0,
@@ -280,7 +260,6 @@ Route::get('/api/products', function (Request $request) {
     ]);
 });
 
-// Optional: keep the old by-category endpoint for compatibility
 Route::get('/api/products/by-category', function (Request $request) {
     $request->validate(['category_id' => 'required|exists:categories,id']);
     $products = Annonce::with(['produit', 'encheres'])
@@ -295,7 +274,6 @@ Route::get('/api/products/by-category', function (Request $request) {
 
     return response()->json([
         'data' => $products->map(function ($annonce) {
-            $photos = $annonce->produit->photos ?? [];
             return [
                 'id' => $annonce->id,
                 'titre' => $annonce->titre,
@@ -303,7 +281,7 @@ Route::get('/api/products/by-category', function (Request $request) {
                 'original_price' => $annonce->prix_depart,
                 'bid_count' => $annonce->encheres()->count(),
                 'date_fin' => $annonce->date_fin,
-                'image' => getProductImageUrl($photos),
+                'image' => ImageHelper::getProductImage($annonce->produit),   // ✅ FIXED
             ];
         })
     ]);
@@ -324,19 +302,20 @@ Route::get('/api/featured-products', function () {
 
     return response()->json([
         'data' => $products->map(function ($annonce) {
-            $photos = $annonce->produit->photos ?? [];
             return [
                 'id' => $annonce->id,
                 'titre' => $annonce->titre,
                 'current_price' => $annonce->getMontantActuel(),
                 'bid_count' => $annonce->encheres()->count(),
-                'image' => getProductImageUrl($photos),
+                'image' => ImageHelper::getProductImage($annonce->produit),   // ✅ FIXED
             ];
         })
     ]);
 });
 
-// Seller routes
+// ============================================
+// SELLER ROUTES
+// ============================================
 Route::middleware(['auth', 'role:vendeur'])
     ->prefix('vendeur')
     ->name('seller.')
