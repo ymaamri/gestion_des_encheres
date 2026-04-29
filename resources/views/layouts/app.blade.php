@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="apple-touch-icon" sizes="76x76" href="{{ asset('assets/img/apple-icon.png') }}">
-    <link rel="icon" type="image/png" href="{{ asset('assets/img/favicon.png') }}">
+    <link rel="icon" type="image/jpg" href="{{ asset('assets/bid.jpg') }}">
     <title>@yield('title', 'Marketplace d\'Enchères') - BidMaster</title>
 
     <!-- Fonts and icons -->
@@ -236,11 +236,11 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            padding: 0.75rem 2rem;
+            padding: 0.75rem 2.5rem;
             border-radius: 50px;
             font-weight: 600;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);  
         }
 
         .btn-gradient:hover {
@@ -257,6 +257,9 @@
             border-radius: 50px;
             font-weight: 600;
             transition: all 0.3s ease;
+            white-space: nowrap;  
+            display: inline-block;
+            flex-shrink: 0;
         }
 
         .btn-outline-gradient:hover {
