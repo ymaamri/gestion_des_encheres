@@ -6,394 +6,317 @@
 @section('breadcrumb', 'Détails de l\'Enchère')
 
 @section('content')
-<div class="row">
-    <div class="col-lg-8">
-        <!-- Product Images Carousel -->
-        <div class="card mb-4 border-0 shadow-sm rounded-4">
-            <div class="card-header bg-white border-0 pt-4 pb-3">
-                <div class="d-flex align-items-center">
-                    <div class="icon-shape rounded-3 d-flex align-items-center justify-content-center me-3" style="width: 48px; height: 48px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                        <i class="material-symbols-rounded text-white">photo_library</i>
-                    </div>
-                    <div>
-                        <h5 class="mb-0 fw-bold" style="color: #2d3748;">Galerie Photos</h5>
-                        <p class="text-muted small mb-0">Images du produit</p>
-                    </div>
-                </div>
-            </div>
-            <div class="card-body">
+@php
+    // Recalcul des variables nécessaires (elles peuvent ne pas être injectées par le contrôleur)
+    $bids = $annonce->encheres()->with('client.user')->latest()->get();
+    $currentHighestBid = $annonce->getMontantActuel();
+    $userBid = null;
+    if(auth()->check() && auth()->user()->client) {
+        $userBid = $annonce->getUserBid(auth()->user()->id);
+    }
+@endphp
+
+<div class="auction-showcase">
+    {{-- Fil d'Ariane stylisé maison (optionnel) --}}
+    <div class="breadcrumb-custom mb-4 d-flex align-items-center">
+        <i class="fas fa-gavel me-2 text-primary"></i>
+        <span class="text-muted">Enchère</span>
+        <i class="fas fa-chevron-right mx-2 text-muted small"></i>
+        <span class="fw-bold text-dark">{{ Str::limit($annonce->titre, 40) }}</span>
+        <span class="ms-auto badge bg-gradient-theme text-white">{{ $annonce->statut }}</span>
+    </div>
+
+    <div class="row g-4">
+        <!-- Colonne Gauche : Médias + Détails -->
+        <div class="col-lg-8">
+            <!-- Galerie d'images améliorée -->
+            <div class="card-custom p-4 mb-4">
                 @php
                     $images = \App\Helpers\ImageHelper::getProductImages($annonce->produit);
                 @endphp
-                
-                @if(count($images) > 1)
-                    <div id="productCarousel" class="carousel slide mb-4" data-bs-ride="carousel">
-                        <div class="carousel-indicators">
-                            @foreach($images as $index => $image)
-                                <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="{{ $index }}" class="{{ $index == 0 ? 'active' : '' }}" aria-current="{{ $index == 0 ? 'true' : 'false' }}" aria-label="Slide {{ $index + 1 }}"></button>
-                            @endforeach
+                <div class="position-relative gallery-container">
+                    @if(count($images) > 1)
+                        <div id="auctionCarousel" class="carousel slide" data-bs-ride="carousel">
+                            <div class="carousel-indicators">
+                                @foreach($images as $index => $image)
+                                    <button type="button" data-bs-target="#auctionCarousel" data-bs-slide-to="{{ $index }}" class="{{ $index == 0 ? 'active' : '' }}" aria-current="{{ $index == 0 ? 'true' : 'false' }}"></button>
+                                @endforeach
+                            </div>
+                            <div class="carousel-inner rounded-4 overflow-hidden">
+                                @foreach($images as $index => $image)
+                                    <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
+                                        <img src="{{ $image }}" class="d-block w-100" style="height: 450px; object-fit: contain; background: #f8f9fa;" alt="Image {{ $index + 1 }}">
+                                        <div class="carousel-caption d-none d-md-block">
+                                            <span class="badge bg-gradient-theme">Image {{ $index + 1 }}/{{ count($images) }}</span>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#auctionCarousel" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon bg-gradient-theme rounded-circle p-4" aria-hidden="true"></span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#auctionCarousel" data-bs-slide="next">
+                                <span class="carousel-control-next-icon bg-gradient-theme rounded-circle p-4" aria-hidden="true"></span>
+                            </button>
                         </div>
-                        <div class="carousel-inner">
-                            @foreach($images as $index => $image)
-                                <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
-                                    <img src="{{ $image }}" class="d-block w-100" style="height: 450px; object-fit: contain; background: #f5f5f5; border-radius: 16px;" alt="Image du produit {{ $index + 1 }}">
-                                </div>
-                            @endforeach
+                    @elseif(count($images) == 1)
+                        <img src="{{ $images[0] }}" class="img-fluid rounded-4 w-100" style="max-height: 450px; object-fit: contain;" alt="Image produit">
+                    @else
+                        <div class="text-center py-5 bg-light rounded-4">
+                            <i class="fas fa-image fa-3x text-muted"></i>
+                            <p class="mt-3">Aucune image disponible</p>
                         </div>
-                        <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon bg-dark rounded-circle p-3" aria-hidden="true"></span>
-                            <span class="visually-hidden">Précédent</span>
-                        </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
-                            <span class="carousel-control-next-icon bg-dark rounded-circle p-3" aria-hidden="true"></span>
-                            <span class="visually-hidden">Suivant</span>
-                        </button>
-                    </div>
-                @elseif(count($images) == 1)
-                    <div class="text-center mb-4">
-                        <img src="{{ $images[0] }}" class="img-fluid rounded-4" style="max-height: 450px; object-fit: contain;" alt="Image du produit">
-                    </div>
-                @else
-                    <div class="text-center mb-4 bg-light rounded-4 p-5">
-                        <i class="material-symbols-rounded" style="font-size: 80px; color: #cbd5e0;">image_not_supported</i>
-                        <p class="mt-3 text-muted">Aucune image disponible pour ce produit</p>
-                    </div>
-                @endif
+                    @endif
+                </div>
 
-                <!-- Product Details Tabs -->
-                <ul class="nav nav-tabs mt-4" id="productTabs" role="tablist">
+                <!-- Miniatures (s’affiche uniquement si plusieurs) -->
+                @if(count($images) > 1)
+                <div class="d-flex justify-content-center mt-3 gap-2 flex-wrap">
+                    @foreach($images as $index => $image)
+                        <img src="{{ $image }}" data-bs-target="#auctionCarousel" data-bs-slide-to="{{ $index }}" class="img-thumbnail rounded-3 cursor-pointer" style="width: 70px; height: 50px; object-fit: cover; border: 2px solid {{ $index==0 ? '#667eea' : '#dee2e6' }};" alt="minia">
+                    @endforeach
+                </div>
+                @endif
+            </div>
+
+            <!-- Détails dans un accordéon stylé -->
+            <div class="card-custom p-4 mb-4">
+                <ul class="nav nav-pills mb-4" id="auctionTabs" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="description-tab" data-bs-toggle="tab" data-bs-target="#description" type="button" role="tab">
-                            <i class="material-symbols-rounded me-1">description</i> Description
-                        </button>
+                        <button class="nav-link active" id="desc-tab" data-bs-toggle="pill" data-bs-target="#desc" type="button"><i class="fas fa-align-left me-1"></i> Description</button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="details-tab" data-bs-toggle="tab" data-bs-target="#details" type="button" role="tab">
-                            <i class="material-symbols-rounded me-1">info</i> Détails produit
-                        </button>
+                        <button class="nav-link" id="specs-tab" data-bs-toggle="pill" data-bs-target="#specs" type="button"><i class="fas fa-clipboard-list me-1"></i> Spécifications</button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="seller-tab" data-bs-toggle="tab" data-bs-target="#seller" type="button" role="tab">
-                            <i class="material-symbols-rounded me-1">store</i> Vendeur
-                        </button>
+                        <button class="nav-link" id="seller-tab" data-bs-toggle="pill" data-bs-target="#seller" type="button"><i class="fas fa-user-circle me-1"></i> Vendeur</button>
                     </li>
                 </ul>
-                <div class="tab-content mt-3">
-                    <div class="tab-pane fade show active" id="description" role="tabpanel">
-                        <div class="p-3">
-                            <h5 class="fw-bold">À propos de cette annonce</h5>
-                            <p>{{ $annonce->description ?: 'Aucune description fournie pour cette annonce.' }}</p>
-                            
-                            <h5 class="fw-bold mt-3">Description du produit</h5>
-                            <p>{{ $annonce->produit->description ?: 'Aucune description fournie pour ce produit.' }}</p>
-                        </div>
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="desc">
+                        <h5 class="fw-bold mb-3">À propos de l'annonce</h5>
+                        <p>{{ $annonce->description ?: 'Aucune description fournie.' }}</p>
+                        @if($annonce->produit->description)
+                            <h5 class="fw-bold mt-4 mb-3">Description du produit</h5>
+                            <p>{{ $annonce->produit->description }}</p>
+                        @endif
                     </div>
-                    <div class="tab-pane fade" id="details" role="tabpanel">
-                        <div class="p-3">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <table class="table table-borderless">
-                                        <tr>
-                                            <th><i class="material-symbols-rounded text-primary">branding_watermark</i> Marque :</th>
-                                            <td>{{ $annonce->produit->marque ?? 'Non spécifiée' }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th><i class="material-symbols-rounded text-primary">model_training</i> Modèle :</th>
-                                            <td>{{ $annonce->produit->modele ?? 'Non spécifié' }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th><i class="material-symbols-rounded text-primary">category</i> Catégorie :</th>
-                                            <td>{{ $annonce->produit->sousCategorie->categorie->nom ?? 'Non catégorisé' }}</td>
-                                        </tr>
-                                    </table>
+                    <div class="tab-pane fade" id="specs">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <span class="text-muted"><i class="fas fa-tag me-2 text-primary"></i> Marque :</span>
+                                    <strong>{{ $annonce->produit->marque ?? 'Non spécifiée' }}</strong>
                                 </div>
-                                <div class="col-md-6">
-                                    <table class="table table-borderless">
-                                        <tr>
-                                            <th><i class="material-symbols-rounded text-primary">inventory_2</i> État :</th>
-                                            <td>
-                                                @switch($annonce->produit->etat)
-                                                    @case('NEUF')
-                                                        <span class="badge bg-gradient-success">Neuf</span>
-                                                        @break
-                                                    @case('TRES_BON_ETAT')
-                                                        <span class="badge bg-gradient-info">Très Bon État</span>
-                                                        @break
-                                                    @case('BON_ETAT')
-                                                        <span class="badge bg-gradient-primary">Bon État</span>
-                                                        @break
-                                                    @case('ACCEPTABLE')
-                                                        <span class="badge bg-gradient-warning">Acceptable</span>
-                                                        @break
-                                                    @default
-                                                        <span class="badge bg-gradient-secondary">{{ $annonce->produit->etat }}</span>
-                                                @endswitch
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th><i class="material-symbols-rounded text-primary">sell</i> Prix de départ :</th>
-                                            <td><strong>{{ number_format($annonce->prix_depart, 2) }} MAD</strong></td>
-                                        </tr>
-                                    </table>
+                                <div class="mb-3">
+                                    <span class="text-muted"><i class="fas fa-cube me-2 text-primary"></i> Modèle :</span>
+                                    <strong>{{ $annonce->produit->modele ?? 'Non spécifié' }}</strong>
+                                </div>
+                                <div class="mb-3">
+                                    <span class="text-muted"><i class="fas fa-layer-group me-2 text-primary"></i> Catégorie :</span>
+                                    <strong>{{ $annonce->produit->sousCategorie->categorie->nom ?? 'N/A' }}</strong>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <span class="text-muted"><i class="fas fa-star me-2 text-primary"></i> État :</span>
+                                    <span class="badge bg-gradient-theme">
+                                        @switch($annonce->produit->etat)
+                                            @case('NEUF') Neuf @break
+                                            @case('TRES_BON_ETAT') Très bon état @break
+                                            @case('BON_ETAT') Bon état @break
+                                            @case('ACCEPTABLE') Acceptable @break
+                                            @default {{ $annonce->produit->etat }}
+                                        @endswitch
+                                    </span>
+                                </div>
+                                <div class="mb-3">
+                                    <span class="text-muted"><i class="fas fa-coins me-2 text-primary"></i> Prix de départ :</span>
+                                    <strong>{{ number_format($annonce->prix_depart, 2) }} TND</strong>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="tab-pane fade" id="seller" role="tabpanel">
-                        <div class="p-3">
-                            <div class="d-flex align-items-center mb-3">
-                                <div class="avatar avatar-xl bg-gradient-theme border-radius-lg d-flex align-items-center justify-content-center">
-                                    <i class="material-symbols-rounded text-white" style="font-size: 48px;">store</i>
-                                </div>
-                                <div class="ms-3">
-                                    <h5 class="mb-0 fw-bold">{{ $annonce->vendeur->client->nom }} {{ $annonce->vendeur->client->prenom }}</h5>
-                                    <p class="text-sm text-muted mb-0">Membre depuis {{ $annonce->vendeur->created_at->format('F Y') }}</p>
+                    <div class="tab-pane fade" id="seller">
+                        <div class="d-flex align-items-center mb-4">
+                            <div class="seller-avatar">
+                                {{ strtoupper(substr($annonce->vendeur->client->nom, 0, 1) . substr($annonce->vendeur->client->prenom, 0, 1)) }}
+                            </div>
+                            <div class="ms-3">
+                                <h5 class="mb-0">{{ $annonce->vendeur->client->nom }} {{ $annonce->vendeur->client->prenom }}</h5>
+                                <small class="text-muted">Membre depuis {{ $annonce->vendeur->created_at->format('F Y') }}</small>
+                            </div>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <div class="bg-light rounded-4 p-3 text-center">
+                                    <h3 class="mb-0 fw-bold text-primary">{{ $annonce->vendeur->nombre_ventes }}</h3>
+                                    <small>Ventes</small>
                                 </div>
                             </div>
-                            <div class="row g-3">
-                                <div class="col-6">
-                                    <div class="card bg-light border-0 rounded-4">
-                                        <div class="card-body text-center p-3">
-                                            <h3 class="mb-0 fw-bold">{{ $annonce->vendeur->nombre_ventes }}</h3>
-                                            <small class="text-muted">Ventes totales</small>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="card bg-light border-0 rounded-4">
-                                        <div class="card-body text-center p-3">
-                                            <h3 class="mb-0 fw-bold text-warning">{{ number_format($annonce->vendeur->note_moyenne, 1) }} / 5</h3>
-                                            <small class="text-muted">
-                                                @for($i = 1; $i <= 5; $i++)
-                                                    <i class="material-symbols-rounded" style="font-size: 14px; color: {{ $i <= round($annonce->vendeur->note_moyenne) ? '#ffc107' : '#dee2e6' }}">star</i>
-                                                @endfor
-                                            </small>
-                                        </div>
-                                    </div>
+                            <div class="col-6">
+                                <div class="bg-light rounded-4 p-3 text-center">
+                                    <h3 class="mb-0 fw-bold text-warning">{{ number_format($annonce->vendeur->note_moyenne, 1) }}</h3>
+                                    <small>Note</small>
                                 </div>
                             </div>
+                        </div>
+                        <div class="mt-3 text-warning">
+                            @for($i=1; $i<=5; $i++)
+                                <i class="fas fa-star{{ $i <= round($annonce->vendeur->note_moyenne) ? '' : '-o' }}"></i>
+                            @endfor
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Bidding History -->
-        <div class="card border-0 shadow-sm rounded-4">
-            <div class="card-header bg-white border-0 pt-4 pb-3">
-                <div class="d-flex align-items-center">
-                    <div class="icon-shape rounded-3 d-flex align-items-center justify-content-center me-3" style="width: 48px; height: 48px; background: linear-gradient(135deg, #4fd1c5 0%, #38b2ac 100%);">
-                        <i class="material-symbols-rounded text-white">history</i>
-                    </div>
-                    <div>
-                        <h5 class="mb-0 fw-bold" style="color: #2d3748;">Historique des Enchères</h5>
-                        <p class="text-muted small mb-0">Dernières offres placées</p>
-                    </div>
+            <!-- Historique des enchères modernisé -->
+            <div class="card-custom p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold mb-0"><i class="fas fa-history text-primary me-2"></i> Historique des offres</h5>
+                    <span class="badge bg-gradient-theme">{{ $bids->count() }} enchère(s)</span>
                 </div>
-            </div>
-            <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table align-items-center mb-0">
-                        <thead>
+                    <table class="table table-borderless align-middle">
+                        <thead class="bg-light rounded-3">
                             <tr>
-                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Enchérisseur</th>
-                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Montant</th>
-                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Date</th>
+                                <th>Enchérisseur</th>
+                                <th class="text-end">Montant</th>
+                                <th class="text-end">Date</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @php
-                                $bids = $annonce->encheres()->with('client.user')->latest()->get();
-                            @endphp
                             @forelse($bids as $enchere)
-                            <tr class="{{ $loop->first ? 'bg-gradient-light' : '' }}">
+                            <tr class="{{ $loop->first && $annonce->statut == 'ACTIVE' ? 'table-primary' : '' }}">
                                 <td>
-                                    <div class="d-flex px-2 py-1">
-                                        <div class="d-flex flex-column justify-content-center">
-                                            <h6 class="mb-0 text-sm">
-                                                @if($enchere->client)
-                                                    {{ $enchere->client->nom }} {{ $enchere->client->prenom }}
-                                                @else
-                                                    <span class="text-muted">Utilisateur supprimé</span>
-                                                @endif
-                                                @if($loop->first && $annonce->statut == 'ACTIVE')
-                                                    <span class="badge ms-2" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">Leader 🏆</span>
-                                                @endif
-                                            </h6>
-                                            @if($enchere->client && $enchere->client->user)
-                                                <p class="text-xs text-secondary mb-0">{{ $enchere->client->user->email }}</p>
-                                            @endif
-                                        </div>
-                                    </div>
+                                    @if($enchere->client)
+                                        {{ $enchere->client->nom }} {{ $enchere->client->prenom }}
+                                        @if($loop->first && $annonce->statut == 'ACTIVE')
+                                            <span class="badge bg-gradient-theme ms-1">Leader</span>
+                                        @endif
+                                    @else
+                                        <span class="text-muted">Utilisateur supprimé</span>
+                                    @endif
                                 </td>
-                                <td class="align-middle text-center">
-                                    <span class="text-{{ $loop->first ? 'success' : 'secondary' }} text-sm font-weight-bold">
-                                        {{ number_format($enchere->montant, 2) }} MAD
-                                    </span>
-                                </td>
-                                <td class="align-middle text-center">
-                                    <span class="text-secondary text-xs font-weight-bold">
-                                        {{ \Carbon\Carbon::parse($enchere->date_mise)->format('d/m/Y H:i:s') }}
-                                        <br>
-                                        <small class="text-muted">{{ \Carbon\Carbon::parse($enchere->date_mise)->diffForHumans() }}</small>
-                                    </span>
-                                </td>
+                                <td class="text-end fw-bold">{{ number_format($enchere->montant, 2) }} TND</td>
+                                <td class="text-end text-muted small">{{ \Carbon\Carbon::parse($enchere->date_mise)->format('d/m/Y H:i') }}</td>
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="3" class="text-center py-5">
-                                    <i class="material-symbols-rounded" style="font-size: 48px;">gavel</i>
-                                    <p class="mt-2 mb-0">Aucune enchère pour le moment.</p>
-                                    <small class="text-muted">Soyez le premier à enchérir !</small>
+                                <td colspan="3" class="text-center py-4">
+                                    <i class="fas fa-gavel fa-2x text-muted mb-2"></i>
+                                    <p>Aucune enchère pour le moment. Soyez le premier !</p>
                                 </td>
                             </tr>
                             @endforelse
                         </tbody>
                     </table>
                 </div>
-                @if($bids->count() > 0)
-                <div class="px-3 py-2 bg-light rounded-bottom-4">
-                    <small class="text-muted">
-                        <i class="material-symbols-rounded" style="font-size: 14px;">info</i>
-                        Total: {{ $bids->count() }} enchère(s) placée(s)
-                    </small>
-                </div>
-                @endif
             </div>
         </div>
-    </div>
 
-    <div class="col-lg-4">
-        <!-- Bid Card -->
-        <div class="card position-sticky shadow-lg border-0 rounded-4" style="top: 100px;">
-            <div class="card-header text-white rounded-top-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h6 class="mb-0 text-white fw-bold"><i class="material-symbols-rounded me-1" style="vertical-align: middle;">gavel</i> Participer à l'enchère</h6>
-                    @if($annonce->statut === 'ACTIVE')
-                        <button class="btn btn-sm" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3);" onclick="location.reload()" title="Actualiser les enchères">
-                            <i class="material-symbols-rounded" style="font-size: 18px; vertical-align: middle;">refresh</i>
-                        </button>
-                    @endif
-                </div>
-            </div>
-            <div class="card-body p-4">
-                <!-- Current Price -->
-                <div class="text-center mb-4">
-                    <small class="text-muted text-uppercase fw-bold">Enchère actuelle</small>
-                    <h2 class="mb-0 fw-bold" style="color: #764ba2;">{{ number_format($currentHighestBid, 2) }} MAD</h2>
-                    @if($annonce->prix_depart < $currentHighestBid)
-                        <small class="text-muted">Départ: {{ number_format($annonce->prix_depart, 2) }} MAD</small>
-                    @endif
-                </div>
+        <!-- Colonne Droite : Carte d'enchère interactive -->
+        <div class="col-lg-4">
+            <div class="card-custom sticky-top" style="top: 90px;">
+                <div class="card-body p-4">
+                    <!-- Prix actuel -->
+                    <div class="text-center mb-4">
+                        <small class="text-muted text-uppercase fw-bold">Enchère actuelle</small>
+                        <h2 class="fw-bold text-gradient">{{ number_format($currentHighestBid, 2) }} TND</h2>
+                        @if($annonce->prix_depart < $currentHighestBid)
+                            <small class="text-muted">Départ : {{ number_format($annonce->prix_depart, 2) }} TND</small>
+                        @endif
+                    </div>
 
-                <!-- Auction Status -->
-                @php
-                    $statusColor = $annonce->statut == 'ACTIVE' ? '#f3f0ff' : ($annonce->statut == 'CLOTUREE' ? '#f8f9fa' : '#fff0f5');
-                    $statusTextColor = $annonce->statut == 'ACTIVE' ? '#764ba2' : ($annonce->statut == 'CLOTUREE' ? '#6c757d' : '#d63384');
-                @endphp
-                <div class="alert text-center mb-4" style="background-color: {{ $statusColor }}; color: {{ $statusTextColor }}; border: none; border-radius: 16px;">
+                    <!-- Compteur / Statut -->
                     @if($annonce->statut == 'ACTIVE')
-                        <i class="material-symbols-rounded">schedule</i>
-                        <strong>Temps restant:</strong>
-                        <div id="countdown" class="h4 mb-0 fw-bold" style="color: #764ba2;"></div>
+                    <div class="bg-purple-light rounded-4 p-3 mb-4 text-center">
+                        <div class="countdown-circle mx-auto mb-2" id="countdownContainer">
+                            <svg viewBox="0 0 100 100" width="80">
+                                <circle cx="50" cy="50" r="45" fill="none" stroke="#e9ecef" stroke-width="8"/>
+                                <circle cx="50" cy="50" r="45" fill="none" stroke="url(#gradient)" stroke-width="8" stroke-dasharray="283" stroke-dashoffset="0" id="progressCircle" transform="rotate(-90 50 50)"/>
+                                <defs><linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#667eea"/><stop offset="100%" stop-color="#764ba2"/></linearGradient></defs>
+                            </svg>
+                            <div class="countdown-text" id="countdown">--:--:--</div>
+                        </div>
+                        <small class="fw-bold text-primary">Temps restant</small>
+                    </div>
                     @elseif($annonce->statut == 'CLOTUREE')
-                        <i class="material-symbols-rounded">check_circle</i>
-                        <strong>Enchère terminée</strong>
+                    <div class="alert alert-success text-center border-0 bg-success-light">
+                        <i class="fas fa-check-circle fa-2x"></i>
+                        <p class="mb-0 mt-2 fw-bold">Enchère terminée</p>
+                    </div>
                     @else
-                        <i class="material-symbols-rounded">pending</i>
-                        <strong>En attente de validation</strong>
+                    <div class="alert alert-warning text-center border-0">
+                        <i class="fas fa-clock fa-2x"></i>
+                        <p class="mb-0 mt-2">En attente de validation</p>
+                    </div>
                     @endif
-                </div>
 
-                <!-- Bid Form -->
-                @if($annonce->statut === 'ACTIVE')
-                    @auth
-                        @role('client')
-                            @if($userBid)
-                                <div class="alert mb-3" style="background-color: #f3f0ff; color: #764ba2; border: none; border-radius: 12px;">
-                                    <i class="material-symbols-rounded">info</i>
-                                    Votre dernière enchère: <strong>{{ number_format($userBid->montant, 2) }} MAD</strong>
+                    <!-- Formulaire d’enchère -->
+                    @if($annonce->statut == 'ACTIVE')
+                        @auth
+                            @role('client')
+                                @if($userBid)
+                                    <div class="alert alert-primary border-0 text-center">
+                                        Votre offre : <strong>{{ number_format($userBid->montant, 2) }} TND</strong>
+                                    </div>
+                                @endif
+                                <form id="bidForm" method="POST" action="{{ route('bids.place', $annonce) }}">
+                                    @csrf
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Votre enchère (TND)</label>
+                                        <input type="number" name="montant" class="form-control form-control-lg" 
+                                               min="{{ $currentHighestBid + $annonce->montant_mise }}" 
+                                               step="1" required placeholder="{{ $currentHighestBid + $annonce->montant_mise }}">
+                                        <small class="text-muted">Minimum : {{ number_format($currentHighestBid + $annonce->montant_mise, 2) }} TND</small>
+                                    </div>
+                                    <button type="submit" class="btn btn-gradient w-100 btn-lg">
+                                        <i class="fas fa-gavel me-1"></i> Placer mon enchère
+                                    </button>
+                                </form>
+                            @else
+                                <div class="text-center py-3">
+                                    <i class="fas fa-lock fa-2x text-muted"></i>
+                                    <p class="mt-2">Connectez-vous en tant qu'acheteur.</p>
+                                    <button class="btn btn-outline-gradient" data-bs-toggle="modal" data-bs-target="#loginModal">Connexion</button>
                                 </div>
-                            @endif
-                            <form id="bidForm" method="POST" action="{{ route('bids.place', $annonce) }}">
-                                @csrf
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold">Votre enchère (MAD)</label>
-                                    <input type="number" name="montant" class="form-control form-control-lg" style="border: 2px solid #667eea; font-size: 1.1rem; font-weight: 600; border-radius: 12px;" step="1" min="{{ $currentHighestBid + $annonce->montant_mise }}" id="bidAmount" required placeholder="{{ $currentHighestBid + $annonce->montant_mise }}">
-                                    <small class="text-muted d-block mt-2">
-                                        <i class="material-symbols-rounded" style="font-size: 14px; vertical-align: middle;">info</i>
-                                        Enchère minimale: <strong>{{ number_format($currentHighestBid + $annonce->montant_mise, 2) }} MAD</strong>
-                                    </small>
-                                </div>
-                                <button type="submit" class="btn-gradient w-100 btn-lg shadow">
-                                    <i class="material-symbols-rounded me-1" style="vertical-align: middle;">gavel</i> Placer mon enchère
-                                </button>
-                            </form>
+                            @endrole
                         @else
-                            <div class="alert text-center" style="background-color: #fff0f5; color: #d63384; border: none; border-radius: 16px;">
-                                <i class="material-symbols-rounded">lock</i>
-                                Vous devez être connecté en tant qu'acheteur pour enchérir.
+                            <div class="text-center py-3">
+                                <i class="fas fa-lock fa-2x text-muted"></i>
+                                <p>Connectez-vous pour enchérir.</p>
+                                <button class="btn btn-outline-gradient" data-bs-toggle="modal" data-bs-target="#loginModal">Connexion</button>
+                                <a href="{{ route('register') }}" class="btn btn-link">Créer un compte</a>
                             </div>
-                            <a href="#" class="btn w-100" data-bs-toggle="modal" data-bs-target="#loginModal" style="border: 1px solid #764ba2; color: #764ba2; background-color: transparent; border-radius: 50px;">
-                                <i class="material-symbols-rounded me-1">login</i> Se connecter
-                            </a>
-                        @endrole
-                    @else
-                        <div class="alert text-center" style="background-color: #fff0f5; color: #d63384; border: none; border-radius: 16px;">
-                            <i class="material-symbols-rounded">lock</i>
-                            Connectez-vous pour participer à cette enchère.
-                        </div>
-                        <a href="#" class="btn w-100" data-bs-toggle="modal" data-bs-target="#loginModal" style="border: 1px solid #764ba2; color: #764ba2; background-color: transparent; border-radius: 50px;">
-                            <i class="material-symbols-rounded me-1">login</i> Se connecter
-                        </a>
-                        <a href="{{ route('register') }}" class="btn btn-link w-100 mt-2">Créer un compte</a>
+                        @endif
+                    @elseif($annonce->statut == 'CLOTUREE')
+                        @php
+                            $winningBid = $annonce->encheres()->latest('montant')->first();
+                            $userWon = Auth::check() && Auth::user()->client && $winningBid && $winningBid->client_id == Auth::user()->client->id;
+                        @endphp
+                        @if($userWon)
+                            <div class="text-center bg-gradient-theme text-white rounded-4 p-3">
+                                <h4>🏆 Félicitations !</h4>
+                                <p>Vous avez gagné avec <strong>{{ number_format($winningBid->montant, 2) }} TND</strong></p>
+                                <button class="btn btn-light" onclick="contactSeller()">Contacter le vendeur</button>
+                            </div>
+                        @else
+                            <div class="text-center p-3 bg-light rounded-4">
+                                <p>Gagnant : {{ $winningBid->client->nom ?? 'N/A' }} ({{ number_format($winningBid->montant ?? 0, 2) }} TND)</p>
+                            </div>
+                        @endif
                     @endif
-                @elseif($annonce->statut === 'CLOTUREE')
-                    @php
-                        $winningBid = $annonce->encheres()->latest('montant')->first();
-                        $userWon = Auth::check() && Auth::user()->client && $winningBid && $winningBid->client_id == Auth::user()->client->id;
-                    @endphp
-                    @if($userWon)
-                        <div class="alert text-center" style="background-color: #fff0f5; color: #d63384; border: none; border-radius: 16px;">
-                            <i class="material-symbols-rounded" style="font-size: 48px;">emoji_events</i>
-                            <h5 class="mt-2 fw-bold" style="color: #d63384;">Félicitations !</h5>
-                            <p>Vous avez remporté cette enchère avec {{ number_format($winningBid->montant, 2) }} MAD</p>
-                            <button class="btn mt-2" style="background-color: #d63384; color: white; border-radius: 50px;" onclick="contactSeller()">
-                                <i class="material-symbols-rounded me-1">mail</i> Contacter le vendeur
-                            </button>
-                        </div>
-                    @else
-                        <div class="alert alert-secondary text-center border-0">
-                            <i class="material-symbols-rounded">check_circle</i>
-                            <p class="mb-0 mt-2">Cette enchère est terminée.</p>
-                            @if($winningBid)
-                                <small>Gagnée par {{ $winningBid->client->nom }} avec {{ number_format($winningBid->montant, 2) }} MAD</small>
-                            @endif
-                        </div>
-                    @endif
-                @else
-                    <div class="alert text-center" style="background-color: #fff0f5; color: #d63384; border: none; border-radius: 16px;">
-                        <i class="material-symbols-rounded">pending</i>
-                        <p class="mb-0 mt-2">Cette enchère n'est pas encore active.</p>
-                    </div>
-                @endif
 
-                <hr class="my-4">
-
-                <!-- Auction Info -->
-                <div class="mt-3">
-                    <h6 class="text-uppercase text-secondary fw-bold">Informations</h6>
-                    <div class="d-flex justify-content-between mb-2">
-                        <span><i class="material-symbols-rounded text-primary">event</i> Début:</span>
-                        <span>{{ $annonce->date_debut ? \Carbon\Carbon::parse($annonce->date_debut)->format('d/m/Y H:i') : 'Non définie' }}</span>
+                    <!-- Infos supplémentaires -->
+                    <hr class="my-4">
+                    <div class="d-flex justify-content-between small">
+                        <span><i class="far fa-calendar-alt me-1"></i> Début</span>
+                        <span>{{ $annonce->date_debut ? \Carbon\Carbon::parse($annonce->date_debut)->format('d/m/Y H:i') : '-' }}</span>
                     </div>
-                    <div class="d-flex justify-content-between mb-2">
-                        <span><i class="material-symbols-rounded text-primary">event_busy</i> Fin:</span>
-                        <span>{{ $annonce->date_fin ? \Carbon\Carbon::parse($annonce->date_fin)->format('d/m/Y H:i') : 'Non définie' }}</span>
-                    </div>
-                    <div class="d-flex justify-content-between">
-                        <span><i class="material-symbols-rounded text-primary">gavel</i> Total enchères:</span>
-                        <span class="badge" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">{{ $annonce->encheres()->count() }}</span>
+                    <div class="d-flex justify-content-between small mt-2">
+                        <span><i class="far fa-calendar-check me-1"></i> Fin</span>
+                        <span>{{ $annonce->date_fin ? \Carbon\Carbon::parse($annonce->date_fin)->format('d/m/Y H:i') : '-' }}</span>
                     </div>
                 </div>
             </div>
@@ -402,46 +325,138 @@
 </div>
 @endsection
 
-@push('scripts')
-<script>
-    // Countdown Timer
-    @if($annonce->statut === 'ACTIVE' && $annonce->date_fin)
-        function updateCountdown() {
-            const endDate = new Date('{{ $annonce->date_fin }}').getTime();
-            const now = new Date().getTime();
-            const distance = endDate - now;
-
-            if (distance < 0) {
-                document.getElementById('countdown').innerHTML = 'Terminée';
-                location.reload();
-                return;
-            }
-
-            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((distance % (86400000)) / (3600000));
-            const minutes = Math.floor((distance % (3600000)) / (60000));
-            const seconds = Math.floor((distance % 60000) / 1000);
-
-            let countdownText = '';
-            if (days > 0) countdownText += days + 'j ';
-            countdownText += hours + 'h ' + minutes + 'm ' + seconds + 's';
-            
-            document.getElementById('countdown').innerHTML = countdownText;
-        }
-
-        updateCountdown();
-        setInterval(updateCountdown, 1000);
-    @endif
-
-    function contactSeller() {
-        window.location.href = 'mailto:{{ $annonce->vendeur->client->user->email }}?subject=Question about auction: {{ $annonce->titre }}';
+@push('styles')
+    <!-- Icônes Font Awesome (chargement robuste) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+<style>
+    /* Styles additionnels pour la page d'enchère - en harmonie avec le layout existant */
+    .auction-showcase .breadcrumb-custom {
+        background: white;
+        padding: 1rem 1.5rem;
+        border-radius: 16px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .card-custom {
+        background: white;
+        border-radius: 20px;
+        border: none;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+        transition: box-shadow 0.3s;
+    }
+    .card-custom:hover {
+        box-shadow: 0 10px 30px rgba(102,126,234,0.12);
+    }
+    .text-gradient {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    .bg-purple-light {
+        background: rgba(102,126,234,0.08);
+    }
+    .bg-success-light {
+        background: rgba(16,185,129,0.1);
+    }
+    .seller-avatar {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+    .countdown-circle {
+        position: relative;
+        width: 80px;
+        height: 80px;
+    }
+    .countdown-circle svg {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+    }
+    .countdown-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-weight: 700;
+        font-size: 0.9rem;
+        color: #667eea;
+    }
+    .nav-pills .nav-link {
+        color: #4a5568;
+        border-radius: 10px;
+        padding: 0.6rem 1.2rem;
+        font-weight: 600;
+    }
+    .nav-pills .nav-link.active {
+        background:transparent;
     }
 
-    // Auto-refresh bid history every 30 seconds for active auctions
-    @if($annonce->statut === 'ACTIVE')
-        setInterval(function() {
-            location.reload();
-        }, 30000);
-    @endif
+    .bg-gradient-theme {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    .table-primary {
+        background: rgba(102,126,234,0.05);
+    }
+</style>
+@endpush
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Compteur à rebours circulaire
+        @if($annonce->statut === 'ACTIVE' && $annonce->date_fin)
+        const endDate = new Date('{{ $annonce->date_fin }}').getTime();
+        const totalSeconds = Math.floor((endDate - Date.now()) / 1000);
+        const circumference = 283; // 2*pi*45
+        const circle = document.getElementById('progressCircle');
+        const countdownEl = document.getElementById('countdown');
+
+        function updateCountdown() {
+            const now = Date.now();
+            const distance = endDate - now;
+            if (distance < 0) {
+                countdownEl.textContent = 'Terminé';
+                circle.style.strokeDashoffset = circumference;
+                return;
+            }
+            const hours = Math.floor(distance / (1000*60*60));
+            const minutes = Math.floor((distance % (1000*60*60)) / (1000*60));
+            const seconds = Math.floor((distance % (1000*60)) / 1000);
+            countdownEl.textContent = `${hours}h ${minutes}m ${seconds}s`;
+
+            const elapsedRatio = 1 - (distance / (totalSeconds * 1000));
+            circle.style.strokeDashoffset = circumference * elapsedRatio;
+        }
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+        @endif
+
+        // Activer les miniatures Bootstrap
+        const thumbnails = document.querySelectorAll('[data-bs-target="#auctionCarousel"]');
+        thumbnails.forEach(thumb => {
+            thumb.addEventListener('click', function() {
+                const slideIndex = this.getAttribute('data-bs-slide-to');
+                const carousel = document.querySelector('#auctionCarousel');
+                const bsCarousel = bootstrap.Carousel.getInstance(carousel);
+                bsCarousel.to(parseInt(slideIndex));
+            });
+        });
+    });
+
+    function contactSeller() {
+        window.location.href = 'mailto:{{ $annonce->vendeur->client->user->email }}?subject=Question%20enchère%20{{ urlencode($annonce->titre) }}';
+    }
 </script>
 @endpush

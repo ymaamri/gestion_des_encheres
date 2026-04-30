@@ -77,7 +77,8 @@
                                         </td>
                                         <td>
                                             <p class="text-xs text-secondary mb-0">
-                                                {{ Str::limit($subcategory->description, 50) }}</p>
+                                                {{ Str::limit($subcategory->description, 50) }}
+                                            </p>
                                         </td>
                                         <td class="align-middle text-center">
                                             <span
@@ -178,6 +179,10 @@
 @endsection
 
 @push('styles')
+    <!-- Icônes Font Awesome (chargement robuste) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
         .btn-gradient {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
