@@ -1,2 +1,6 @@
 cd /opt/lampp/htdocs/gestion_des_encheres
 php artisan schedule:work
+
+
+cd /opt/lampp/htdocs/gestion_des_encheres
+php artisan auctions:close-expired

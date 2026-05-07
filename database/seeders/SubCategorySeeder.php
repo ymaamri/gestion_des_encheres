@@ -15,26 +15,46 @@ class SubCategorySeeder extends Seeder
                 ['nom' => 'Smartphones', 'description' => 'Mobile phones and accessories'],
                 ['nom' => 'Laptops', 'description' => 'Notebooks and computers'],
                 ['nom' => 'Tablets', 'description' => 'iPad and Android tablets'],
-                ['nom' => 'Audio', 'description' => 'Headphones, speakers, and audio equipment'],
-                ['nom' => 'Cameras', 'description' => 'Digital cameras and photography equipment'],
+                ['nom' => 'Audio', 'description' => 'Headphones, speakers, audio equipment'],
+                ['nom' => 'Cameras', 'description' => 'Digital cameras and photography'],
             ],
             'Fashion' => [
-                ['nom' => "Men's Clothing", 'description' => 'Shirts, pants, jackets for men'],
-                ['nom' => "Women's Clothing", 'description' => 'Dresses, blouses, skirts for women'],
-                ['nom' => 'Shoes', 'description' => 'Sneakers, boots, and formal shoes'],
-                ['nom' => 'Accessories', 'description' => 'Bags, watches, belts, and jewelry'],
+                ['nom' => "Hommes", 'description' => 'Men clothing, shirts, pants, jackets'],
+                ['nom' => "Femmes", 'description' => 'Women dresses, blouses, skirts'],
+                ['nom' => 'Chaussures', 'description' => 'Sneakers, boots, formal shoes'],
+                ['nom' => 'Accessoires', 'description' => 'Bags, watches, belts, jewelry'],
             ],
             'Home & Garden' => [
-                ['nom' => 'Furniture', 'description' => 'Sofas, tables, chairs, and beds'],
-                ['nom' => 'Decor', 'description' => 'Home decoration and art'],
-                ['nom' => 'Kitchen', 'description' => 'Appliances and utensils'],
-                ['nom' => 'Gardening', 'description' => 'Tools and plants for garden'],
+                ['nom' => 'Meubles', 'description' => 'Sofas, tables, chairs, beds'],
+                ['nom' => 'Décoration', 'description' => 'Home decor and art pieces'],
+                ['nom' => 'Cuisine', 'description' => 'Appliances and utensils'],
+                ['nom' => 'Jardin', 'description' => 'Tools, plants, outdoor furniture'],
             ],
             'Sports' => [
                 ['nom' => 'Fitness', 'description' => 'Gym equipment and accessories'],
-                ['nom' => 'Outdoor', 'description' => 'Camping and hiking gear'],
-                ['nom' => 'Team Sports', 'description' => 'Football, basketball, soccer equipment'],
-                ['nom' => 'Cycling', 'description' => 'Bikes and cycling accessories'],
+                ['nom' => 'Plein air', 'description' => 'Camping, hiking gear'],
+                ['nom' => 'Sports collectifs', 'description' => 'Football, basketball, soccer'],
+                ['nom' => 'Cyclisme', 'description' => 'Bikes and cycling accessories'],
+            ],
+            'Automotive' => [
+                ['nom' => 'Voitures', 'description' => 'Cars and vehicles'],
+                ['nom' => 'Motos', 'description' => 'Motorcycles and scooters'],
+                ['nom' => 'Pièces auto', 'description' => 'Car parts and accessories'],
+            ],
+            'Collectibles' => [
+                ['nom' => 'Art', 'description' => 'Paintings, sculptures'],
+                ['nom' => 'Antiquités', 'description' => 'Vintage items'],
+                ['nom' => 'Monnaies & timbres', 'description' => 'Coins and stamps'],
+            ],
+            'Books' => [
+                ['nom' => 'Livres neufs', 'description' => 'New releases'],
+                ['nom' => 'Livres anciens', 'description' => 'Rare editions'],
+                ['nom' => 'BD & Mangas', 'description' => 'Comics and manga'],
+            ],
+            'Toys & Hobbies' => [
+                ['nom' => 'Jeux vidéo', 'description' => 'Video games and consoles'],
+                ['nom' => 'Jouets', 'description' => 'Classic toys'],
+                ['nom' => 'Modélisme', 'description' => 'Models and hobby kits'],
             ],
         ];
 
@@ -42,15 +62,14 @@ class SubCategorySeeder extends Seeder
             $category = Categorie::where('nom', $categoryName)->first();
             if ($category) {
                 foreach ($subs as $sub) {
-                    SousCategorie::create([
-                        'categorie_id' => $category->id,
-                        'nom' => $sub['nom'],
-                        'description' => $sub['description'],
-                    ]);
+                    SousCategorie::firstOrCreate(
+                        ['categorie_id' => $category->id, 'nom' => $sub['nom']],
+                        ['description' => $sub['description']]
+                    );
                 }
             }
         }
 
-        $this->command->info('Sub-categories seeded successfully!');
+        $this->command->info('✅ Sub-categories seeded successfully!');
     }
 }

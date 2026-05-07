@@ -1,4 +1,6 @@
 {{-- /opt/lampp/htdocs/gestion_des_encheres/resources/views/admin/auctions/index.blade.php --}}
+@php use App\Helpers\ImageHelper; @endphp
+
 @extends('layouts.app')
 
 @section('title', 'Gestion des Enchères')
@@ -85,8 +87,8 @@
         <div class="auctions-grid" id="auctionsGrid">
             @forelse($auctions as $annonce)
                 @php
-                    $photos = $annonce->produit->photos ?? [];
-                    $firstPhoto = !empty($photos) ? Storage::url($photos[0]) : 'https://via.placeholder.com/400x300';
+                    // Use ImageHelper to get the first product image URL (handles both external URLs and local storage)
+                    $firstPhoto = ImageHelper::getProductImage($annonce->produit);
                     $currentPrice = $annonce->getMontantActuel();
                     $bidCount = $annonce->encheres()->count();
                     $status = $annonce->statut;
@@ -189,9 +191,6 @@
                                 <a href="{{ route('annonces.show', $annonce) }}" target="_blank" class="action-btn view-btn">
                                     <i class="fas fa-eye"></i> Voir
                                 </a>
-                                <!--      <a href="{{ route('admin.auctions.show', $annonce) }}" class="action-btn details-btn">
-                                                    <i class="fas fa-info-circle"></i> Détails
-                                                </a> -->
                             </div>
                         </div>
                     </div>

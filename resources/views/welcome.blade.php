@@ -1082,8 +1082,8 @@
                                     <div class="product-body">
                                         <h5 class="product-title">${escapeHtml(product.titre)}</h5>
                                         <div class="mb-2">
-                                            <span class="product-price">${formatPrice(product.current_price)} MAD</span>
-                                            ${product.original_price > product.current_price ? `<span class="product-old-price">${formatPrice(product.original_price)} MAD</span>` : ''}
+                                            <span class="product-price">${formatPrice(product.current_price)} TND</span>
+                                            ${product.original_price > product.current_price ? `<span class="product-old-price">${formatPrice(product.original_price)} TND</span>` : ''}
                                         </div>
                                         <div class="d-flex justify-content-between align-items-center mb-2">
                                             <span class="bid-count"><i class="fas fa-gavel me-1"></i> ${product.bid_count || 0} enchères</span>
@@ -1164,7 +1164,7 @@
                                     <div class="product-body">
                                         <h5 class="product-title">${escapeHtml(product.titre)}</h5>
                                         <div class="mb-2">
-                                            <span class="product-price">${formatPrice(product.current_price)} MAD</span>
+                                            <span class="product-price">${formatPrice(product.current_price)} TND</span>
                                         </div>
                                         <a href="/annonces/${product.id}" class="btn-gradient w-100 mt-2">Participer</a>
                                     </div>

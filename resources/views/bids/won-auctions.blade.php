@@ -74,7 +74,7 @@
                     <span class="stat-icon">💰</span>
                     <div><span class="stat-num"
                             id="statTotalSpent">{{ number_format($wonAuctions->sum('montant'), 0) }}</span><span
-                            class="stat-name">MAD investis</span></div>
+                            class="stat-name">TND investis</span></div>
                 </div>
                 <div class="stat-item stat-premium">
                     <span class="stat-icon">⚡</span>

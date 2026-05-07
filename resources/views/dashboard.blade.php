@@ -73,7 +73,7 @@
                     <div class="stat-content">
                         <span class="stat-label">Offres placées</span>
                         <span class="stat-value" data-target="{{ $stats['total_bids'] ?? 0 }}">0</span>
-                        <span class="stat-sub">Volume ~{{ number_format(($stats['total_bids'] ?? 0) * 1000) }} MAD</span>
+                        <span class="stat-sub">Volume ~{{ number_format(($stats['total_bids'] ?? 0) * 1000) }} TND</span>
                     </div>
                     <div class="stat-glow"></div>
                 </div>
@@ -125,7 +125,7 @@
                                 <img src="{{ $img }}" class="item-img" alt="produit">
                                 <div class="item-body">
                                     <strong>{{ Str::limit($annonce->titre, 25) }}</strong>
-                                    <small>{{ number_format($annonce->getMontantActuel(), 2) }} MAD</small>
+                                    <small>{{ number_format($annonce->getMontantActuel(), 2) }} TND</small>
                                 </div>
                                 <span
                                     class="badge badge-{{ $annonce->statut == 'ACTIVE' ? 'success' : ($annonce->statut == 'CLOTUREE' ? 'secondary' : 'warning') }}">{{ $annonce->statut }}</span>
@@ -328,7 +328,7 @@
                     <div class="stat-content">
                         <span class="stat-label">Mon solde</span>
                         <span class="stat-value" data-target="{{ $stats['balance'] ?? 0 }}">0</span>
-                        <span class="stat-sub">MAD</span>
+                        <span class="stat-sub">TND</span>
                     </div>
                     <div class="stat-glow"></div>
                 </div>
@@ -373,7 +373,7 @@
                                 <div class="card-content">
                                     <h4>{{ Str::limit($auction->titre, 30) }}</h4>
                                     <div class="price-row">
-                                        <span class="current">{{ number_format($auction->getMontantActuel(), 2) }} MAD</span>
+                                        <span class="current">{{ number_format($auction->getMontantActuel(), 2) }} TND</span>
                                         <span class="bids"><i class="fas fa-gavel"></i> {{ $auction->encheres()->count() }}</span>
                                     </div>
                                 </div>
@@ -395,7 +395,7 @@
                             <li class="list-item">
                                 <div class="item-body">
                                     <strong>{{ $bid->annonce->titre ?? 'Enchère supprimée' }}</strong>
-                                    <small>Mon offre : {{ number_format($bid->montant, 2) }} MAD</small>
+                                    <small>Mon offre : {{ number_format($bid->montant, 2) }} TND</small>
                                 </div>
                                 <span class="badge badge-info">{{ $bid->created_at->diffForHumans() }}</span>
                             </li>
@@ -418,8 +418,8 @@
 
     <style>
         /* ============================================================
-                   DASHBOARD X-TREME - PUR CSS NATIF, ÉBLOUISSEMENT GARANTI
-                   ============================================================ */
+                                                       DASHBOARD X-TREME - PUR CSS NATIF, ÉBLOUISSEMENT GARANTI
+                                                       ============================================================ */
         :root {
             --g-start: #667eea;
             --g-end: #764ba2;

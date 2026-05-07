@@ -20,4 +20,4 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 // Schedule the auction closing command to run every minute
-Schedule::command('auctions:close-expired')->everyMinute();
+// Schedule::command('auctions:close-expired')->everyMinute();

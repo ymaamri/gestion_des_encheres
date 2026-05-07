@@ -75,6 +75,10 @@
             border-color: #667eea;
             box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
         }
+
+        input {
+            padding: 5px !important;
+        }
     </style>
 @endpush
 
